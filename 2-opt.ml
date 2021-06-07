@@ -1,7 +1,6 @@
 module TwoOpt = struct
     type arg = {city_count: int; eval : int -> int -> float}
-    let make_arg city_count eval = {city_count; eval}
-    let optBest arg max arr =
+    let optBest city_count eval max arr =
         let rec loop k =
             let diff = ref 0. in
             let minI, minJ = ref 0, ref 0 in
