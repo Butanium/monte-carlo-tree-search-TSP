@@ -1,4 +1,8 @@
 # ocaml-tsp
-Different heuristic solution for the TSP in ocaml
+Different heuristic solution for the TSP written ocaml
 
-For now only 2-opt is working and the MCTS is in WIP. Maybe I'll add a GA too, we'll see
+## WIP : 
+- **2-opt** is working 
+- **Monte-Carlo tree search** aka MCTS need some more testing but seems to work.
+-  **Genetic algorithm** not started
+-  ???
