@@ -1,4 +1,5 @@
 module Showtsp = struct
+    open Graphics
     type parameters = {mutable height: int; mutable width: int; mutable city_size: int}
 
     let params = {height=600; width=600; city_size=10}
@@ -33,4 +34,23 @@ module Showtsp = struct
             lineto_city sol.(k);
         done;
         lineto_city sol.(0)
+        
+    let show_solution_list cities sol =
+        let maxX, maxY = Array.fold_left (fun (maxX, maxY) (x,y) -> (max maxX x), (max maxY y)) (0.,0.) cities
+        in
+        let movetoT (x,y)= moveto x y
+        in
+        let coord = coordToScreen (maxX, maxY)
+        in
+        let lineto_city city = let x,y = coord cities.(city) in lineto x y
+        in
+        show_cities cities;
+        set_line_width 3;
+        set_color black;
+        let x :: xs = sol in 
+            
+        movetoT @@ coord cities.(x);
+        List.iter lineto_city xs;
+        lineto_city x
+    
 end;;

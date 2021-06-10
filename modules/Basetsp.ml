@@ -4,6 +4,6 @@ module Basetsp = struct
         in
         let city_count = Array.length cities in
         let adj_matrix = Array.init city_count (fun i -> Array.init city_count (fun j -> dist cities.(i) cities.(j)))
-        in 
+        in
         fun c1 c2 -> adj_matrix.(c1).(c2)
 end;;
