@@ -16,7 +16,7 @@ module Showtsp = struct
         Array.iteri (fun i (x,y) ->  set_color red; fill_circle x y params.city_size;set_text_size 20;set_color black;
                     moveto x y; draw_string @@ string_of_int i) @@ Array.map (coordToScreen (maxX, maxY)) cities
 
-    let print_solution cities sol =
+    let show_solution cities sol =
         let maxX, maxY = Array.fold_left (fun (maxX, maxY) (x,y) -> (max maxX x), (max maxY y)) (0.,0.) cities
         in
         let movetoT (x,y)= moveto x y

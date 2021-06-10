@@ -55,5 +55,5 @@ let print_solution cities sol =
 let id =  Array.init (Array.length cities) Fun.id;;
     print_solution cities id ;;
 let s = Array.init (Array.length cities) Fun.id;;
-TwoOpt.optBest city_count eval (-1) s;;
+TwoOpt.opt_best city_count eval (-1) s;;
 print_solution cities s ;;

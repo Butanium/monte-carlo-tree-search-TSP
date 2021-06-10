@@ -50,7 +50,7 @@ module MCTS = struct
                                 e *. (log(nf) /. node.base.visit) ** 0.5  -. node.base.accScore /. node.base.visit
     let random_creation arg =
         match arg.rnd_creation_mode with
-        | Roulette -> arg.eval arg.last_city
+        | Roulette -> 100. /. arg.eval arg.last_city
         | Random -> fun _ -> 1.
         | _ -> failwith "not implemented"
     let playout_opt arg =
@@ -117,7 +117,8 @@ module MCTS = struct
                 let _, n = List.fold_left
                      (fun ((accS, accN) as acc) n -> let s =  score n in if s > accS then s, n else acc) (score  x, x) xs
                      in select n arg
-    let mcts city_count eval rnd_creation_mode opt_mode select_mode min_conv min_playouts max_time =
+    (*mcts city_count eval rnd_creation_mode opt_mode select_mode min_conv max_playout max_time*)
+    let mcts city_count eval rnd_creation_mode opt_mode select_mode min_conv max_playout max_time =
         let arg = {city_count; eval; rnd_creation_mode; opt_mode; score = 0.; start = 0; length = 1;
             visited = IntSet.singleton 0; last_city=0; select_mode}
         in
@@ -141,7 +142,7 @@ module MCTS = struct
         in
         while (getRoot()).init_length < city_count do
             let t = Sys.time() in
-            while (!root).base.visit < float_of_int min_playouts && getRatio() < min_conv && Sys.time() -. t < max_time do
+            while (!root).base.visit < float_of_int max_playout && getRatio() < min_conv && Sys.time() -. t < max_time do
                 let r = getRoot() in
                 arg.score <- r.init_score;
                 arg.length <- r.init_length;
