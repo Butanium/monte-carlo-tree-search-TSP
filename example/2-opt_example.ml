@@ -2,7 +2,7 @@ let city_count = 50;; (* the amount of city *)
 #load "graphics.cma";;
 open Graphics;;
 type city = {x:float; y:float};;
-let ic = open_in "C:/Users/Clement/Documents/prépa/algogen/saves/save_2.txt";;
+let ic = open_in "C:/Users/Clement/Documents/prépa/tipe/ocaml-tsp/save_1.txt";;
 let cities = Array.init city_count
     (fun _ ->
         let x::y::[] = List.map (fun s -> float_of_string @@ String.trim s)

@@ -4,30 +4,38 @@ module MCTS = struct
 
     module IntSet = Set.Make(Int)
     module RndQ = struct
-        exception Empty
-        type 'a t = {mutable size: int; content : 'a array; weights : float array; mutable tot : float}
-        (** [create size arr] *)
-        let getTot q = let t = ref 0. in for k = 0 to q.size - 1 do t := !t +. q.weights.(q.content.(k)) done;
-            !t
-
-        let create size arr weights = let tot = Array.fold_left (+.) 0. weights in
-                 {size; content = arr; weights; tot}
-        let is_empty q = q.size = 0
-        let take q = if q.size = 0 then raise Empty else
-            let rec aux k acc = let acc = acc -. q.weights.(k) in
-                if k = q.size - 1 || acc <= 0. then k else aux (k+1) acc
-            in
-            let i = aux  0 @@ Random.float 1.*. getTot q  in
-            let r = q.content.(i) in
-            q.content.(i) <- q.content.(q.size - 1);
-            q.size <- q.size - 1;
-            r
-        let tot_empty q =
-            Array.init q.size (fun _ -> take q)
+            exception Empty
+            type 'a t = {mutable size: int; content : ('a * float) array; mutable tot : float}
+            (** [create size arr] *)
+            let getTot q = 
+                let t = ref 0. in 
+                for k = 0 to q.size - 1 do 
+                    t := !t +. let _,p = q.content.(k) in p 
+                done;
+                !t
+            let simple_create size arr = 
+                {size; content = Array.map (fun i -> i,1.) arr; tot = float_of_int size}
+            let create size arr weights = let tot = Array.fold_left (+.) 0. weights in
+                {size; content = Array.mapi (fun i x -> x, weights.(i)) arr; tot}
+            let is_empty q = q.size = 0
+            let take q = if q.size = 0 then raise Empty else
+                let rec aux k acc = if k >= q.size - 1 then k else (
+                    let acc = acc -. let _, p = q.content.(k) in p in
+                            if acc <= 0. then k else aux (k+1) acc
+                        )
+                    in
+                    let i = aux  0 @@ Random.float 1.*. getTot q  in
+                        let res, p as r = q.content.(i) in
+                    q.content.(i) <- q.content.(q.size - 1);
+                    q.size <- q.size - 1;
+                    res
+            let tot_empty q =
+                Array.init q.size (fun _ -> take q)
     end
     type baseNode = {mutable accScore:float; mutable visit:float; mutable sons: mctNode list;
             poss_cities: int RndQ.t; accDist:float; city:int}
-    and herit_node = R of {used_cities: IntSet.t; init_score: float; init_length: int} | N of mctNode
+    and heritage =  {used_cities: IntSet.t; init_score: float; init_length: int; start_path: int list}
+    and herit_node = R of heritage | N of mctNode
     and mctNode = {base: baseNode; herit_node: herit_node}
     type creation_mode = Roulette | Random
     type opt_mode = No_opt | Two_Opt_Best of int | Two_Opt_Fast of int
@@ -72,10 +80,10 @@ module MCTS = struct
         let end_path = RndQ.tot_empty q
         in
         playout_opt arg end_path;
-        let r = ref @@ arg.score +. eval arg.last_city end_path.(0) +. eval end_path.(av_count - 1) arg.start
+        let r = ref @@ arg.score +. arg.eval arg.last_city end_path.(0) +. arg.eval end_path.(av_count - 1) arg.start
         in
         for i = 1 to av_count - 2 do
-            r := !r +. eval end_path.(i) end_path.(i+1)
+            r := !r +. arg.eval end_path.(i) end_path.(i+1)
         done;
         !r
     let rec retropropagation node value =
@@ -113,21 +121,46 @@ module MCTS = struct
         let arg = {city_count; eval; rnd_creation_mode; opt_mode; score = 0.; start = 0; length = 1;
             visited = IntSet.singleton 0; last_city=0; select_mode}
         in
-        let poss_cities = available arg in
+        let poss_cities = available arg
         in
         let root = ref {base={accScore=0.; visit = 0.; sons = []; poss_cities; accDist = 0.; city=0};
-            herit_node = R{used_cities = IntSet.singleton 0; init_score=0.; init_length=1}}
+            herit_node = R{used_cities = IntSet.singleton 0; init_score=0.; init_length=1; start_path = [0]}}
+        in
+        let get_best_son node =
+            match node.base.sons with
+            | x :: xs -> List.fold_left
+                        (fun ((accS, accN) as acc) n -> let s = n.base.accScore /. n.base.visit in if s < accS then s, n else acc)
+                        (x.base.accScore /. x.base.visit, x) xs
+            | _ -> failwith "no sons"
         in
         let getRatio() =
-            let r = List.fold_left (fun acc n -> max acc n.visit) (!root).base.sons
+            let r = List.fold_left (fun acc n -> max acc n.base.visit) 0. (!root).base.sons
             in r /. (!root.base.visit)
         in
-        while (match !root.herit_node with | R {init_length;_} -> init_length | _ -> failwith "Invalid root") < city_count do
+        let getRoot() = match !root.herit_node with | R x -> x | _ -> failwith "Invalid root"
+        in
+        while (getRoot()).init_length < city_count do
             let t = Sys.time() in
             while (!root).base.visit < float_of_int min_playouts && getRatio() < min_conv && Sys.time() -. t < max_time do
-                (*reset args *)
+                let r = getRoot() in
+                arg.score <- r.init_score;
+                arg.length <- r.init_length;
+                arg.visited <- r.used_cities;
+                arg.last_city <- (!root).base.city;
                 select !root arg;
-
+            done;
+            let _, n = get_best_son !root in
+            let r = getRoot() in
+            let b_root = (!root).base in
+            let used_cities = IntSet.add n.base.city r.used_cities in
+            let init_score = r.init_score +. arg.eval b_root.city n.base.city in
+            let start_path = n.base.city :: r.start_path in
+            let init_length = r.init_length + 1 in
+            let newRoot = {base=n.base; herit_node=R {used_cities; init_score; init_length; start_path}}
+            in root := newRoot
+            (* update root *)
+        done;
+        List.rev @@ arg.start :: (getRoot()).start_path
 
 
 
