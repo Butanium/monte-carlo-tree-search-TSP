@@ -40,15 +40,19 @@ module MCTS = struct
     and mctNode = {base: baseNode; herit_node: herit_node}
     type creation_mode = Roulette | Random
     type opt_mode = No_opt | Two_Opt_Best of int | Two_Opt_Fast of int
-    type select_mode = Ucb1 of float
+    type select_mode = Ucb1 of float | Ucb1_mst of float | Ucb1_ecart_type of float
     type arg = {city_count: int; eval : int -> int -> float; rnd_creation_mode: creation_mode; opt_mode: opt_mode;
                 mutable score:float; start:int; mutable length:int; mutable visited:IntSet.t; mutable last_city:int;
-                select_mode: select_mode}
+                mutable select_mode: select_mode}
     let get_father node = match node.herit_node with | R _ -> failwith "no dads for root" | N n -> n
     let node_score arg =
         match arg.select_mode with
         | Ucb1 e -> fun node -> let nf = (get_father node).base.visit in
                                 e *. (log(nf) /. node.base.visit) ** 0.5  -. node.base.accScore /. node.base.visit
+        | Ucb1_mst e -> let inf = Primalg.primalg arg.eval arg.city_count in
+                    fun node -> let nf = (get_father node).base.visit in
+                                inf *. e *. (log(nf) /. node.base.visit) ** 0.5  -. node.base.accScore /. node.base.visit
+        | Ucb1_ecart_type e -> failwith "unexpected ucb1 mode, ecart_type need to be converted into ucb1"
     let random_creation arg =
         match arg.rnd_creation_mode with
         | Roulette -> fun c -> 100. /. arg.eval arg.last_city c
@@ -189,11 +193,17 @@ module MCTS = struct
                 arg.length <- r.init_length;
                 arg.visited <- r.used_cities;
                 arg.last_city <- (!root).base.city;
+                (match RndQ.is_empty (!root).base.poss_cities, arg.select_mode with
+                | true, Ucb1_ecart_type e -> let moy = List.fold_left (fun acc n -> acc +. n.base.accScore /. n.base.visit) 0. (!root).base.sons
+                    in arg.select_mode <- Ucb1 (e *. moy)
+                | _ -> ());
                 try (
                 select !root arg;
                 ) with Invalid_argument e -> raise @@ Invalid_argument ("SELECT failed: "^e)
             done;
-            Printf.printf "%.0f playoutes before advance\n" (!root).base.visit;
+
+
+            Printf.printf "%.0f playouts before advance\n" (!root).base.visit;
             if (not (playout_count() < max_playout)) then print_endline "max_playout";
             if (not (playout_count() < min_playout || getRatio() < min_conv )) then Printf.printf "convergence %.4f\n" @@ getRatio();
             if (not (Sys.time() -. t < max_time)) then print_endline "time";
@@ -208,6 +218,7 @@ module MCTS = struct
             IntSet.iter (fun x -> Printf.printf "%d, " x) used_cities;
             let newRoot = {base=n.base; herit_node=R {used_cities; init_score; init_length; start_path}}
             in root := newRoot
+
             (* update root *)
         done;
         List.rev @@ arg.start :: (getRoot()).start_path
@@ -219,8 +230,5 @@ module MCTS = struct
 
 
 
-
-
-
-
 end;;
+
