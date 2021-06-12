@@ -1,8 +1,7 @@
 module MCTS = struct
-    let mapInPlace f arr = Array.iteri (fun i x -> arr.(i) <- f x) arr
-
 
     module IntSet = Set.Make(Int)
+
     module RndQ = struct
             exception Empty
             type 'a t = {mutable size: int; content : ('a * float) array; mutable tot : float}
@@ -39,10 +38,10 @@ module MCTS = struct
     and herit_node = R of heritage | N of mctNode
     and mctNode = {base: baseNode; herit_node: herit_node}
     type creation_mode = Roulette | Random
-    type opt_mode = No_opt | Two_Opt_Best of int | Two_Opt_Fast of int
+    type opt_mode = No_opt | Two_opt_best | Two_opt_fast
     type select_mode = Ucb1 of float | Ucb1_mst of float | Ucb1_ecart_type of float
-    type arg = {city_count: int; eval : int -> int -> float; rnd_creation_mode: creation_mode; opt_mode: opt_mode;
-                mutable score:float; start:int; mutable length:int; mutable visited:IntSet.t; mutable last_city:int;
+    type arg = {debug: bool; city_count: int; eval : int -> int -> float; rnd_creation_mode: creation_mode; opt_mode: opt_mode;
+                start:int; mutable length:int; mutable visited:IntSet.t; mutable last_city:int;
                 mutable select_mode: select_mode}
     let get_father node = match node.herit_node with | R _ -> failwith "no dads for root" | N n -> n
     let node_score arg =
@@ -55,23 +54,21 @@ module MCTS = struct
         | Ucb1_ecart_type e -> failwith "unexpected ucb1 mode, ecart_type need to be converted into ucb1"
     let random_creation arg =
         match arg.rnd_creation_mode with
-        | Roulette -> fun c -> 100. /. arg.eval arg.last_city c
+        | Roulette -> fun c -> 1. /. arg.eval arg.last_city c
         | Random -> fun _ -> 1.
         | _ -> failwith "not implemented"
     let playout_opt arg =
         match arg.opt_mode with
         | No_opt -> fun _ -> ()
-        | Two_Opt_Best m -> TwoOpt.opt_best arg.city_count arg.eval m
-        | Two_Opt_Fast m -> TwoOpt.opt_fast arg.city_count arg.eval m
+        | Two_opt_best -> TwoOpt.opt_best arg.eval
+        | Two_opt_fast -> TwoOpt.opt_fast arg.eval
 
     let available arg =
-       try (
        let av_count = arg.city_count - arg.length
        in
        let arr = Array.make av_count (-1) in
        let fill = let ind = ref 0 in
-           fun x -> try (arr.(!ind) <- x; incr ind) with
-           _ -> Printf.printf "length : %d\n" arg.length; IntSet.iter (fun x -> Printf.printf "%d, " x) arg.visited; failwith "fill failed"
+           fun x -> arr.(!ind) <- x; incr ind
        in
        let rec aux i accC =
            if not (i = arg.city_count || accC = av_count)
@@ -80,39 +77,23 @@ module MCTS = struct
                    aux (i+1) (accC + if b then 1 else 0)
                )
        in aux 0 0;
-       if Array.mem (-1) arr then (
-        print_endline "elements : ";
-        Array.iter (fun x -> Printf.printf "%d, " x) arr;
-        Printf.printf "length : %d\n" arg.length;
-        IntSet.iter (fun x -> Printf.printf "%d, " x) arg.visited;
-        failwith "-1 in available array..."
-       );
        RndQ.create av_count arr @@ Array.init av_count (fun i -> random_creation arg arr.(i))
-       ) with Invalid_argument e ->
-                    raise @@ Invalid_argument (Printf.sprintf "available failed : "^e)
-    let playout arg =
+
+    let playout arg init_dist =
         let av_count = arg.city_count - arg.length in
         if av_count = 0 then arg.eval arg.last_city arg.start else (
             let q = available arg in
             let end_path = RndQ.tot_empty q
             in
-            assert(Array.length end_path = av_count);
+            (
+            try (
             playout_opt arg end_path;
-
-            let r = try ( ref @@ arg.score +. arg.eval arg.last_city end_path.(0) +. arg.eval end_path.(av_count - 1) arg.start
-            ) with Invalid_argument e -> Array.iter (fun x -> Printf.printf "%d, " x) end_path;
-             print_endline "used : ";
-             IntSet.iter (fun x -> Printf.printf "%d, " x) arg.visited;
-             raise @@ Invalid_argument (Printf.sprintf "fail init score with size %d and error %s" (Array.length
-            end_path) e)
+            ) with Invalid_argument e -> raise @@ Invalid_argument ("opt failed :"^e));
+            let r = ref @@ init_dist +. arg.eval arg.last_city end_path.(0) +. arg.eval end_path.(av_count - 1) arg.start
             in
 
             for i = 0 to av_count - 2 do
-                try (
                 r := !r +. arg.eval end_path.(i) end_path.(i+1)
-                ) with Invalid_argument e -> (
-                raise @@ Invalid_argument (Printf.sprintf "loop failed at eval %d %d | err : %s" end_path.(i) end_path.(i+1) e)
-                )
             done;
             !r
         )
@@ -127,11 +108,8 @@ module MCTS = struct
         try (
         let x = RndQ.take node.base.poss_cities in
 
-            let dist = try (arg.eval node.base.city x) with Invalid_argument e -> raise @@
-            Invalid_argument (Printf.sprintf "eval failed %d, %d : " node.base.city x ^e)
+            let dist = arg.eval node.base.city x
             in
-            arg.score <- arg.score +. dist;
-            assert (not @@ IntSet.mem x arg.visited);
             arg.visited <- IntSet.add x arg.visited;
             arg.last_city <- x;
             arg.length <- arg.length + 1;
@@ -140,7 +118,7 @@ module MCTS = struct
                     accDist; city=x}; herit_node = N node}
             in
             node.base.sons <- newN :: node.base.sons;
-            try (retropropagation newN @@ accDist +. playout arg) with Invalid_argument e -> raise @@ Invalid_argument ("PLAYOUT"^e)
+            retropropagation newN @@ playout arg accDist
         ) with Invalid_argument e -> raise @@ Invalid_argument ("expend failed : "^e)
 
     let rec select node arg =
@@ -159,8 +137,12 @@ module MCTS = struct
                      (fun ((accS, accN) as acc) n -> let s =  score n in if s > accS then s, n else acc) (score  x, x) xs
                      in update_arg arg node; select n arg)
     (*mcts city_count eval rnd_creation_mode opt_mode select_mode min_conv max_playout max_time*)
-    let mcts city_count eval rnd_creation_mode opt_mode select_mode min_conv min_playout max_playout max_time =
-        let arg = {city_count; eval; rnd_creation_mode; opt_mode; score = 0.; start = 0; length = 1;
+    let debug_node node =
+        Printf.printf "visits : %.0f, dist ratio : %.1f, city : %d, not developped : %d\n"
+            node.base.visit (node.base.accScore /. node.base.visit) node.base.city node.base.poss_cities.size
+
+    let mcts ?(debug=false) city_count eval rnd_creation_mode opt_mode select_mode min_conv min_playout max_playout max_time =
+        let arg = {debug; city_count; eval; rnd_creation_mode; opt_mode; start = 0; length = 1;
             visited = IntSet.singleton 0; last_city=0; select_mode}
         in
         let poss_cities = available arg
@@ -189,7 +171,6 @@ module MCTS = struct
             let t = Sys.time() in
             while playout_count() < max_playout && (playout_count() < min_playout || getRatio() < min_conv) && Sys.time() -. t < max_time do
                 let r = getRoot() in
-                arg.score <- r.init_score;
                 arg.length <- r.init_length;
                 arg.visited <- r.used_cities;
                 arg.last_city <- (!root).base.city;
@@ -221,6 +202,8 @@ module MCTS = struct
 
             (* update root *)
         done;
+        print_endline "root sons : ";
+                List.iter debug_node (!root).base.sons;
         List.rev @@ arg.start :: (getRoot()).start_path
 
 

@@ -1,5 +1,7 @@
 module MCTS2 = struct
+
     module IntSet = Set.Make(Int)
+
     module RndQ = struct
             exception Empty
             type 'a t = {mutable size: int; content : ('a * float) array; mutable tot : float}
@@ -36,10 +38,10 @@ module MCTS2 = struct
     and herit_node = R of heritage | N of mctNode
     and mctNode = {base: baseNode; herit_node: herit_node}
     type creation_mode = Roulette | Random
-    type opt_mode = No_opt | Two_Opt_Best of int | Two_Opt_Fast of int
+    type opt_mode = No_opt | Two_opt_best | Two_opt_fast
     type select_mode = Ucb1 of float | Ucb1_mst of float | Ucb1_ecart_type of float
-    type arg = {city_count: int; eval : int -> int -> float; rnd_creation_mode: creation_mode; opt_mode: opt_mode;
-                mutable score:float; start:int; mutable length:int; mutable visited:IntSet.t; mutable last_city:int;
+    type arg = {debug: bool; city_count: int; eval : int -> int -> float; rnd_creation_mode: creation_mode; opt_mode: opt_mode;
+                start:int; mutable length:int; mutable visited:IntSet.t; mutable last_city:int;
                 mutable select_mode: select_mode; mutable min_dist:float; current_path:int array;
                 mutable best_path : int list}
     let get_father node = match node.herit_node with | R _ -> failwith "no dads for root" | N n -> n
@@ -59,8 +61,8 @@ module MCTS2 = struct
     let playout_opt arg =
         match arg.opt_mode with
         | No_opt -> fun _ -> ()
-        | Two_Opt_Best m -> TwoOpt.opt_best arg.city_count arg.eval m
-        | Two_Opt_Fast m -> TwoOpt.opt_fast arg.city_count arg.eval m
+        | Two_opt_best -> TwoOpt.opt_best arg.eval
+        | Two_opt_fast -> TwoOpt.opt_fast arg.eval
 
     let available arg =
        let av_count = arg.city_count - arg.length
@@ -78,24 +80,26 @@ module MCTS2 = struct
        in aux 0 0;
        RndQ.create av_count arr @@ Array.init av_count (fun i -> random_creation arg arr.(i))
 
-    let playout arg =
+    let playout arg init_dist =
         let av_count = arg.city_count - arg.length in
         if av_count = 0 then arg.eval arg.last_city arg.start else (
             let q = available arg in
             let end_path = RndQ.tot_empty q
             in
-            assert(Array.length end_path = av_count);
+            (
+            try (
             playout_opt arg end_path;
-
-            let r = ref @@ arg.score +. arg.eval arg.last_city end_path.(0) +. arg.eval end_path.(av_count - 1) arg.start
+            ) with Invalid_argument e -> raise @@ Invalid_argument ("opt failed :"^e));
+            let r = ref @@ init_dist +. arg.eval arg.last_city end_path.(0) +. arg.eval end_path.(av_count - 1) arg.start
             in
 
             for i = 0 to av_count - 2 do
                 r := !r +. arg.eval end_path.(i) end_path.(i+1)
             done;
+
             if !r < arg.min_dist then (
                 arg.min_dist <- !r;
-                let rec aux i acc = if i = city_count then arg.start :: acc else
+                let rec aux i acc = if i = arg.city_count then arg.start :: acc else
                     let n = if i >= arg.length then end_path.(i - arg.length)
                         else arg.current_path.(i)
                     in
@@ -103,6 +107,7 @@ module MCTS2 = struct
                 in
                 arg.best_path <- aux 1 []
             );
+
             !r
         )
     let rec retropropagation node value =
@@ -116,12 +121,9 @@ module MCTS2 = struct
         try (
         let x = RndQ.take node.base.poss_cities in
 
-            let dist = try (arg.eval node.base.city x) with Invalid_argument e -> raise @@
-            Invalid_argument (Printf.sprintf "eval failed %d, %d : " node.base.city x ^e)
+            let dist = arg.eval node.base.city x
             in
-            arg.current_path.(arg.length) <- node.base.city;
-            arg.score <- arg.score +. dist;
-            assert (not @@ IntSet.mem x arg.visited);
+            arg.current_path.(arg.length) <- x;
             arg.visited <- IntSet.add x arg.visited;
             arg.last_city <- x;
             arg.length <- arg.length + 1;
@@ -130,7 +132,7 @@ module MCTS2 = struct
                     accDist; city=x}; herit_node = N node}
             in
             node.base.sons <- newN :: node.base.sons;
-            try (retropropagation newN @@ accDist +. playout arg) with Invalid_argument e -> raise @@ Invalid_argument ("PLAYOUT"^e)
+            try (retropropagation newN @@ playout arg accDist) with Invalid_argument e -> raise @@ Invalid_argument ("PLAYOUT"^e)
         ) with Invalid_argument e -> raise @@ Invalid_argument ("expend failed : "^e)
 
     let rec select node arg =
@@ -143,11 +145,13 @@ module MCTS2 = struct
         in
         match RndQ.is_empty node.base.poss_cities, node.base.sons with
             | true, [] -> (try (
+                arg.length <- arg.length + 1;
                 let s = node.base.accScore +. arg.eval node.base.city arg.start in
                 if s < arg.min_dist then (
                     arg.min_dist <- s;
                     arg.current_path.(arg.city_count - 1) <- node.base.city;
-                    arg.best_path <- Array.to_list arg.current_path
+                    arg.best_path <- Array.to_list arg.current_path;
+                    assert (abs_float (s -. Basetsp.path_length arg.eval arg.current_path) < 0.0001)
                 );
                 retropropagation node s)
                 with Invalid_argument e -> raise @@ Invalid_argument ("retropropagation failed : "^e))
@@ -157,10 +161,14 @@ module MCTS2 = struct
                      (fun ((accS, accN) as acc) n -> let s =  score n in if s > accS then s, n else acc) (score  x, x) xs
                      in update_arg arg node; select n arg)
     (*mcts city_count eval rnd_creation_mode opt_mode select_mode min_conv max_playout max_time*)
-    let mcts city_count eval rnd_creation_mode opt_mode select_mode max_playout max_time =
-        let arg = {city_count; eval; rnd_creation_mode; opt_mode; score = 0.; start = 0; length = 1;
+    let debug_node node =
+        Printf.printf "visits : %.0f, dist ratio : %.1f, city : %d, not developped : %d\n"
+            node.base.visit (node.base.accScore /. node.base.visit) node.base.city node.base.poss_cities.size
+
+    let mcts ?(debug=false) city_count eval rnd_creation_mode opt_mode select_mode max_playout max_time =
+        let arg = {debug; city_count; eval; rnd_creation_mode; opt_mode; start = 0; length = 1;
             visited = IntSet.singleton 0; last_city=0; select_mode; min_dist=infinity;
-            current_path= Array.make city_count 0; best_path=[]}
+            current_path= Array.make city_count (-1); best_path=[]}
         in
         let poss_cities = available arg
         in
@@ -179,11 +187,12 @@ module MCTS2 = struct
         let playout_count() = root.base.visit
         in
         let max_playout = float_of_int max_playout in
-
+        arg.current_path.(0) <- 0;
         let t = Sys.time() in
+        let max_depth = ref 0 in
         while playout_count() < max_playout && Sys.time() -. t < max_time do
             let r = getRoot() in
-            arg.score <- r.init_score;
+            max_depth := max !max_depth arg.length;
             arg.length <- r.init_length;
             arg.visited <- r.used_cities;
             arg.last_city <- (root).base.city;
@@ -191,21 +200,19 @@ module MCTS2 = struct
             | true, Ucb1_ecart_type e -> let moy = List.fold_left (fun acc n -> acc +. n.base.accScore /. n.base.visit) 0. (root).base.sons
                 in arg.select_mode <- Ucb1 (e *. moy)
             | _ -> ());
-            try (
+            (try (
             select root arg;
-            ) with Invalid_argument e -> raise @@ Invalid_argument ("SELECT failed: "^e)
+            ) with Invalid_argument e -> raise @@ Invalid_argument ("SELECT failed: "^e));
+            assert (abs_float (arg.min_dist -. Basetsp.path_length arg.eval (Array.of_list arg.best_path)) < 0.0001)
         done;
-        Printf.printf "%.0f playouts done" root.base.visit;
-        if (not (playout_count() < max_playout)) then print_endline "finished by max_playout";
-        if (not (Sys.time() -. t < max_time)) then print_endline "finished by time";
-        arg.best_path, arg.min_dist
-
-
-
-
-
-
-
+        Printf.printf "%.0f playouts done, max depth : %d\n" root.base.visit !max_depth;
+        if (not (playout_count() < max_playout)) then print_endline "finished by max_playout\n";
+        if (not (Sys.time() -. t < max_time)) then print_endline "finished by time\n";
+        print_endline "root sons : ";
+                List.iter debug_node root.base.sons;
+        let r = Array.of_list arg.best_path in
+        (* TwoOpt.opt_fast arg.eval r; *)
+        r
 
 end;;
 

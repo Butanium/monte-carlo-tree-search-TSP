@@ -27,7 +27,7 @@ module Readertsp = struct
         let path = Array.make city_count 0
         in
         let fill = let i = ref 0 in
-            fun x -> path.(!i) <- x; incr i
+            fun x -> path.(!i) <- x-1; incr i
         in
         let ic = open_in  @@
             Printf.sprintf "C:/Users/Clement/Documents/prépa/tipe/ocaml-tsp/tsp/%s.opt.tour" tsp_name
