@@ -81,7 +81,7 @@ module MCTS = struct
 
     let playout arg init_dist =
         let av_count = arg.city_count - arg.length in
-        if av_count = 0 then arg.eval arg.last_city arg.start else (
+        if av_count = 0 then init_dist +. arg.eval arg.last_city arg.start else (
             let q = available arg in
             let end_path = RndQ.tot_empty q
             in
@@ -140,7 +140,26 @@ module MCTS = struct
     let debug_node node =
         Printf.printf "visits : %.0f, dist ratio : %.1f, city : %d, not developped : %d\n"
             node.base.visit (node.base.accScore /. node.base.visit) node.base.city node.base.poss_cities.size
+    let get_best_son node =
+        match node.base.sons with
+        | x :: xs -> List.fold_left
+                    (fun ((accS, accN) as acc) n -> let s = n.base.accScore /. n.base.visit in if s < accS then s, n else acc)
+                    (x.base.accScore /. x.base.visit, x) xs
+        | _ -> failwith "no sons"
+    in
+    let rec debug_mcts root =
+        print_endline "\n chosen : ";
+        debug_node root;
+        match root.base.sons with
+        | [] -> ()
+        | l ->begin
+            List.iter debug_node l;
+            debug_mcts @@ get_best_son root;
+        end
 
+
+
+    in
     let mcts ?(debug=false) city_count eval rnd_creation_mode opt_mode select_mode min_conv min_playout max_playout max_time =
         let arg = {debug; city_count; eval; rnd_creation_mode; opt_mode; start = 0; length = 1;
             visited = IntSet.singleton 0; last_city=0; select_mode}
@@ -149,13 +168,6 @@ module MCTS = struct
         in
         let root = ref {base={accScore=0.; visit = 0.; sons = []; poss_cities; accDist = 0.; city=0};
             herit_node = R{used_cities = IntSet.empty; init_score=0.; init_length=0; start_path = [0]}}
-        in
-        let get_best_son node =
-            match node.base.sons with
-            | x :: xs -> List.fold_left
-                        (fun ((accS, accN) as acc) n -> let s = n.base.accScore /. n.base.visit in if s < accS then s, n else acc)
-                        (x.base.accScore /. x.base.visit, x) xs
-            | _ -> failwith "no sons"
         in
         let getRatio() =
             let r = List.fold_left (fun acc n -> max acc n.base.visit) 0. (!root).base.sons

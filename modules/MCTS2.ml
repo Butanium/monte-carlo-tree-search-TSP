@@ -82,7 +82,7 @@ module MCTS2 = struct
 
     let playout arg init_dist =
         let av_count = arg.city_count - arg.length in
-        if av_count = 0 then arg.eval arg.last_city arg.start else (
+        if av_count = 0 then init_dist +. arg.eval arg.last_city arg.start else (
             let q = available arg in
             let end_path = RndQ.tot_empty q
             in
