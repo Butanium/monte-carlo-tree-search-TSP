@@ -37,31 +37,51 @@ module MCTS = struct
     and heritage =  {used_cities: IntSet.t; init_score: float; init_length: int; start_path: int list}
     and herit_node = R of heritage | N of mctNode
     and mctNode = {base: baseNode; herit_node: herit_node}
+    type average_mode = Arithmetic | Geometric | Harmonic
     type creation_mode = Roulette | Random
     type opt_mode = No_opt | Two_opt_best | Two_opt_fast
     type select_mode = Ucb1 of float | Ucb1_mst of float | Ucb1_ecart_type of float
     type arg = {debug: bool; city_count: int; eval : int -> int -> float; rnd_creation_mode: creation_mode; opt_mode: opt_mode;
                 start:int; mutable length:int; mutable visited:IntSet.t; mutable last_city:int;
-                mutable select_mode: select_mode}
+                mutable node_score: mctNode -> float; average_mode: average_mode}
     let get_father node = match node.herit_node with | R _ -> failwith "no dads for root" | N n -> n
-    let node_score arg =
-        match arg.select_mode with
-        | Ucb1 e -> fun node -> let nf = (get_father node).base.visit in
-                                e *. (log(nf) /. node.base.visit) ** 0.5  -. node.base.accScore /. node.base.visit
-        | Ucb1_mst e -> let inf = Primalg.primalg arg.eval arg.city_count in
-                    fun node -> let nf = (get_father node).base.visit in
-                                inf *. e *. (log(nf) /. node.base.visit) ** 0.5  -. node.base.accScore /. node.base.visit
-        | Ucb1_ecart_type e -> failwith "unexpected ucb1 mode, ecart_type need to be converted into ucb1"
+
+
     let random_creation arg =
         match arg.rnd_creation_mode with
         | Roulette -> fun c -> 1. /. arg.eval arg.last_city c
         | Random -> fun _ -> 1.
         | _ -> failwith "not implemented"
+
     let playout_opt arg =
         match arg.opt_mode with
         | No_opt -> fun _ -> ()
         | Two_opt_best -> TwoOpt.opt_best arg.eval
         | Two_opt_fast -> TwoOpt.opt_fast arg.eval
+
+    let add_acc arg =
+        match arg.average_mode with
+            | Arithmetic -> ( +. )
+            | Geometric -> ( *. )
+            | Harmonic -> fun acc x -> acc +. 1. /. x
+
+    let get_average_fun average_mode node =
+        let s = node.base.accScore in
+        let n = node.base.visit in
+        match average_mode with
+            | Arithmetic -> s /. n
+            | Geometric -> s ** (1. /. n)
+            | Harmonic -> 1. /. s
+
+    let get_node_score_fun average_mode eval city_count =
+        let av = get_average_fun average_mode in
+        function
+        | Ucb1 e -> fun node -> let nf = (get_father node).base.visit in
+                                e *. (log(nf) /. node.base.visit) ** 0.5  -. av node
+        | Ucb1_mst e -> let inf = Primalg.primalg eval city_count in
+                    fun node -> let nf = (get_father node).base.visit in
+                                inf *. e *. (log(nf) /. node.base.visit) ** 0.5  -. av node
+        | Ucb1_ecart_type _ -> fun _ -> failwith "ecart type not defined"
 
     let available arg =
        let av_count = arg.city_count - arg.length
@@ -97,11 +117,11 @@ module MCTS = struct
             done;
             !r
         )
-    let rec retropropagation node value =
+    let rec retropropagation node value arg =
         node.base.visit <- node.base.visit +. 1.;
-        node.base.accScore <- value +. node.base.accScore;
+        node.base.accScore <- (add_acc arg) value node.base.accScore;
         match node.herit_node with
-            | N father -> retropropagation father value
+            | N father -> retropropagation father value arg
             | _ -> ()
 
     let expend node arg =
@@ -118,7 +138,7 @@ module MCTS = struct
                     accDist; city=x}; herit_node = N node}
             in
             node.base.sons <- newN :: node.base.sons;
-            retropropagation newN @@ playout arg accDist
+            retropropagation newN (playout arg accDist) arg
         ) with Invalid_argument e -> raise @@ Invalid_argument ("expend failed : "^e)
 
     let rec select node arg =
@@ -129,12 +149,12 @@ module MCTS = struct
                 arg.last_city <- n.base.city
         in
         match RndQ.is_empty node.base.poss_cities, node.base.sons with
-            | true, [] -> (try (retropropagation node @@ node.base.accScore +. arg.eval node.base.city arg.start)
+            | true, [] -> (try (retropropagation node (node.base.accScore +. arg.eval node.base.city arg.start) arg)
                 with Invalid_argument e -> raise @@ Invalid_argument ("retropropagation failed : "^e))
             | false, _ -> (try (update_arg arg node; expend node arg) with Invalid_argument e -> raise @@ Invalid_argument ("expend failed : "^e))
-            | true, x :: xs -> (let score = node_score arg in
+            | true, x :: xs -> (let score = arg.node_score in
                 let _, n = List.fold_left
-                     (fun ((accS, accN) as acc) n -> let s =  score n in if s > accS then s, n else acc) (score  x, x) xs
+                     (fun ((accS, accN) as acc) n -> let s =  score n in if s > accS then s, n else acc) (score x, x) xs
                      in update_arg arg node; select n arg)
     (*mcts city_count eval rnd_creation_mode opt_mode select_mode min_conv max_playout max_time*)
     let debug_node node =
@@ -146,7 +166,7 @@ module MCTS = struct
                     (fun ((accS, accN) as acc) n -> let s = n.base.accScore /. n.base.visit in if s < accS then s, n else acc)
                     (x.base.accScore /. x.base.visit, x) xs
         | _ -> failwith "no sons"
-    in
+
     let rec debug_mcts root =
         print_endline "\n chosen : ";
         debug_node root;
@@ -154,15 +174,16 @@ module MCTS = struct
         | [] -> ()
         | l ->begin
             List.iter debug_node l;
-            debug_mcts @@ get_best_son root;
+            debug_mcts @@ let _, n = get_best_son root in n;
         end
 
 
 
-    in
-    let mcts ?(debug=false) city_count eval rnd_creation_mode opt_mode select_mode min_conv min_playout max_playout max_time =
+
+    let mcts ?(debug=false) city_count eval rnd_creation_mode opt_mode select_mode average_mode min_conv min_playout max_playout max_time =
         let arg = {debug; city_count; eval; rnd_creation_mode; opt_mode; start = 0; length = 1;
-            visited = IntSet.singleton 0; last_city=0; select_mode}
+            visited = IntSet.singleton 0; last_city=0; average_mode;
+            node_score=get_node_score_fun average_mode eval city_count select_mode}
         in
         let poss_cities = available arg
         in
@@ -186,9 +207,9 @@ module MCTS = struct
                 arg.length <- r.init_length;
                 arg.visited <- r.used_cities;
                 arg.last_city <- (!root).base.city;
-                (match RndQ.is_empty (!root).base.poss_cities, arg.select_mode with
+                (match RndQ.is_empty (!root).base.poss_cities, select_mode with
                 | true, Ucb1_ecart_type e -> let moy = List.fold_left (fun acc n -> acc +. n.base.accScore /. n.base.visit) 0. (!root).base.sons
-                    in arg.select_mode <- Ucb1 (e *. moy)
+                    in arg.node_score <- get_node_score_fun average_mode eval city_count (Ucb1 (e *. moy))
                 | _ -> ());
                 try (
                 select !root arg;

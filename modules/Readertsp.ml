@@ -8,7 +8,7 @@ module Readertsp = struct
             fun x -> cities.(!i) <- x; incr i
         in
         let ic = open_in  @@
-            Printf.sprintf "C:/Users/Clement/Documents/prépa/tipe/ocaml-tsp/tsp/%s.tsp" tsp_name
+            Printf.sprintf "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp/%s.tsp" tsp_name
         in
         let rec loop started = try (let s = String.trim @@ input_line ic in
             if started then (
@@ -30,7 +30,7 @@ module Readertsp = struct
             fun x -> path.(!i) <- x-1; incr i
         in
         let ic = open_in  @@
-            Printf.sprintf "C:/Users/Clement/Documents/prépa/tipe/ocaml-tsp/tsp/%s.opt.tour" tsp_name
+            Printf.sprintf "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp/%s.opt.tour" tsp_name
         in
         let rec loop started = try (let s = String.trim @@ input_line ic in
             if started then (

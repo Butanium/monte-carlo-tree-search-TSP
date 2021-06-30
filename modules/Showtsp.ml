@@ -52,5 +52,8 @@ module Showtsp = struct
         movetoT @@ coord cities.(x);
         List.iter lineto_city xs;
         lineto_city x
+    let show_best_path config =
+        let _, cities = Readertsp.open_tsp config in
+        show_solution cities (Readertsp.open_path config)
     
 end;;
