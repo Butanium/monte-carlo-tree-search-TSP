@@ -1,40 +1,10 @@
-(* todo reread whole file *)
+(* todo remove assert for runtime *)
 module MCTS2 = struct
 
     module IntSet = Set.Make(Int)
 
-    module RndQ = struct
-            exception Empty
-            type 'a t = {mutable size: int; content : ('a * float) array; mutable tot : float}
-            (** [create size arr] *)
-            let getTot q =
-                let t = ref 0. in
-                for k = 0 to q.size - 1 do
-                    t := !t +. let _,p = q.content.(k) in p
-                done;
-                !t
-            let simple_create size arr =
-                {size; content = Array.map (fun i -> i,1.) arr; tot = float_of_int size}
-            let create size arr weights = let tot = Array.fold_left (+.) 0. weights in
-                {size; content = Array.mapi (fun i x -> x, weights.(i)) arr; tot}
-            let is_empty q = q.size = 0
-            let take q = try(
-                if q.size = 0 then raise Empty else
-                let rec aux k acc = if k >= q.size - 1 then k else (
-                    let acc = acc -. let _, p = q.content.(k) in p in
-                            if acc <= 0. then k else aux (k+1) acc
-                        )
-                    in
-                    let i = aux  0 @@ Random.float 1.*. getTot q  in
-                        let res, p as r = q.content.(i) in
-                    q.content.(i) <- q.content.(q.size - 1);
-                    q.size <- q.size - 1;
-                    res) with Invalid_argument e -> raise @@ Invalid_argument ("take failed : "^e)
-            let tot_empty q =
-                Array.init q.size (fun _ -> take q)
-    end
     type baseNode = {mutable accScore:float; mutable visit:float; mutable sons: mctNode list;
-            poss_cities: int RndQ.t; accDist:float; city:int}
+            poss_cities: int RndQ.t; accDist:int; city:int}
     and heritage =  {used_cities: IntSet.t; init_score: float; init_length: int; start_path: int list}
     and herit_node = R of heritage | N of mctNode
     and mctNode = {base: baseNode; herit_node: herit_node}
@@ -42,18 +12,24 @@ module MCTS2 = struct
     type creation_mode = Roulette | Random
     type opt_mode = No_opt | Two_opt_best | Two_opt_fast
     type select_mode = Ucb1 of float | Ucb1_mst of float | Ucb1_ecart_type of float
-    type arg = {debug: bool; city_count: int; eval : int -> int -> float; rnd_creation_mode: creation_mode; opt_mode: opt_mode;
+    type arg = {debug: bool; city_count: int; eval : int -> int -> int; rnd_creation_mode: creation_mode; opt_mode: opt_mode;
                 start:int; mutable length:int; mutable visited:IntSet.t; mutable last_city:int;
-                mutable node_score: mctNode -> float; average_mode: average_mode; mutable min_dist:float; current_path:int array;
+                mutable node_score: mctNode -> float; average_mode: average_mode; mutable min_dist:int; current_path:int array;
                 mutable best_path : int list}
     let get_father node = match node.herit_node with | R _ -> failwith "no dads for root" | N n -> n
 
 
     let random_creation arg =
         match arg.rnd_creation_mode with
-        | Roulette -> fun c -> 1. /. arg.eval arg.last_city c
         | Random -> fun _ -> 1.
-        | _ -> failwith "not implemented"
+        | Roulette -> fun c -> 1. /. float_of_int (arg.eval arg.last_city c)
+
+
+    let weight_update arg last q =
+        match arg.rnd_creation_mode with
+        | Random ->()
+        | Roulette -> RndQ.change_weights (fun _ x -> 1. /. float_of_int (arg.eval x last)) q
+
     let playout_opt arg =
         match arg.opt_mode with
         | No_opt -> fun _ -> ()
@@ -62,9 +38,9 @@ module MCTS2 = struct
 
     let add_acc arg =
         match arg.average_mode with
-            | Arithmetic -> ( +. )
-            | Geometric -> ( *. )
-            | Harmonic -> fun acc x -> acc +. 1. /. x
+            | Arithmetic -> fun acc x -> acc +. float_of_int x
+            | Geometric -> fun acc x -> acc *. float_of_int x
+            | Harmonic -> fun acc x -> acc +. 1. /. float_of_int x
 
     let get_average_fun average_mode node =
         let s = node.base.accScore in
@@ -72,14 +48,14 @@ module MCTS2 = struct
         match average_mode with
             | Arithmetic -> s /. n
             | Geometric -> s ** (1. /. n)
-            | Harmonic -> 1. /. s
+            | Harmonic -> n /. s
 
     let get_node_score_fun average_mode eval city_count =
         let av = get_average_fun average_mode in
         function
         | Ucb1 e -> fun node -> let nf = (get_father node).base.visit in
                                 e *. (log(nf) /. node.base.visit) ** 0.5  -. av node
-        | Ucb1_mst e -> let inf = Primalg.primalg eval city_count in
+        | Ucb1_mst e -> let inf = float_of_int @@  Primalg.primalg eval city_count in
                     fun node -> let nf = (get_father node).base.visit in
                                 inf *. e *. (log(nf) /. node.base.visit) ** 0.5  -. av node
         | Ucb1_ecart_type e -> fun _ -> failwith "unexpected ucb1 mode, ecart_type need to be converted into ucb1"
@@ -102,19 +78,23 @@ module MCTS2 = struct
 
     let playout arg init_dist =
         let av_count = arg.city_count - arg.length in
-        if av_count = 0 then init_dist +. arg.eval arg.last_city arg.start else (
+        if av_count = 0 then init_dist + arg.eval arg.last_city arg.start else (
             let q = available arg in
-            let end_path = RndQ.tot_empty q
+            let end_path = Array.init av_count (
+                fun _ -> let v = RndQ.take q in
+                weight_update arg v q;
+                v
+                )
             in
             (
             try (
             playout_opt arg end_path;
             ) with Invalid_argument e -> raise @@ Invalid_argument ("opt failed :"^e));
-            let r = ref @@ init_dist +. arg.eval arg.last_city end_path.(0) +. arg.eval end_path.(av_count - 1) arg.start
+            let r = ref @@ init_dist + arg.eval arg.last_city end_path.(0) + arg.eval end_path.(av_count - 1) arg.start
             in
 
             for i = 0 to av_count - 2 do
-                r := !r +. arg.eval end_path.(i) end_path.(i+1)
+                r := !r + arg.eval end_path.(i) end_path.(i+1)
             done;
 
             if !r < arg.min_dist then (
@@ -132,7 +112,7 @@ module MCTS2 = struct
         )
     let rec retropropagation node value arg =
         node.base.visit <- node.base.visit +. 1.;
-        node.base.accScore <- (add_acc arg) value node.base.accScore;
+        node.base.accScore <- (add_acc arg) node.base.accScore value;
         match node.herit_node with
             | N father -> retropropagation father value arg
             | _ -> ()
@@ -147,7 +127,7 @@ module MCTS2 = struct
             arg.visited <- IntSet.add x arg.visited;
             arg.last_city <- x;
             arg.length <- arg.length + 1;
-            let accDist = node.base.accDist +. dist in
+            let accDist = node.base.accDist + dist in
             let newN = {base={accScore=0.; visit=0.; sons = []; poss_cities = available arg;
                     accDist; city=x}; herit_node = N node}
             in
@@ -165,12 +145,12 @@ module MCTS2 = struct
         match RndQ.is_empty node.base.poss_cities, node.base.sons with
             | true, [] -> (try (
                 arg.length <- arg.length + 1;
-                let s = node.base.accScore +. arg.eval node.base.city arg.start in
+                let s = node.base.accDist + arg.eval node.base.city arg.start in
                 if s < arg.min_dist then (
                     arg.min_dist <- s;
                     arg.current_path.(arg.city_count - 1) <- node.base.city;
                     arg.best_path <- Array.to_list arg.current_path;
-                    assert (abs_float (s -. Basetsp.path_length arg.eval arg.current_path) < 0.0001)
+                    assert (s = Basetsp.path_length arg.eval arg.current_path)
                 );
                 retropropagation node s arg)
                 with Invalid_argument e -> raise @@ Invalid_argument ("retropropagation failed : "^e))
@@ -179,7 +159,6 @@ module MCTS2 = struct
                 let _, n = List.fold_left
                      (fun ((accS, accN) as acc) n -> let s =  score n in if s > accS then s, n else acc) (score x, x) xs
                      in update_arg arg node; select n arg)
-    (*mcts city_count eval rnd_creation_mode opt_mode select_mode min_conv max_playout max_time*)
     let debug_node node =
         Printf.printf "visits : %.0f, dist ratio : %.1f, city : %d, not developped : %d\n"
             node.base.visit (node.base.accScore /. node.base.visit) node.base.city node.base.poss_cities.size
@@ -207,13 +186,13 @@ module MCTS2 = struct
 
     let mcts ?(debug=false) city_count eval rnd_creation_mode opt_mode select_mode average_mode max_playout max_time =
         let arg = {debug; city_count; eval; rnd_creation_mode; opt_mode; start = 0; length = 1;
-            visited = IntSet.singleton 0; last_city=0; average_mode; min_dist=infinity;
+            visited = IntSet.singleton 0; last_city=0; average_mode; min_dist=max_int;
             node_score=get_node_score_fun average_mode eval city_count select_mode;
             current_path= Array.make city_count (-1); best_path=[]}
         in
         let poss_cities = available arg
         in
-        let root = {base={accScore=0.; visit = 0.; sons = []; poss_cities; accDist = 0.; city=0};
+        let root = {base={accScore=0.; visit = 0.; sons = []; poss_cities; accDist = 0; city=0};
             herit_node = R{used_cities = IntSet.empty; init_score=0.; init_length=0; start_path = [0]}}
         in
         let getRoot() = match root.herit_node with | R x -> x | _ -> failwith "Invalid root"
@@ -237,7 +216,7 @@ module MCTS2 = struct
             (try (
             select root arg;
             ) with Invalid_argument e -> raise @@ Invalid_argument ("SELECT failed: "^e));
-            assert (abs_float (arg.min_dist -. Basetsp.path_length arg.eval (Array.of_list arg.best_path)) < 0.0001)
+            assert (arg.min_dist = Basetsp.path_length arg.eval (Array.of_list arg.best_path))
         done;
         Printf.printf "%.0f playouts done, max depth : %d\n" root.base.visit !max_depth;
         if (not (playout_count() < max_playout)) then print_endline "finished by max_playout\n";

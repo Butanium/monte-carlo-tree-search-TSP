@@ -10,7 +10,7 @@ module Primalg = struct
         let rec aux to_visit visited score =
             if not @@ IntSet.is_empty to_visit then (
                 let added = ref (-1) in
-                let mini = ref infinity in
+                let mini = ref max_int in
                 IntSet.iter (fun c1 ->
                     IntSet.iter (fun c2 ->
                         let len = eval c1 c2 in
@@ -22,11 +22,11 @@ module Primalg = struct
                 in
                 let new_visited = IntSet.add !added visited
                 in
-                aux new_to_visit new_visited (score +.  !mini)
+                aux new_to_visit new_visited (score +  !mini)
             ) else (
                 score
             )
         in
-        aux init_visit init_visited 0.
+        aux init_visit init_visited 0
 end;;
 
