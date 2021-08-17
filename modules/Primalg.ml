@@ -1,5 +1,4 @@
 module Primalg = struct
-    module IntSet = Set.Make(Int)
     let primalg eval city_count =
         let init_visited = IntSet.singleton 0 in
         let init_visit =
