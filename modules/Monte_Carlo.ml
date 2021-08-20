@@ -79,9 +79,7 @@ module Monte_Carlo = struct
         let size = !arg.city_count - !arg.path_size
         in
         update_weights queue last_city;
-        let end_path =
-        try (Array.init size (fun _ -> let c = RndQ.take queue in update_weights queue c; c)) with Invalid_argument _ ->
-        failwith "end_path"
+        let end_path = Array.init size (fun _ -> let c = RndQ.take queue in update_weights queue c; c)
         in
         let score = ref @@ !arg.eval last_city end_path.(0) + !arg.eval 0 end_path.(size - 1) + start_dist
         in
@@ -211,8 +209,9 @@ module Monte_Carlo = struct
             if !playout_count = city_count - 1 then
                 !arg.get_node_score <- get_node_score_fun root exploration_mode
         done;
-        Printf.printf "%d playouts, %.0f s, %d length" !playout_count (Sys.time() -. start_time) !arg.best_score;
+        Printf.printf "\n%d playouts, %.0f s, %d length" !playout_count (Sys.time() -. start_time) !arg.best_score;
         !arg.best_path
 
 
 end;;
+

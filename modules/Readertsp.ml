@@ -1,5 +1,5 @@
 module Readertsp = struct
-    let open_tsp tsp_name =
+    let open_tsp ?(file_path = "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp") tsp_name =
         let city_count = Scanf.sscanf tsp_name "%[^0-9]%d" (fun _ c -> c)
         in
         let cities = Array.make city_count (0., 0.)
@@ -8,7 +8,7 @@ module Readertsp = struct
             fun x -> cities.(!i) <- x; incr i
         in
         let ic = open_in  @@
-            Printf.sprintf "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp/%s.tsp" tsp_name
+            Printf.sprintf "%s/%s.tsp" file_path tsp_name
         in
         let rec loop started = try (let s = String.trim @@ input_line ic in
             if started then (
@@ -21,7 +21,7 @@ module Readertsp = struct
         in loop false;
         city_count, cities
 
-    let open_path tsp_name =
+        let open_path ?(file_path = "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp") tsp_name =
         let city_count = Scanf.sscanf tsp_name "%[^0-9]%d" (fun _ c -> c)
         in
         let path = Array.make city_count 0
@@ -30,7 +30,7 @@ module Readertsp = struct
             fun x -> path.(!i) <- x-1; incr i
         in
         let ic = open_in  @@
-            Printf.sprintf "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp/%s.opt.tour" tsp_name
+        Printf.sprintf "%s/%s.opt.tour" file_path tsp_name
         in
         let rec loop started = try (let s = String.trim @@ input_line ic in
             if started then (

@@ -307,7 +307,7 @@ module Primalg = struct
 end;;
 
 module Readertsp = struct
-    let open_tsp tsp_name =
+    let open_tsp ?(file_path = "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp") tsp_name =
         let city_count = Scanf.sscanf tsp_name "%[^0-9]%d" (fun _ c -> c)
         in
         let cities = Array.make city_count (0., 0.)
@@ -316,7 +316,7 @@ module Readertsp = struct
             fun x -> cities.(!i) <- x; incr i
         in
         let ic = open_in  @@
-            Printf.sprintf "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp/%s.tsp" tsp_name
+            Printf.sprintf "%s/%s.tsp" file_path tsp_name
         in
         let rec loop started = try (let s = String.trim @@ input_line ic in
             if started then (
@@ -329,7 +329,7 @@ module Readertsp = struct
         in loop false;
         city_count, cities
 
-    let open_path tsp_name =
+        let open_path ?(file_path = "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp") tsp_name =
         let city_count = Scanf.sscanf tsp_name "%[^0-9]%d" (fun _ c -> c)
         in
         let path = Array.make city_count 0
@@ -338,7 +338,7 @@ module Readertsp = struct
             fun x -> path.(!i) <- x-1; incr i
         in
         let ic = open_in  @@
-            Printf.sprintf "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp/%s.opt.tour" tsp_name
+        Printf.sprintf "%s/%s.opt.tour" file_path tsp_name
         in
         let rec loop started = try (let s = String.trim @@ input_line ic in
             if started then (
@@ -359,6 +359,7 @@ module Basetsp = struct
         let adj_matrix = Array.init city_count (fun i -> Array.init city_count (fun j -> dist cities.(i) cities.(j)))
         in
         fun c1 c2 -> adj_matrix.(c1).(c2)
+
     let path_length eval path =
         let s = ref 0 in
         for i = 0 to Array.length path - 2 do
@@ -367,7 +368,7 @@ module Basetsp = struct
         !s + eval path.(0) path.(Array.length path - 1)
 
     let best_path_length config eval =
-        let path = Readertsp.open_path config in
+        let path = Readertsp2.open_path config in
         path_length eval path
 end;;
 module Showtsp = struct
@@ -425,8 +426,8 @@ module Showtsp = struct
         List.iter lineto_city xs;
         lineto_city x
     let show_best_path config =
-        let _, cities = Readertsp.open_tsp config in
-        show_solution cities (Readertsp.open_path config)
+        let _, cities = Readertsp2.open_tsp config in
+        show_solution cities (Readertsp2.open_path config)
     
 end;;
 module TwoOpt = struct
@@ -436,14 +437,15 @@ module TwoOpt = struct
              path.(i+1+k) <- path.(j-k);
              path.(j-k) <- t;
          done
-    let opt_best ?(debug = false) ?(maxi = -1) eval path =
-        let bound = Array.length path in
 
+    let opt_best ?(debug = false) ?(partial_path = false) ?(maxi = -1) eval path =
+        let bound = Array.length path in
+        let partial = if partial_path then 1 else 0 in
         let rec loop k =
             let diff = ref 0 in
             let minI, minJ = ref 0, ref 0 in
-                for i = 0 to bound - 4 do
-                    for j = i+2 to bound - 1 - max 0 (1-i) do
+                for i = 0 to bound - 4 - partial do
+                    for j = i+2 to bound - 1 - max (2*partial) (1-i) do
                         let d = eval path.(i) path.(j) + eval path.(i+1) path.((j+1) mod bound)
                         - eval path.(i) path.(i+1) - eval path.(j) path.((j+1) mod bound)
                         in
@@ -461,12 +463,13 @@ module TwoOpt = struct
             )
         in loop 1
 
-    let opt_fast ?(debug = false) ?(maxi = -1) eval path =
+    let opt_fast ?(debug = false) ?(partial_path = false) ?(maxi = -1) eval path =
         let bound = Array.length path in
+        let partial = if partial_path then 1 else 0 in
         let rec rec_while i = (i < maxi || maxi < 0) &&
             not (loop1 0) && rec_while (i+1)
-        and loop1 i = i >= bound - 4 || (loop2 i (i+2) && loop1 (i+1))
-        and loop2 i j = j >= bound - max 0 (1-i)  || (
+        and loop1 i = i >= bound - 3 - partial  || (loop2 i (i+2) && loop1 (i+1))
+        and loop2 i j = j >= bound - max (2*partial) (1-i)  || (
             let diff = eval path.(i) path.(j) + eval path.(i+1) path.((j+1) mod bound)
                                    - eval path.(i) path.(i+1) - eval path.(j) path.((j+1) mod bound)  in
             if diff < 0 then (
@@ -476,7 +479,9 @@ module TwoOpt = struct
             ) else true
         ) && loop2 i (j+1)
         in
-        let _ = rec_while 0 in ()
+        rec_while 0
+
+
 
     type random_creation = Roulette | Random
 
@@ -624,9 +629,7 @@ module Monte_Carlo = struct
         let size = !arg.city_count - !arg.path_size
         in
         update_weights queue last_city;
-        let end_path =
-        try (Array.init size (fun _ -> let c = RndQ.take queue in update_weights queue c; c)) with Invalid_argument _ ->
-        failwith "end_path"
+        let end_path = Array.init size (fun _ -> let c = RndQ.take queue in update_weights queue c; c)
         in
         let score = ref @@ !arg.eval last_city end_path.(0) + !arg.eval 0 end_path.(size - 1) + start_dist
         in
@@ -756,11 +759,13 @@ module Monte_Carlo = struct
             if !playout_count = city_count - 1 then
                 !arg.get_node_score <- get_node_score_fun root exploration_mode
         done;
-        Printf.printf "%d playouts, %.0f s, %d length" !playout_count (Sys.time() -. start_time) !arg.best_score;
+        Printf.printf "\n%d playouts, %.0f s, %d length" !playout_count (Sys.time() -. start_time) !arg.best_score;
         !arg.best_path
 
 
-end;;module Simulated_Annealing = struct
+end;;
+
+module Simulated_Annealing = struct
 
     type random_change_mode = Swap | Insert | Invert
 

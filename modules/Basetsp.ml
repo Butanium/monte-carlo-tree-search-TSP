@@ -7,6 +7,7 @@ module Basetsp = struct
         let adj_matrix = Array.init city_count (fun i -> Array.init city_count (fun j -> dist cities.(i) cities.(j)))
         in
         fun c1 c2 -> adj_matrix.(c1).(c2)
+
     let path_length eval path =
         let s = ref 0 in
         for i = 0 to Array.length path - 2 do
