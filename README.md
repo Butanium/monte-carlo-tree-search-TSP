@@ -20,7 +20,7 @@ playouts and reduce their size, can end up in a better result.
 
 ## How can I test it ?
 
-Open it and build it with dune.
+Open it and build it with dune. Try to run the files in examples as executable (Todo : setup executable)
 
 ## Ressources
 
