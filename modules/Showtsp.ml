@@ -1,4 +1,4 @@
-module Showtsp = struct
+
     open Graphics
     type parameters = {mutable height: int; mutable width: int; mutable city_size: int}
 
@@ -47,13 +47,13 @@ module Showtsp = struct
         show_cities cities;
         set_line_width 3;
         set_color black;
-        let x :: xs = sol in 
-            
+        match sol with
+        | [] -> prerr_endline "warning : tried to display empty solution" 
+        | x :: xs -> ( 
         movetoT @@ coord cities.(x);
         List.iter lineto_city xs;
         lineto_city x
+        )
     let show_best_path config =
         let _, cities = Readertsp.open_tsp config in
         show_solution cities (Readertsp.open_path config)
-    
-end;;

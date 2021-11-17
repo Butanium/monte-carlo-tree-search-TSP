@@ -1,5 +1,5 @@
 
-module MCTS = struct
+ MCTS = struct
 
     type baseNode = {mutable accScore:float; mutable visit:float; mutable sons: mctNode list;
             poss_cities: int RndQ.t; accDist : int; city:int}

@@ -1,18 +1,19 @@
-module TwoOpt = struct
+
     let invertPath i j path =
         for k = 0 to (j - i)/2 - 1 do
              let t = path.(i+1+k) in
              path.(i+1+k) <- path.(j-k);
              path.(j-k) <- t;
          done
-    let opt_best ?(debug = false) ?(maxi = -1) eval path =
-        let bound = Array.length path in
 
+    let opt_best ?(debug = false) ?(partial_path = false) ?(maxi = -1) eval path =
+        let bound = Array.length path in
+        let partial = if partial_path then 1 else 0 in
         let rec loop k =
             let diff = ref 0 in
             let minI, minJ = ref 0, ref 0 in
-                for i = 0 to bound - 4 do
-                    for j = i+2 to bound - 1 - max 0 (1-i) do
+                for i = 0 to bound - 4 - partial do
+                    for j = i+2 to bound - 1 - max (2*partial) (1-i) do
                         let d = eval path.(i) path.(j) + eval path.(i+1) path.((j+1) mod bound)
                         - eval path.(i) path.(i+1) - eval path.(j) path.((j+1) mod bound)
                         in
@@ -30,12 +31,13 @@ module TwoOpt = struct
             )
         in loop 1
 
-    let opt_fast ?(debug = false) ?(maxi = -1) eval path =
+    let opt_fast ?(debug = false) ?(partial_path = false) ?(maxi = -1) eval path =
         let bound = Array.length path in
+        let partial = if partial_path then 1 else 0 in
         let rec rec_while i = (i < maxi || maxi < 0) &&
             not (loop1 0) && rec_while (i+1)
-        and loop1 i = i >= bound - 4 || (loop2 i (i+2) && loop1 (i+1))
-        and loop2 i j = j >= bound - max 0 (1-i)  || (
+        and loop1 i = i >= bound - 3 - partial  || (loop2 i (i+2) && loop1 (i+1))
+        and loop2 i j = j >= bound - max (2*partial) (1-i)  || (
             let diff = eval path.(i) path.(j) + eval path.(i+1) path.((j+1) mod bound)
                                    - eval path.(i) path.(i+1) - eval path.(j) path.((j+1) mod bound)  in
             if diff < 0 then (
@@ -45,7 +47,9 @@ module TwoOpt = struct
             ) else true
         ) && loop2 i (j+1)
         in
-        let _ = rec_while 0 in ()
+        rec_while 0
+
+
 
     type random_creation = Roulette | Random
 
@@ -67,7 +71,7 @@ module TwoOpt = struct
         let best_path = Array.make city_count (-1) in
         for _ = 1 to n do
             let path = random_path q eval rnd_mode city_count in
-            opt_fast eval path;
+            let _ = opt_fast eval path in
             let len = Basetsp.path_length eval path in
             if len < !best_len then (
                 best_len := len;
@@ -80,4 +84,3 @@ module TwoOpt = struct
         done;
         best_path
 
-end;;

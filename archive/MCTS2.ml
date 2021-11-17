@@ -1,5 +1,5 @@
 (* todo remove assert for runtime *)
-module MCTS2 = struct
+ MCTS2 = struct
 
     type baseNode = {mutable accScore:float; mutable visit:float; mutable childs: mctNode list;
             poss_cities: int RndQ.t; accDist:int; city:int}

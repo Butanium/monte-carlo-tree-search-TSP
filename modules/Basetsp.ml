@@ -1,4 +1,4 @@
-module Basetsp = struct
+
     let dists cities =
         let dist (c1x,c1y) (c2x,c2y) =
             int_of_float (0.5 +. sqrt ((c1x -. c2x)*.(c1x -. c2x) +. (c1y -. c2y)*. (c1y -. c2y)))
@@ -18,4 +18,3 @@ module Basetsp = struct
     let best_path_length config eval =
         let path = Readertsp.open_path config in
         path_length eval path
-end;;

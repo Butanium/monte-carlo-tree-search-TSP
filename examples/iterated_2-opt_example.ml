@@ -9,3 +9,8 @@ let best_len = Basetsp.best_path_length city_config eval in
     Printf.printf "\n%% of error : %.2f %%" (100. *.float_of_int(len - best_len) /. float_of_int best_len);;
 
 let best_path = Readertsp.open_path city_config;;
+open Graphics;;
+open_graph "";;
+set_text_size 10;;
+Graphics.set_font "-*-fixed-medium-r-semicondensed--25-*-*-*-*-*-iso8859-1";;
+draw_string "uwuwuwuwu";;

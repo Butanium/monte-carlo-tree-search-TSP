@@ -1,4 +1,3 @@
-module Simulated_Annealing = struct
 
     type random_change_mode = Swap | Insert | Invert
 
@@ -58,5 +57,3 @@ module Simulated_Annealing = struct
         in aux init_T
 
 
-
-end;;

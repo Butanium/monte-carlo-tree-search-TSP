@@ -1,4 +1,3 @@
-module Monte_Carlo = struct
 
     type node_info = {mutable visit : float; mutable score : float; city : int; tot_dist : int; mutable childs : mtc_node list; to_expend :
         int RndQ.t}
@@ -6,7 +5,7 @@ module Monte_Carlo = struct
     (* [EN] The information stored in a node *)
 
     and heritage = Root | Parent of mtc_node
-    (* [FR] le type qui contient la référence au node précédent *)
+    (* [FR] le type qui contient la rï¿½fï¿½rence au node prï¿½cï¿½dent *)
     (* [EN] Reference to the precedent node if it exists *)
 
     and mtc_node = {info : node_info; heritage : heritage}
@@ -14,17 +13,17 @@ module Monte_Carlo = struct
     (* [EN] Represents a node in the monte carlo tree *)
 
     type playout_selection_mode = Roulette | Random
-    (* [FR] Mode de selection du playout : Random correspond à une sélection aléatoire et Roulette
-    à une selection pondérée par la distance au *)
+    (* [FR] Mode de selection du playout : Random correspond ï¿½ une sï¿½lection alï¿½atoire et Roulette
+    ï¿½ une selection pondï¿½rï¿½e par la distance au *)
     (* [EN] selection mode for the end of a playout.
     - For roulette, the probability of choosing a city 'c'
     as the 'i+1' citie is pondered by 1 / distance c c_i.
     - Random is just random selection *)
 
     type exploration_constant = Min_spanning_tree | Standard_deviation
-    (* [FR] Définie le paramètre d'exploration utilisée pour séléctionner le meilleur fils d'un noeud
+    (* [FR] Dï¿½finie le paramï¿½tre d'exploration utilisï¿½e pour sï¿½lï¿½ctionner le meilleur fils d'un noeud
     - Min_spanning_tree utilise la longueur de l'arbre couvrant minimal
-    - Standard_deviation utilise la valeur de l'écart type entre les scores des noeuds une fois que la racine de l'arbre
+    - Standard_deviation utilise la valeur de l'ï¿½cart type entre les scores des noeuds une fois que la racine de l'arbre
         est entierement expandue *)
     (* [EN] Define the exploration paramater used to select the best child of a node
     - Min_spanning_tree use the length of the minimal spanning tree
@@ -32,29 +31,29 @@ module Monte_Carlo = struct
 
     type arguments = {playout_selection_mode : playout_selection_mode; mutable visited : IntSet.t; city_count : int;
                       mutable path_size : int; eval : int -> int -> int; mutable get_node_score : mtc_node -> float;
-                      current_path : int array; best_path : int array; mutable best_score : int}
-    (* [FR] Type contenant tous les arguments qui n'auront donc pas besoin d'être passés
-    dans les différentes fonctions *)
+                      current_path : int array; playout_path : int array; best_path : int array; mutable best_score : int}
+    (* [FR] Type contenant tous les arguments qui n'auront donc pas besoin d'ï¿½tre passï¿½s
+    dans les diffï¿½rentes fonctions *)
     (* [EN] Type containing all the info needed in the functions in order to avoid
     useless arguments*)
 
     let arg = ref {playout_selection_mode=Random; visited = IntSet.empty; city_count= -1; path_size = -1;
                    eval = (fun _ _ -> -1); get_node_score = (fun _ -> -1.); current_path = [||]; best_path = [||];
-                   best_score = -1}
-    (* [FR] Référence au record qui est utilisé par toutes les fonctions *)
+                   best_score = -1; playout_path = [||]}
+    (* [FR] Rï¿½fï¿½rence au record qui est utilisï¿½ par toutes les fonctions *)
     (* [EN] Ref to the record that will be used by every functions *)
 
 
     let update_weights queue last = match !arg.playout_selection_mode with
-    (* [FR] Actualise les poids des différentes villes par rapport à la dernière ville choisie
-    pour le chemin aléatoire du playout *)
+    (* [FR] Actualise les poids des diffï¿½rentes villes par rapport ï¿½ la derniï¿½re ville choisie
+    pour le chemin alï¿½atoire du playout *)
     (* [EN] Update the weights in the random queue according to the last city added to the playout path *)
         | Random -> ()
         | Roulette -> RndQ.change_weights (fun _ city -> 1. /. float_of_int (!arg.eval city last)) queue
 
 
     let available() =
-    (* [FR] Renvoie une file aléatoire contenant toutes les villes non visitées *)
+    (* [FR] Renvoie une file alï¿½atoire contenant toutes les villes non visitï¿½es *)
     (* [EN] Returns a random queue containing all non visited cities *)
         let i = ref 0 in
         let rec aux() =
@@ -72,15 +71,19 @@ module Monte_Carlo = struct
 
 
     let playout last_city start_dist =
-    (* [FR] Termine aléatoirement le trajet commencé lors de l'exploration *)
+    (* [FR] Termine alï¿½atoirement le trajet commencï¿½ lors de l'exploration *)
     (* [EN] Finish randomly the path started during the exploration *)
         let queue = available()
         in
         let size = !arg.city_count - !arg.path_size
         in
         update_weights queue last_city;
-        let end_path = Array.init size (fun _ -> let c = RndQ.take queue in update_weights queue c; c)
-        in
+        for k = 0 to size - 1 do
+            let c = RndQ.take queue in
+            update_weights queue c;
+            !arg.playout_path.(k) <- c
+        done;
+        let end_path = !arg.playout_path in
         let score = ref @@ !arg.eval last_city end_path.(0) + !arg.eval 0 end_path.(size - 1) + start_dist
         in
         for i = 1 to size - 1 do
@@ -109,7 +112,7 @@ module Monte_Carlo = struct
 
 
     let expend node =
-    (* [FR] Développe l'arbre en créant un nouveau noeud relié à 'node' *)
+    (* [FR] Dï¿½veloppe l'arbre en crï¿½ant un nouveau noeud reliï¿½ ï¿½ 'node' *)
     (* [EN] Expend the tree by adding a new node linked to 'node' *)
         let city = RndQ.take node.info.to_expend in
         !arg.visited <- IntSet.add city !arg.visited;
@@ -125,7 +128,7 @@ module Monte_Carlo = struct
 
 
     let get_node_score_fun root exploration_mode =
-    (* [FR] Renvoie la fonction d'évaluation qui sera utilisée pendant la sélection *)
+    (* [FR] Renvoie la fonction d'ï¿½valuation qui sera utilisï¿½e pendant la sï¿½lection *)
     (* [EN] Return the function which will return the score of a node during selection *)
         let c = (match exploration_mode with
             | Min_spanning_tree -> float_of_int @@ Primalg.primalg !arg.eval !arg.city_count
@@ -155,7 +158,7 @@ module Monte_Carlo = struct
             | n :: ns -> aux (!arg.get_node_score n) n ns
 
     let update_arg node =
-    (* [FR] Actualise les arguments de arg au fur à mesure que l'on progresse dans l'arbre *)
+    (* [FR] Actualise les arguments de arg au fur ï¿½ mesure que l'on progresse dans l'arbre *)
     (* [EN] Update the arguments while exploring the tree *)
         !arg.visited <- IntSet.add node.info.city !arg.visited;
         !arg.current_path.(!arg.path_size) <- node.info.city;
@@ -163,8 +166,8 @@ module Monte_Carlo = struct
 
 
     let rec selection node =
-    (* [FR] Parcours l'arbre en prenant le meilleur fils recursivement jusqu'à atteindre une feuille ou un noed n'ayant
-     pas tous ses fils develeppés *)
+    (* [FR] Parcours l'arbre en prenant le meilleur fils recursivement jusqu'ï¿½ atteindre une feuille ou un noed n'ayant
+     pas tous ses fils develeppï¿½s *)
     (* [EN] Browse through the tree, picking the best child recursively until it reachs a leaf
     or a node with undeveloped children *)
         update_arg node;
@@ -184,18 +187,18 @@ module Monte_Carlo = struct
 
 
     let reset_arg() =
-    (* [FR] Réinitialise les villes visistées et la taille du chemin à chaque fois qu'on repart de la racine de l'arbre *)
+    (* [FR] Rï¿½initialise les villes visistï¿½es et la taille du chemin ï¿½ chaque fois qu'on repart de la racine de l'arbre *)
     (* [EN] Reset the visited cities and the path size every time we restart our exploration from the root *)
         !arg.path_size <- 0;
         !arg.visited <- IntSet.empty
 
 
     let procede_mcts playout_selection_mode exploration_mode city_count eval max_time max_playout =
-    (* [FR] Créer développe l'abre en gardant en mémoire le meilleur chemin emprunté durant les différents playout *)
+    (* [FR] Crï¿½er dï¿½veloppe l'abre en gardant en mï¿½moire le meilleur chemin empruntï¿½ durant les diffï¿½rents playout *)
     (* [EN] Create and develop the tree, keeping in memory the best path done during the playouts *)
         arg := {playout_selection_mode; visited = IntSet.empty; city_count; path_size = 0; eval;
                 get_node_score = (fun _ -> -1.); current_path = Array.make city_count (-1);
-                best_path = Array.make city_count (-1); best_score = max_int};
+                best_path = Array.make city_count (-1); playout_path = Array.make city_count (-1); best_score = max_int};
         let playout_count = ref 0 in
         let start_time = Sys.time() in
         let info = try ({visit = 0.; score = 0.; city = 0; tot_dist = 0; childs = [];
@@ -213,5 +216,5 @@ module Monte_Carlo = struct
         !arg.best_path
 
 
-end;;
+
 
