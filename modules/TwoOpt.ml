@@ -1,4 +1,4 @@
-
+module TwoOpt = struct
     let invertPath i j path =
         for k = 0 to (j - i)/2 - 1 do
              let t = path.(i+1+k) in
@@ -71,7 +71,7 @@
         let best_path = Array.make city_count (-1) in
         for _ = 1 to n do
             let path = random_path q eval rnd_mode city_count in
-            let _ = opt_fast eval path in
+            opt_fast eval path;
             let len = Basetsp.path_length eval path in
             if len < !best_len then (
                 best_len := len;
@@ -84,3 +84,4 @@
         done;
         best_path
 
+end;;
