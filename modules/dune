@@ -1,0 +1,14 @@
+(library
+ (wrapped false)
+ (name mcts)
+ (modules
+  RndQ
+  Readertsp
+  Basetsp
+  Showtsp
+  TwoOpt
+  Primalg
+  Monte_Carlo_Debug
+  Monte_Carlo
+  Simulated_Annealing)
+ (libraries graphics))

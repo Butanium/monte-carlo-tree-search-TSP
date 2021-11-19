@@ -1,0 +1,4 @@
+(executable
+ (name MCTS_main)
+ (libraries graphics mcts)
+)
