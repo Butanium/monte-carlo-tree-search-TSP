@@ -10,5 +10,6 @@
   Primalg
   Monte_Carlo_Debug
   Monte_Carlo
-  Simulated_Annealing)
+  Simulated_Annealing
+  Mutable_Manager)
  (libraries graphics))

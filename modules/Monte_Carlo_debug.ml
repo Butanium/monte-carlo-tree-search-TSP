@@ -10,8 +10,8 @@ let deb = {playout_time = 0.; available_time = 0.; pl_creation = 0.; pl_getlent 
 let reset_deb() = deb.playout_time <- 0.; deb.available_time <- 0.; deb.pl_creation <- 0.; deb.pl_getlent <- 0.;
     deb.pl_store <- 0.; deb.pl_weight_update <- 0.; deb.max_depth <- 0; deb.score_hist <- []; deb.best_score_hist <- []
 
-type node_info = {mutable visit : float; mutable score : float; city : int; tot_dist : int; mutable childs : mtc_node list; to_expend :
-    int RndQ.t}
+type node_info = {mutable visit : float; mutable score : float; city : int; tot_dist : int; mutable childs : mtc_node list; 
+    mutable to_expend : int RndQ.t}
 (* [FR] le type qui contient les infos contenues dans chaque node *)
 (* [EN] The information stored in a node *)
 
@@ -42,7 +42,7 @@ type exploration_constant = Min_spanning_tree | Standard_deviation
 
 type arguments = {playout_selection_mode : playout_selection_mode; mutable visited : IntSet.t; city_count : int;
                     mutable path_size : int; eval : int -> int -> int; mutable get_node_score : mtc_node -> float;
-                    current_path : int array; playout_path : int array; best_path : int array; mutable best_score : int}
+                    current_path : int array; best_path : int array; mutable best_score : int}
 (* [FR] Type contenant tous les arguments qui n'auront donc pas besoin d'�tre pass�s
 dans les diff�rentes fonctions *)
 (* [EN] Type containing all the info needed in the functions in order to avoid
@@ -50,7 +50,7 @@ useless arguments*)
 
 let arg = ref {playout_selection_mode=Random; visited = IntSet.empty; city_count= -1; path_size = -1;
                 eval = (fun _ _ -> -1); get_node_score = (fun _ -> -1.); current_path = [||]; best_path = [||];
-                best_score = -1; playout_path = [||]}
+                best_score = -1}
 (* [FR] R�f�rence au record qui est utilis� par toutes les fonctions *)
 (* [EN] Ref to the record that will be used by every functions *)
 
@@ -62,8 +62,21 @@ pour le chemin al�atoire du playout *)
     | Random -> ()
     | Roulette -> RndQ.change_weights (fun _ city -> 1. /. float_of_int (!arg.eval city last)) queue
 
+let playout_queue = ref @@ RndQ.simple_create 0 [||]
 
-let available() =
+let playout_path = ref [||]
+
+let queue_manager = Mutable_Manager.create (fun () -> RndQ.simple_create 1 [|-1|])
+
+let empty_queue = RndQ.simple_create 0 [||] 
+
+let init() =
+    playout_path := Array.make !arg.city_count (-1);
+    let arr = Array.make !arg.city_count (-1) in
+    playout_queue := RndQ.simple_create !arg.city_count arr;
+    Mutable_Manager.set_create_fun queue_manager (fun () -> RndQ.simple_create !arg.city_count @@ Array.make !arg.city_count (-1))
+
+let available queue =
 (* [FR] Renvoie une file al�atoire contenant toutes les villes non visit�es *)
 (* [EN] Returns a random queue containing all non visited cities *)
     let st = Sys.time() in
@@ -76,18 +89,23 @@ let available() =
     in
     let size = (!arg.city_count - !arg.path_size)
     in
-    let cities = try (Array.init size (fun _ -> aux())) with Invalid_argument _ -> raise @@
-    Invalid_argument (Printf.sprintf "%d size, %d city_count, %d path_size" size !arg.city_count !arg.path_size)
-    in
+    RndQ.reset queue;
+    RndQ.set_length queue size;
+    for i=0 to size-1 do 
+        RndQ.replace_element queue i (aux())
+    done;
+     (* try ()) with Invalid_argument _ -> raise @@
+    Invalid_argument (Printf.sprintf "%d size, %d city_count, %d path_size" size !arg.city_count !arg.path_size) *)
+    
     deb.available_time <- deb.available_time +. Sys.time() -. st;
-    RndQ.simple_create size cities
+    queue
 
 
 let playout last_city start_dist =
 (* [FR] Termine al�atoirement le trajet commenc� lors de l'exploration *)
 (* [EN] Finish randomly the path started during the exploration *)
     let st = Sys.time() in
-    let queue = available()
+    let queue = available !playout_queue
     in
     let size = !arg.city_count - !arg.path_size
     in
@@ -98,10 +116,10 @@ let playout last_city start_dist =
         let st_wu = Sys.time() in
         update_weights queue c;
         deb.pl_weight_update <- deb.pl_weight_update +. Sys.time() -. st_wu;
-        !arg.playout_path.(k) <- c
+        !playout_path.(k) <- c
     done;
     deb.pl_creation <- deb.pl_creation +. Sys.time() -. cr_st;
-    let end_path = !arg.playout_path in
+    let end_path = !playout_path in
     let gl_st = Sys.time() in
     let score = ref @@ !arg.eval last_city end_path.(0) + !arg.eval 0 end_path.(size - 1) + start_dist
     in
@@ -111,6 +129,7 @@ let playout last_city start_dist =
     deb.pl_getlent <- deb.pl_getlent +. Sys.time() -.gl_st;
     let store_st = Sys.time() in
     if !score < !arg.best_score then (
+        
         !arg.best_score <- !score;
         for i = 0 to !arg.path_size - 1 do
             !arg.best_path.(i) <- !arg.current_path.(i)
@@ -118,6 +137,9 @@ let playout last_city start_dist =
         for i = 0 to size - 1 do
             !arg.best_path.(!arg.path_size + i) <- end_path.(i)
         done;
+        (* prerr_endline "new path : ";
+        Basetsp.prerr_path !arg.best_path *)
+
     );
     deb.pl_store <- deb.pl_store +. Sys.time() -. store_st;
     deb.playout_time <- deb.playout_time +. Sys.time() -. st;
@@ -138,12 +160,16 @@ let expend node =
 (* [FR] D�veloppe l'arbre en cr�ant un nouveau noeud reli� � 'node' *)
 (* [EN] Expend the tree by adding a new node linked to 'node' *)
     let city = RndQ.take node.info.to_expend in
+    if RndQ.is_empty node.info.to_expend then (
+        Mutable_Manager.free queue_manager node.info.to_expend;
+        node.info.to_expend <- empty_queue
+    );
     !arg.visited <- IntSet.add city !arg.visited;
     !arg.current_path.(!arg.path_size) <- city;
     !arg.path_size <- !arg.path_size + 1;
     deb.max_depth <- max deb.max_depth !arg.path_size;
     let tot_dist = node.info.tot_dist + !arg.eval node.info.city city in
-    let to_expend = available() in
+    let to_expend = available @@ Mutable_Manager.get queue_manager in 
     let info = {visit = 0.; score = 0.; city; tot_dist; childs=[]; to_expend} in
     let new_node = {info; heritage = Parent node} in
     node.info.childs <- new_node :: node.info.childs;
@@ -238,19 +264,23 @@ let rec debug_mcts root =
     end
 
 
-let procede_mcts playout_selection_mode exploration_mode city_count eval max_time max_playout =
+let procede_mcts ?(debug = true) playout_selection_mode exploration_mode city_count eval max_time max_playout =
 (* [FR] Cr�er d�veloppe l'abre en gardant en m�moire le meilleur chemin emprunt� durant les diff�rents playout *)
 (* [EN] Create and develop the tree, keeping in memory the best path done during the playouts *)
     reset_deb();
     arg := {playout_selection_mode; visited = IntSet.empty; city_count; path_size = 0; eval;
             get_node_score = (fun _ -> -1.); current_path = Array.make city_count (-1);
-            best_path = Array.make city_count (-1); playout_path = Array.make city_count (-1); best_score = max_int};
+            best_path = Array.make city_count (-1); best_score = max_int};
+    init();
+
     let playout_count = ref 0 in
     let start_time = Sys.time() in
     let info = try ({visit = 0.; score = 0.; city = 0; tot_dist = 0; childs = [];
         to_expend = RndQ.simple_create (city_count - 1) @@ Array.init (city_count - 1) (fun x -> x + 1)}) with
             Invalid_argument _ -> failwith "info" in
     let root = {info; heritage = Root} in
+
+
     while !playout_count < max_playout && Sys.time() -. start_time < max_time do
         reset_arg();
         incr playout_count;
@@ -258,17 +288,18 @@ let procede_mcts playout_selection_mode exploration_mode city_count eval max_tim
         if !playout_count = city_count - 1 then
             !arg.get_node_score <- get_node_score_fun root exploration_mode
     done;
-
-    print_endline "\n\n _______________START DEBUG INFO_______________\n";
-    Printf.printf "\n%d playouts, %.0f s, %d max depth, best score : %d " !playout_count (Sys.time() -. start_time) deb.max_depth !arg.best_score;
-    Printf.printf "\n%.1f playout time, %.1f available time, %.3f playout time ratio\n %.3f creation time ratio in playout \n" deb.playout_time deb.available_time
-        (deb.playout_time /. (Sys.time() -. start_time)) (deb.pl_creation /. deb.playout_time);
-    Printf.printf "weight update ratio : %.3f, get lenght ratio : %.3f , store ratio : %.3f \n" (deb.pl_weight_update /. deb.playout_time) (deb.pl_getlent
-    /. deb.playout_time) (deb.pl_store /. deb.playout_time);
-    print_endline "\n________________END DEBUG INFO_________________\n";
-    print_endline "\n\n_________________START DEBUG TREE_______________\n";
-    debug_mcts root;
-    print_endline "\n\n_________________END DEBUG TREE_______________\n";
+    if debug then begin
+        print_endline "\n\n _______________START DEBUG INFO_______________\n";
+        Printf.printf "\n%d playouts, %.0f s, %d max depth, best score : %d " !playout_count (Sys.time() -. start_time) deb.max_depth !arg.best_score;
+        Printf.printf "\n%.1f playout time, %.1f available time, %.3f playout time ratio\n %.3f creation time ratio in playout \n" deb.playout_time deb.available_time
+            (deb.playout_time /. (Sys.time() -. start_time)) (deb.pl_creation /. deb.playout_time);
+        Printf.printf "weight update ratio : %.3f, get lenght ratio : %.3f , store ratio : %.3f \n" (deb.pl_weight_update /. deb.playout_time) (deb.pl_getlent
+        /. deb.playout_time) (deb.pl_store /. deb.playout_time);
+        print_endline "\n________________END DEBUG INFO_________________\n";
+        print_endline "\n\n_________________START DEBUG TREE_______________\n";
+        debug_mcts root;
+        print_endline "\n\n_________________END DEBUG TREE_______________\n";
+    end;
     !arg.best_path
 
 

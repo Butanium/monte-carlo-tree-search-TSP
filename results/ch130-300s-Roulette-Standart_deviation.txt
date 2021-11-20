@@ -1,0 +1,383 @@
+_______________START DEBUG INFO_______________
+
+
+246014 playouts, 300 s, 4 max depth, 23689 length
+280.2 playout time, 10.3 available time, 0.934 playout time ratio
+ 0.944 creation time ratio in playout 
+weight update ratio : 0.861, get lenght ratio : 0.007 , store ratio : 0.000 
+
+________________END DEBUG INFO_________________
+
+
+
+_________________START DEBUG TREE_______________
+
+
+chosen : 
+
+visits : 246014, dist ratio : 32613.1, city : 0, not developped : 0
+
+root childs : 
+
+conv : 2.6%  |  visits : 6287, dist ratio : 32432.5, city : 40, not developped : 0
+conv : 2.3%  |  visits : 5767, dist ratio : 32443.5, city : 70, not developped : 0
+conv : 2.3%  |  visits : 5693, dist ratio : 32445.1, city : 116, not developped : 0
+conv : 2.2%  |  visits : 5335, dist ratio : 32453.5, city : 1, not developped : 0
+conv : 2.1%  |  visits : 5278, dist ratio : 32454.9, city : 49, not developped : 0
+conv : 2.0%  |  visits : 4801, dist ratio : 32467.9, city : 61, not developped : 0
+conv : 1.9%  |  visits : 4663, dist ratio : 32472.4, city : 53, not developped : 0
+conv : 1.6%  |  visits : 3942, dist ratio : 32497.1, city : 114, not developped : 0
+conv : 1.5%  |  visits : 3682, dist ratio : 32508.2, city : 38, not developped : 0
+conv : 1.5%  |  visits : 3675, dist ratio : 32506.3, city : 16, not developped : 0
+conv : 1.5%  |  visits : 3670, dist ratio : 32508.4, city : 126, not developped : 0
+conv : 1.5%  |  visits : 3637, dist ratio : 32509.8, city : 34, not developped : 0
+conv : 1.4%  |  visits : 3547, dist ratio : 32514.2, city : 10, not developped : 0
+conv : 1.4%  |  visits : 3524, dist ratio : 32515.1, city : 44, not developped : 0
+conv : 1.4%  |  visits : 3475, dist ratio : 32518.0, city : 33, not developped : 0
+conv : 1.4%  |  visits : 3449, dist ratio : 32518.4, city : 127, not developped : 0
+conv : 1.4%  |  visits : 3339, dist ratio : 32524.1, city : 15, not developped : 0
+conv : 1.3%  |  visits : 3261, dist ratio : 32527.8, city : 17, not developped : 0
+conv : 1.3%  |  visits : 3228, dist ratio : 32530.0, city : 129, not developped : 0
+conv : 1.3%  |  visits : 3121, dist ratio : 32536.3, city : 75, not developped : 0
+conv : 1.2%  |  visits : 2976, dist ratio : 32544.8, city : 117, not developped : 0
+conv : 1.2%  |  visits : 2954, dist ratio : 32545.7, city : 27, not developped : 0
+conv : 1.2%  |  visits : 2938, dist ratio : 32546.3, city : 92, not developped : 0
+conv : 1.2%  |  visits : 2909, dist ratio : 32548.6, city : 2, not developped : 0
+conv : 1.2%  |  visits : 2890, dist ratio : 32549.0, city : 30, not developped : 0
+conv : 1.1%  |  visits : 2829, dist ratio : 32553.2, city : 99, not developped : 0
+conv : 1.1%  |  visits : 2793, dist ratio : 32555.2, city : 3, not developped : 0
+conv : 1.1%  |  visits : 2750, dist ratio : 32558.9, city : 4, not developped : 0
+conv : 1.1%  |  visits : 2749, dist ratio : 32558.5, city : 104, not developped : 0
+conv : 1.1%  |  visits : 2735, dist ratio : 32559.1, city : 103, not developped : 0
+conv : 1.1%  |  visits : 2640, dist ratio : 32566.0, city : 19, not developped : 0
+conv : 1.0%  |  visits : 2535, dist ratio : 32574.0, city : 26, not developped : 0
+conv : 1.0%  |  visits : 2527, dist ratio : 32574.3, city : 96, not developped : 0
+conv : 1.0%  |  visits : 2515, dist ratio : 32575.9, city : 108, not developped : 0
+conv : 1.0%  |  visits : 2496, dist ratio : 32576.9, city : 111, not developped : 0
+conv : 1.0%  |  visits : 2399, dist ratio : 32584.5, city : 106, not developped : 0
+conv : 1.0%  |  visits : 2346, dist ratio : 32588.7, city : 123, not developped : 0
+conv : 0.9%  |  visits : 2335, dist ratio : 32590.3, city : 128, not developped : 0
+conv : 0.9%  |  visits : 2294, dist ratio : 32593.8, city : 45, not developped : 0
+conv : 0.9%  |  visits : 2251, dist ratio : 32599.2, city : 79, not developped : 0
+conv : 0.9%  |  visits : 2242, dist ratio : 32598.9, city : 82, not developped : 0
+conv : 0.9%  |  visits : 2227, dist ratio : 32599.4, city : 42, not developped : 0
+conv : 0.9%  |  visits : 2182, dist ratio : 32603.6, city : 18, not developped : 0
+conv : 0.9%  |  visits : 2119, dist ratio : 32609.9, city : 69, not developped : 0
+conv : 0.9%  |  visits : 2093, dist ratio : 32612.3, city : 125, not developped : 0
+conv : 0.8%  |  visits : 2083, dist ratio : 32613.9, city : 77, not developped : 0
+conv : 0.8%  |  visits : 2046, dist ratio : 32617.1, city : 60, not developped : 0
+conv : 0.8%  |  visits : 1981, dist ratio : 32624.1, city : 113, not developped : 0
+conv : 0.8%  |  visits : 1965, dist ratio : 32627.0, city : 20, not developped : 0
+conv : 0.8%  |  visits : 1962, dist ratio : 32627.0, city : 32, not developped : 0
+conv : 0.8%  |  visits : 1881, dist ratio : 32635.9, city : 37, not developped : 0
+conv : 0.8%  |  visits : 1847, dist ratio : 32640.1, city : 29, not developped : 0
+conv : 0.7%  |  visits : 1812, dist ratio : 32644.6, city : 120, not developped : 0
+conv : 0.7%  |  visits : 1812, dist ratio : 32644.6, city : 67, not developped : 0
+conv : 0.7%  |  visits : 1751, dist ratio : 32652.6, city : 105, not developped : 0
+conv : 0.7%  |  visits : 1740, dist ratio : 32655.4, city : 25, not developped : 0
+conv : 0.7%  |  visits : 1615, dist ratio : 32672.8, city : 68, not developped : 0
+conv : 0.7%  |  visits : 1601, dist ratio : 32674.6, city : 58, not developped : 0
+conv : 0.6%  |  visits : 1596, dist ratio : 32674.4, city : 115, not developped : 0
+conv : 0.6%  |  visits : 1585, dist ratio : 32675.8, city : 107, not developped : 0
+conv : 0.6%  |  visits : 1581, dist ratio : 32676.9, city : 23, not developped : 0
+conv : 0.6%  |  visits : 1565, dist ratio : 32680.5, city : 47, not developped : 0
+conv : 0.6%  |  visits : 1558, dist ratio : 32681.0, city : 85, not developped : 0
+conv : 0.6%  |  visits : 1540, dist ratio : 32683.9, city : 94, not developped : 0
+conv : 0.6%  |  visits : 1536, dist ratio : 32683.6, city : 118, not developped : 0
+conv : 0.6%  |  visits : 1518, dist ratio : 32686.4, city : 41, not developped : 0
+conv : 0.6%  |  visits : 1505, dist ratio : 32689.9, city : 63, not developped : 0
+conv : 0.6%  |  visits : 1488, dist ratio : 32691.6, city : 62, not developped : 0
+conv : 0.6%  |  visits : 1468, dist ratio : 32695.4, city : 22, not developped : 0
+conv : 0.6%  |  visits : 1442, dist ratio : 32699.5, city : 14, not developped : 0
+conv : 0.6%  |  visits : 1415, dist ratio : 32705.7, city : 121, not developped : 0
+conv : 0.6%  |  visits : 1388, dist ratio : 32710.3, city : 91, not developped : 0
+conv : 0.6%  |  visits : 1367, dist ratio : 32714.3, city : 52, not developped : 0
+conv : 0.6%  |  visits : 1356, dist ratio : 32716.0, city : 109, not developped : 0
+conv : 0.5%  |  visits : 1314, dist ratio : 32724.4, city : 88, not developped : 0
+conv : 0.5%  |  visits : 1307, dist ratio : 32726.4, city : 7, not developped : 0
+conv : 0.5%  |  visits : 1282, dist ratio : 32730.4, city : 43, not developped : 0
+conv : 0.5%  |  visits : 1242, dist ratio : 32740.7, city : 54, not developped : 0
+conv : 0.5%  |  visits : 1233, dist ratio : 32743.6, city : 78, not developped : 0
+conv : 0.5%  |  visits : 1188, dist ratio : 32752.0, city : 28, not developped : 0
+conv : 0.5%  |  visits : 1187, dist ratio : 32752.7, city : 98, not developped : 0
+conv : 0.5%  |  visits : 1182, dist ratio : 32754.0, city : 87, not developped : 0
+conv : 0.5%  |  visits : 1177, dist ratio : 32755.8, city : 50, not developped : 0
+conv : 0.5%  |  visits : 1172, dist ratio : 32757.7, city : 65, not developped : 0
+conv : 0.5%  |  visits : 1163, dist ratio : 32758.5, city : 89, not developped : 0
+conv : 0.5%  |  visits : 1153, dist ratio : 32760.1, city : 21, not developped : 0
+conv : 0.5%  |  visits : 1152, dist ratio : 32761.3, city : 76, not developped : 0
+conv : 0.5%  |  visits : 1144, dist ratio : 32762.6, city : 80, not developped : 0
+conv : 0.5%  |  visits : 1113, dist ratio : 32770.6, city : 6, not developped : 0
+conv : 0.4%  |  visits : 1098, dist ratio : 32775.0, city : 84, not developped : 0
+conv : 0.4%  |  visits : 1096, dist ratio : 32775.5, city : 97, not developped : 0
+conv : 0.4%  |  visits : 1084, dist ratio : 32779.1, city : 24, not developped : 0
+conv : 0.4%  |  visits : 1060, dist ratio : 32785.3, city : 36, not developped : 0
+conv : 0.4%  |  visits : 1047, dist ratio : 32788.2, city : 124, not developped : 0
+conv : 0.4%  |  visits : 1042, dist ratio : 32790.6, city : 119, not developped : 0
+conv : 0.4%  |  visits : 1041, dist ratio : 32790.7, city : 101, not developped : 0
+conv : 0.4%  |  visits : 996, dist ratio : 32804.5, city : 93, not developped : 0
+conv : 0.4%  |  visits : 979, dist ratio : 32809.7, city : 39, not developped : 0
+conv : 0.4%  |  visits : 978, dist ratio : 32809.4, city : 12, not developped : 0
+conv : 0.4%  |  visits : 963, dist ratio : 32816.7, city : 66, not developped : 0
+conv : 0.4%  |  visits : 956, dist ratio : 32817.8, city : 86, not developped : 0
+conv : 0.4%  |  visits : 930, dist ratio : 32827.3, city : 71, not developped : 0
+conv : 0.4%  |  visits : 914, dist ratio : 32831.2, city : 57, not developped : 0
+conv : 0.4%  |  visits : 890, dist ratio : 32839.1, city : 59, not developped : 0
+conv : 0.4%  |  visits : 889, dist ratio : 32839.6, city : 112, not developped : 0
+conv : 0.4%  |  visits : 878, dist ratio : 32843.6, city : 48, not developped : 0
+conv : 0.4%  |  visits : 863, dist ratio : 32854.2, city : 5, not developped : 0
+conv : 0.3%  |  visits : 848, dist ratio : 32855.4, city : 9, not developped : 0
+conv : 0.3%  |  visits : 809, dist ratio : 32871.3, city : 11, not developped : 0
+conv : 0.3%  |  visits : 795, dist ratio : 32879.5, city : 31, not developped : 0
+conv : 0.3%  |  visits : 789, dist ratio : 32884.6, city : 13, not developped : 0
+conv : 0.3%  |  visits : 786, dist ratio : 32882.1, city : 102, not developped : 0
+conv : 0.3%  |  visits : 784, dist ratio : 32883.9, city : 100, not developped : 0
+conv : 0.3%  |  visits : 782, dist ratio : 32882.9, city : 83, not developped : 0
+conv : 0.3%  |  visits : 780, dist ratio : 32885.3, city : 72, not developped : 0
+conv : 0.3%  |  visits : 771, dist ratio : 32890.6, city : 46, not developped : 0
+conv : 0.3%  |  visits : 749, dist ratio : 32898.7, city : 64, not developped : 0
+conv : 0.3%  |  visits : 745, dist ratio : 32901.6, city : 95, not developped : 0
+conv : 0.3%  |  visits : 734, dist ratio : 32907.2, city : 55, not developped : 0
+conv : 0.3%  |  visits : 732, dist ratio : 32907.6, city : 81, not developped : 0
+conv : 0.3%  |  visits : 713, dist ratio : 32916.7, city : 90, not developped : 0
+conv : 0.3%  |  visits : 680, dist ratio : 32935.6, city : 56, not developped : 0
+conv : 0.3%  |  visits : 656, dist ratio : 32948.8, city : 8, not developped : 0
+conv : 0.3%  |  visits : 622, dist ratio : 32967.8, city : 51, not developped : 0
+conv : 0.2%  |  visits : 581, dist ratio : 32994.9, city : 73, not developped : 0
+conv : 0.2%  |  visits : 557, dist ratio : 33017.6, city : 35, not developped : 0
+conv : 0.2%  |  visits : 522, dist ratio : 33039.8, city : 122, not developped : 0
+conv : 0.2%  |  visits : 432, dist ratio : 33126.7, city : 74, not developped : 0
+conv : 0.1%  |  visits : 332, dist ratio : 33260.6, city : 110, not developped : 0
+
+chosen : 
+
+visits : 6287, dist ratio : 32432.5, city : 40, not developped : 0
+
+root childs : 
+
+conv : 1.3%  |  visits : 82, dist ratio : 31899.3, city : 126, not developped : 46
+conv : 1.3%  |  visits : 79, dist ratio : 31993.8, city : 77, not developped : 49
+conv : 1.3%  |  visits : 79, dist ratio : 31965.7, city : 129, not developped : 49
+conv : 1.2%  |  visits : 78, dist ratio : 31950.2, city : 107, not developped : 50
+conv : 1.2%  |  visits : 76, dist ratio : 31972.8, city : 28, not developped : 52
+conv : 1.2%  |  visits : 74, dist ratio : 31995.3, city : 10, not developped : 54
+conv : 1.2%  |  visits : 74, dist ratio : 32020.1, city : 115, not developped : 54
+conv : 1.2%  |  visits : 73, dist ratio : 32046.4, city : 30, not developped : 55
+conv : 1.1%  |  visits : 72, dist ratio : 32021.2, city : 119, not developped : 56
+conv : 1.1%  |  visits : 71, dist ratio : 32035.0, city : 22, not developped : 57
+conv : 1.1%  |  visits : 70, dist ratio : 32061.4, city : 111, not developped : 58
+conv : 1.1%  |  visits : 69, dist ratio : 32084.3, city : 106, not developped : 59
+conv : 1.0%  |  visits : 66, dist ratio : 32122.7, city : 45, not developped : 62
+conv : 1.0%  |  visits : 66, dist ratio : 32110.2, city : 62, not developped : 62
+conv : 1.0%  |  visits : 65, dist ratio : 32154.3, city : 70, not developped : 63
+conv : 1.0%  |  visits : 65, dist ratio : 32148.1, city : 27, not developped : 63
+conv : 1.0%  |  visits : 65, dist ratio : 32134.2, city : 114, not developped : 63
+conv : 1.0%  |  visits : 65, dist ratio : 32137.7, city : 60, not developped : 63
+conv : 1.0%  |  visits : 64, dist ratio : 32150.7, city : 2, not developped : 64
+conv : 1.0%  |  visits : 63, dist ratio : 32175.0, city : 4, not developped : 65
+conv : 1.0%  |  visits : 62, dist ratio : 32182.4, city : 38, not developped : 66
+conv : 1.0%  |  visits : 62, dist ratio : 32170.3, city : 41, not developped : 66
+conv : 1.0%  |  visits : 62, dist ratio : 32179.7, city : 68, not developped : 66
+conv : 1.0%  |  visits : 61, dist ratio : 32206.6, city : 85, not developped : 67
+conv : 1.0%  |  visits : 61, dist ratio : 32196.5, city : 15, not developped : 67
+conv : 1.0%  |  visits : 60, dist ratio : 32217.5, city : 49, not developped : 68
+conv : 1.0%  |  visits : 60, dist ratio : 32269.8, city : 61, not developped : 68
+conv : 1.0%  |  visits : 60, dist ratio : 32231.7, city : 25, not developped : 68
+conv : 0.9%  |  visits : 59, dist ratio : 32240.3, city : 63, not developped : 69
+conv : 0.9%  |  visits : 59, dist ratio : 32266.7, city : 5, not developped : 69
+conv : 0.9%  |  visits : 58, dist ratio : 32255.8, city : 59, not developped : 70
+conv : 0.9%  |  visits : 58, dist ratio : 32280.8, city : 116, not developped : 70
+conv : 0.9%  |  visits : 57, dist ratio : 32332.2, city : 46, not developped : 71
+conv : 0.9%  |  visits : 57, dist ratio : 32269.8, city : 19, not developped : 71
+conv : 0.9%  |  visits : 57, dist ratio : 32264.5, city : 108, not developped : 71
+conv : 0.9%  |  visits : 57, dist ratio : 32258.1, city : 113, not developped : 71
+conv : 0.9%  |  visits : 57, dist ratio : 32269.4, city : 128, not developped : 71
+conv : 0.9%  |  visits : 56, dist ratio : 32277.9, city : 75, not developped : 72
+conv : 0.9%  |  visits : 56, dist ratio : 32292.6, city : 23, not developped : 72
+conv : 0.9%  |  visits : 56, dist ratio : 32292.2, city : 64, not developped : 72
+conv : 0.9%  |  visits : 56, dist ratio : 32373.2, city : 67, not developped : 72
+conv : 0.9%  |  visits : 55, dist ratio : 32319.4, city : 54, not developped : 73
+conv : 0.9%  |  visits : 55, dist ratio : 32308.5, city : 103, not developped : 73
+conv : 0.9%  |  visits : 54, dist ratio : 32375.7, city : 87, not developped : 74
+conv : 0.9%  |  visits : 54, dist ratio : 32368.6, city : 3, not developped : 74
+conv : 0.9%  |  visits : 54, dist ratio : 32320.6, city : 96, not developped : 74
+conv : 0.9%  |  visits : 54, dist ratio : 32325.7, city : 94, not developped : 74
+conv : 0.8%  |  visits : 53, dist ratio : 32349.6, city : 16, not developped : 75
+conv : 0.8%  |  visits : 53, dist ratio : 32340.1, city : 98, not developped : 75
+conv : 0.8%  |  visits : 53, dist ratio : 32367.5, city : 69, not developped : 75
+conv : 0.8%  |  visits : 52, dist ratio : 32361.0, city : 120, not developped : 76
+conv : 0.8%  |  visits : 52, dist ratio : 32391.3, city : 32, not developped : 76
+conv : 0.8%  |  visits : 51, dist ratio : 32458.1, city : 79, not developped : 77
+conv : 0.8%  |  visits : 50, dist ratio : 32407.9, city : 55, not developped : 78
+conv : 0.8%  |  visits : 50, dist ratio : 32426.3, city : 29, not developped : 78
+conv : 0.8%  |  visits : 50, dist ratio : 32488.9, city : 14, not developped : 78
+conv : 0.8%  |  visits : 49, dist ratio : 32430.3, city : 43, not developped : 79
+conv : 0.8%  |  visits : 49, dist ratio : 32507.0, city : 12, not developped : 79
+conv : 0.8%  |  visits : 49, dist ratio : 32445.2, city : 121, not developped : 79
+conv : 0.8%  |  visits : 49, dist ratio : 32442.8, city : 109, not developped : 79
+conv : 0.8%  |  visits : 48, dist ratio : 32462.4, city : 24, not developped : 80
+conv : 0.8%  |  visits : 48, dist ratio : 32480.0, city : 99, not developped : 80
+conv : 0.8%  |  visits : 48, dist ratio : 32481.1, city : 47, not developped : 80
+conv : 0.7%  |  visits : 47, dist ratio : 32561.2, city : 125, not developped : 81
+conv : 0.7%  |  visits : 47, dist ratio : 32582.6, city : 82, not developped : 81
+conv : 0.7%  |  visits : 47, dist ratio : 32485.7, city : 93, not developped : 81
+conv : 0.7%  |  visits : 46, dist ratio : 32572.0, city : 34, not developped : 82
+conv : 0.7%  |  visits : 46, dist ratio : 32502.3, city : 48, not developped : 82
+conv : 0.7%  |  visits : 46, dist ratio : 32501.3, city : 53, not developped : 82
+conv : 0.7%  |  visits : 46, dist ratio : 32526.4, city : 76, not developped : 82
+conv : 0.7%  |  visits : 45, dist ratio : 32530.3, city : 6, not developped : 83
+conv : 0.7%  |  visits : 45, dist ratio : 32536.1, city : 36, not developped : 83
+conv : 0.7%  |  visits : 45, dist ratio : 32536.3, city : 17, not developped : 83
+conv : 0.7%  |  visits : 45, dist ratio : 32578.4, city : 95, not developped : 83
+conv : 0.7%  |  visits : 45, dist ratio : 32574.2, city : 89, not developped : 83
+conv : 0.7%  |  visits : 44, dist ratio : 32584.0, city : 44, not developped : 84
+conv : 0.7%  |  visits : 44, dist ratio : 32644.1, city : 92, not developped : 84
+conv : 0.7%  |  visits : 44, dist ratio : 32572.1, city : 39, not developped : 84
+conv : 0.7%  |  visits : 43, dist ratio : 32608.2, city : 127, not developped : 85
+conv : 0.7%  |  visits : 43, dist ratio : 32592.2, city : 58, not developped : 85
+conv : 0.7%  |  visits : 43, dist ratio : 32614.5, city : 80, not developped : 85
+conv : 0.7%  |  visits : 43, dist ratio : 32629.2, city : 35, not developped : 85
+conv : 0.7%  |  visits : 43, dist ratio : 32597.8, city : 1, not developped : 85
+conv : 0.7%  |  visits : 43, dist ratio : 32625.7, city : 52, not developped : 85
+conv : 0.7%  |  visits : 43, dist ratio : 32635.0, city : 90, not developped : 85
+conv : 0.7%  |  visits : 43, dist ratio : 32587.0, city : 51, not developped : 85
+conv : 0.7%  |  visits : 42, dist ratio : 32623.2, city : 8, not developped : 86
+conv : 0.7%  |  visits : 42, dist ratio : 32701.1, city : 42, not developped : 86
+conv : 0.7%  |  visits : 41, dist ratio : 32689.0, city : 102, not developped : 87
+conv : 0.7%  |  visits : 41, dist ratio : 32646.1, city : 74, not developped : 87
+conv : 0.7%  |  visits : 41, dist ratio : 32702.5, city : 81, not developped : 87
+conv : 0.7%  |  visits : 41, dist ratio : 32699.3, city : 9, not developped : 87
+conv : 0.6%  |  visits : 40, dist ratio : 32702.5, city : 91, not developped : 88
+conv : 0.6%  |  visits : 40, dist ratio : 32695.2, city : 105, not developped : 88
+conv : 0.6%  |  visits : 40, dist ratio : 32780.5, city : 112, not developped : 88
+conv : 0.6%  |  visits : 40, dist ratio : 32693.2, city : 26, not developped : 88
+conv : 0.6%  |  visits : 40, dist ratio : 32686.8, city : 88, not developped : 88
+conv : 0.6%  |  visits : 40, dist ratio : 32686.0, city : 57, not developped : 88
+conv : 0.6%  |  visits : 39, dist ratio : 32718.4, city : 11, not developped : 89
+conv : 0.6%  |  visits : 39, dist ratio : 32718.4, city : 13, not developped : 89
+conv : 0.6%  |  visits : 39, dist ratio : 32754.2, city : 117, not developped : 89
+conv : 0.6%  |  visits : 38, dist ratio : 32834.7, city : 123, not developped : 90
+conv : 0.6%  |  visits : 38, dist ratio : 32754.0, city : 66, not developped : 90
+conv : 0.6%  |  visits : 38, dist ratio : 32781.6, city : 104, not developped : 90
+conv : 0.6%  |  visits : 37, dist ratio : 32858.3, city : 31, not developped : 91
+conv : 0.6%  |  visits : 37, dist ratio : 32778.6, city : 37, not developped : 91
+conv : 0.6%  |  visits : 36, dist ratio : 32830.8, city : 65, not developped : 92
+conv : 0.6%  |  visits : 36, dist ratio : 32921.3, city : 7, not developped : 92
+conv : 0.6%  |  visits : 36, dist ratio : 32910.5, city : 84, not developped : 92
+conv : 0.6%  |  visits : 35, dist ratio : 32903.0, city : 50, not developped : 93
+conv : 0.6%  |  visits : 35, dist ratio : 32979.9, city : 118, not developped : 93
+conv : 0.6%  |  visits : 35, dist ratio : 32859.6, city : 83, not developped : 93
+conv : 0.5%  |  visits : 34, dist ratio : 33004.4, city : 100, not developped : 94
+conv : 0.5%  |  visits : 34, dist ratio : 32898.5, city : 124, not developped : 94
+conv : 0.5%  |  visits : 34, dist ratio : 32948.4, city : 122, not developped : 94
+conv : 0.5%  |  visits : 33, dist ratio : 32987.3, city : 101, not developped : 95
+conv : 0.5%  |  visits : 33, dist ratio : 32940.5, city : 18, not developped : 95
+conv : 0.5%  |  visits : 33, dist ratio : 32938.3, city : 21, not developped : 95
+conv : 0.5%  |  visits : 33, dist ratio : 32980.6, city : 20, not developped : 95
+conv : 0.5%  |  visits : 32, dist ratio : 32980.7, city : 110, not developped : 96
+conv : 0.5%  |  visits : 32, dist ratio : 33015.0, city : 71, not developped : 96
+conv : 0.5%  |  visits : 31, dist ratio : 33034.7, city : 72, not developped : 97
+conv : 0.5%  |  visits : 30, dist ratio : 33081.6, city : 33, not developped : 98
+conv : 0.4%  |  visits : 26, dist ratio : 33334.0, city : 56, not developped : 102
+conv : 0.4%  |  visits : 25, dist ratio : 33406.3, city : 86, not developped : 103
+conv : 0.4%  |  visits : 24, dist ratio : 33463.9, city : 97, not developped : 104
+conv : 0.3%  |  visits : 22, dist ratio : 33623.0, city : 73, not developped : 106
+conv : 0.3%  |  visits : 21, dist ratio : 33667.1, city : 78, not developped : 107
+
+chosen : 
+
+visits : 82, dist ratio : 31899.3, city : 126, not developped : 46
+
+root childs : 
+
+conv : 1.2%  |  visits : 1, dist ratio : 32260.0, city : 41, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 30469.0, city : 25, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 33259.0, city : 115, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 29138.0, city : 99, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31810.0, city : 74, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31186.0, city : 68, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31677.0, city : 20, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 30927.0, city : 61, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31955.0, city : 15, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 34462.0, city : 81, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32345.0, city : 30, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31872.0, city : 110, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 28805.0, city : 24, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 34588.0, city : 114, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31547.0, city : 66, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32168.0, city : 1, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32538.0, city : 26, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 30752.0, city : 43, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 28951.0, city : 91, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31493.0, city : 57, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 29639.0, city : 111, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 34309.0, city : 46, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32063.0, city : 48, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 29131.0, city : 42, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32148.0, city : 18, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 30536.0, city : 32, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32674.0, city : 105, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31988.0, city : 50, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31843.0, city : 95, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 34227.0, city : 85, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32136.0, city : 112, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 35236.0, city : 77, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32792.0, city : 63, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32578.0, city : 34, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 34532.0, city : 96, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32279.0, city : 94, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31795.0, city : 35, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32837.0, city : 93, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 33251.0, city : 78, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32002.0, city : 13, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 27996.0, city : 120, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 34302.0, city : 129, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 30622.0, city : 7, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32563.0, city : 83, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32292.0, city : 102, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31580.0, city : 100, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31219.0, city : 39, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31160.0, city : 51, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31643.0, city : 86, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31047.0, city : 123, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 33856.0, city : 121, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32136.0, city : 31, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31116.0, city : 58, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31316.0, city : 28, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 33928.0, city : 90, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 26675.0, city : 70, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 33381.0, city : 23, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 30878.0, city : 21, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 33429.0, city : 127, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 33186.0, city : 65, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 33436.0, city : 101, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31859.0, city : 10, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 33796.0, city : 44, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31722.0, city : 73, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32582.0, city : 69, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 34580.0, city : 107, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 29384.0, city : 87, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 28738.0, city : 125, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 30577.0, city : 60, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 34039.0, city : 109, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 30021.0, city : 37, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 30117.0, city : 9, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 31463.0, city : 117, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32048.0, city : 84, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 30561.0, city : 119, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32224.0, city : 122, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 34054.0, city : 12, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 30682.0, city : 47, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 34120.0, city : 16, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32337.0, city : 75, not developped : 126
+conv : 1.2%  |  visits : 1, dist ratio : 32024.0, city : 128, not developped : 126
+
+chosen : 
+
+visits : 1, dist ratio : 26675.0, city : 70, not developped : 126
+
+root childs : 
+
+
+
+_________________END DEBUG TREE_______________

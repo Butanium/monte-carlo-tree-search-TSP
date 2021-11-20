@@ -24,6 +24,11 @@ let print_path path =
         if i = Array.length path - 1 then Printf.printf "-> [%d]\n" 
         else Printf.printf "-> %d ") v) path
 
+let prerr_path path = 
+    let prerrf = fun f x-> prerr_string (Printf.sprintf f x) in 
+    Array.iteri (fun i v -> (if i = 0 then prerrf "[%d] " else 
+        if i = Array.length path - 1 then prerrf "-> [%d]\n" 
+        else prerrf "-> %d ") v) path
 let print_best_path config = 
     print_path @@ Readertsp.open_path config
 

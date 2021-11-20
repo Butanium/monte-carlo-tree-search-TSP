@@ -4,8 +4,12 @@
 exception Empty
 
 type 'a t = {mutable size: int; content : ('a * float) array; mutable tot : float}
-(** [size], la taille actuelle de la file, [content] une array dont les [size] premiers �l�ments
-repr�sentent les �l�ments restant dans la file avec leur probabilit�, [tot] est la somme des probabilit�s*)
+(* [size], la taille actuelle de la file, [content] une array dont les [size] premiers �l�ments
+repr�sentent les �l�ments restant dans la file avec leur probabilit�, [tot] est la somme des probabilit�s *)
+let replace_element queue index element =
+    let _, w = queue.content.(index) in
+    queue.content.(index) <- (element, w)
+(* Remplace l'élément à l'index [index] de la queue par [element]*)
 
 let simple_create size arr =
     {size; content = Array.map (fun x -> x, 1.) arr; tot = float_of_int size}
@@ -23,15 +27,28 @@ let is_empty q = q.size = 0
 let get_length q = q.size
 (* Renvoie la taille de la file *)
 
+let set_length q size = 
+    if size > Array.length q.content then 
+        raise @@ Invalid_argument "Given size is bigger than content size";
+    q.size <- size;
+    q.tot <- let acc = ref 0. in 
+        for i = 0 to size - 1 do  
+            let _,w = q.content.(i) in 
+            acc := !acc +. w
+        done;
+        !acc
+
+
 let take q =
-(* Selectionne al�atoirement un �l�ment *)
+(* Selectionne al�atoirement un �l�ment *)  
+    (* Random.self_init(); *)
     if q.size = 0 then raise Empty else
-    let rec aux k acc = if k >= q.size - 1 then k else (
+    let rec aux k acc = if k >= q.size - 1 then q.size - 1 else (
         let acc = acc -. let _, p = q.content.(k) in p in
                 if acc < 1e-10 then k else aux (k+1) acc
             )
     in
-    let i = aux  0 @@ Random.float 1. *. q.tot  in
+    let i = aux 0 @@ Random.float 1. *. q.tot  in
     (* [i] l'index selectionn� al�atoirement *)
         let res, p as r = q.content.(i) in
             q.content.(i) <- q.content.(q.size - 1);
