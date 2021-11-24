@@ -1,4 +1,4 @@
-(executable
- (name MCTS_vs_SA)
- (libraries graphics mcts)
+(executables 
+ (names MCTS_vs_SA Monte_Carlo_example iterated_2opt_example Simulated_Annealing_example)
+ (libraries mcts)
 )

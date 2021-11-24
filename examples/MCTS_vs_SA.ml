@@ -22,8 +22,5 @@ let () =
     print_endline "\nsend anything to see the mcts path";
     let _ = read_line() in 
     let title = "\nmcts path" in 
-    Showtsp.show_solution ~title cities mcts_path;
-    print_endline "\nsend anything to exit";
-    let _ = read_line() in 
-        ()
+    Showtsp.show_solution_and_wait ~title cities mcts_path;
 

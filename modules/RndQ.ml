@@ -27,7 +27,7 @@ let is_empty q = q.size = 0
 let get_length q = q.size
 (* Renvoie la taille de la file *)
 
-let set_length q size = 
+let set_size q size = 
     if size > Array.length q.content then 
         raise @@ Invalid_argument "Given size is bigger than content size";
     q.size <- size;
@@ -41,7 +41,6 @@ let set_length q size =
 
 let take q =
 (* Selectionne al�atoirement un �l�ment *)  
-    (* Random.self_init(); *)
     if q.size = 0 then raise Empty else
     let rec aux k acc = if k >= q.size - 1 then q.size - 1 else (
         let acc = acc -. let _, p = q.content.(k) in p in

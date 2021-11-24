@@ -19,11 +19,12 @@ in [this paper](http://sasimi.jp/new/sasimi2016/files/archive/pdf/p352_R4-14.pdf
 playouts and reduce their size, can end up in a better result.
 
 ## How can I test it ?
+
 If you don't want to use dune you can still run an old version of the project online - see toplevel release.
 
 If you have dune, 
 - Open and build the project using `dune build`. 
-- Then chose a test or an example you want and run it using `dune exec ./dir_name/exec_name.exe`. For example : `dune exec ./tests/MCTS_main.exe` 
+- Then chose a test or an example you want and run it using `dune exec ./dir_name/exec_name.exe`. For example : `dune exec ./tests/MCTS_main.exe` or `dune exec ./examples/MCTS_vs_SA.exe`
 
 ## Ressources
 

@@ -1,4 +1,4 @@
-(executable
- (name MCTS_main)
+(executables
+ (names MCTS_main)
  (libraries graphics mcts)
 )

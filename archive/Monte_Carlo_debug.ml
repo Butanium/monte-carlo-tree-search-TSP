@@ -10,8 +10,8 @@ let deb = {playout_time = 0.; available_time = 0.; pl_creation = 0.; pl_getlent 
 let reset_deb() = deb.playout_time <- 0.; deb.available_time <- 0.; deb.pl_creation <- 0.; deb.pl_getlent <- 0.;
     deb.pl_store <- 0.; deb.pl_weight_update <- 0.; deb.max_depth <- 0; deb.score_hist <- []; deb.best_score_hist <- []
 
-type node_info = {mutable visit : float; mutable score : float; city : int; tot_dist : int; mutable childs : mtc_node list; 
-    mutable to_expend : int RndQ.t}
+type node_info = {mutable visit : float; mutable score : float; mutable best_score : float; city : int; tot_dist : int; mutable childs : mtc_node list; 
+    mutable to_expand : int RndQ.t}
 (* [FR] le type qui contient les infos contenues dans chaque node *)
 (* [EN] The information stored in a node *)
 
@@ -71,6 +71,7 @@ let queue_manager = Mutable_Manager.create (fun () -> RndQ.simple_create 1 [|-1|
 let empty_queue = RndQ.simple_create 0 [||] 
 
 let init() =
+    Random.self_init();  
     playout_path := Array.make !arg.city_count (-1);
     let arr = Array.make !arg.city_count (-1) in
     playout_queue := RndQ.simple_create !arg.city_count arr;
@@ -90,7 +91,7 @@ let available queue =
     let size = (!arg.city_count - !arg.path_size)
     in
     RndQ.reset queue;
-    RndQ.set_length queue size;
+    RndQ.set_size queue size;
     for i=0 to size-1 do 
         RndQ.replace_element queue i (aux())
     done;
@@ -151,26 +152,29 @@ let rec retropropagation node value =
 (* [EN] Update the node visited during the exploration according to the playout score *)
     node.info.visit <- node.info.visit +. 1.;
     node.info.score <- node.info.score +. value;
+    if value < node.info.best_score then (
+        node.info.best_score <- value;
+    );
     match node.heritage with
         | Root -> ()
         | Parent parent -> retropropagation parent value
 
 
-let expend node =
+let expand node =
 (* [FR] D�veloppe l'arbre en cr�ant un nouveau noeud reli� � 'node' *)
-(* [EN] Expend the tree by adding a new node linked to 'node' *)
-    let city = RndQ.take node.info.to_expend in
-    if RndQ.is_empty node.info.to_expend then (
-        Mutable_Manager.free queue_manager node.info.to_expend;
-        node.info.to_expend <- empty_queue
+(* [EN] Expand the tree by adding a new node linked to 'node' *)
+    let city = RndQ.take node.info.to_expand in
+    if RndQ.is_empty node.info.to_expand then (
+        Mutable_Manager.free queue_manager node.info.to_expand;
+        node.info.to_expand <- empty_queue
     );
     !arg.visited <- IntSet.add city !arg.visited;
     !arg.current_path.(!arg.path_size) <- city;
     !arg.path_size <- !arg.path_size + 1;
     deb.max_depth <- max deb.max_depth !arg.path_size;
     let tot_dist = node.info.tot_dist + !arg.eval node.info.city city in
-    let to_expend = available @@ Mutable_Manager.get queue_manager in 
-    let info = {visit = 0.; score = 0.; city; tot_dist; childs=[]; to_expend} in
+    let to_expand = available @@ Mutable_Manager.get queue_manager in 
+    let info = {visit = 0.; score = 0.; best_score = infinity; city; tot_dist; childs=[]; to_expand} in
     let new_node = {info; heritage = Parent node} in
     node.info.childs <- new_node :: node.info.childs;
     let result = float_of_int @@ playout city tot_dist in
@@ -221,7 +225,7 @@ let rec selection node =
 (* [EN] Browse through the tree, picking the best child recursively until it reachs a leaf
 or a node with undeveloped children *)
     update_arg node;
-    if RndQ.is_empty node.info.to_expend then
+    if RndQ.is_empty node.info.to_expand then
         match node.info.childs with
             | [] -> let dist = node.info.tot_dist + !arg.eval node.info.city !arg.current_path.(0) in
                 if dist < !arg.best_score then (
@@ -233,7 +237,7 @@ or a node with undeveloped children *)
                 retropropagation node @@ float_of_int dist
             | _ -> selection @@ get_best_child node
     else
-        expend node
+        expand node
 
 
 let reset_arg() =
@@ -243,8 +247,8 @@ let reset_arg() =
     !arg.visited <- IntSet.empty
 
 let debug_node node =
-    Printf.printf "visits : %.0f, dist ratio : %.1f, city : %d, not developped : %d\n"
-        node.info.visit (node.info.score /. node.info.visit) node.info.city node.info.to_expend.size
+    Printf.printf "visits : %.0f, best score : %.1f, average score : %.1f, city : %d, not developped : %d\n"
+        node.info.visit node.info.best_score (node.info.score /. node.info.visit) node.info.city node.info.to_expand.size
 
 let rec debug_mcts root =
     print_endline "\nchosen : \n";
@@ -264,7 +268,7 @@ let rec debug_mcts root =
     end
 
 
-let procede_mcts ?(debug = true) playout_selection_mode exploration_mode city_count eval max_time max_playout =
+let procede_mcts ?(debug_tree = true) playout_selection_mode exploration_mode city_count eval max_time max_playout =
 (* [FR] Cr�er d�veloppe l'abre en gardant en m�moire le meilleur chemin emprunt� durant les diff�rents playout *)
 (* [EN] Create and develop the tree, keeping in memory the best path done during the playouts *)
     reset_deb();
@@ -275,8 +279,8 @@ let procede_mcts ?(debug = true) playout_selection_mode exploration_mode city_co
 
     let playout_count = ref 0 in
     let start_time = Sys.time() in
-    let info = try ({visit = 0.; score = 0.; city = 0; tot_dist = 0; childs = [];
-        to_expend = RndQ.simple_create (city_count - 1) @@ Array.init (city_count - 1) (fun x -> x + 1)}) with
+    let info = try ({visit = 0.; score = 0.; best_score = infinity; city = 0; tot_dist = 0; childs = [];
+        to_expand = RndQ.simple_create (city_count - 1) @@ Array.init (city_count - 1) (fun x -> x + 1)}) with
             Invalid_argument _ -> failwith "info" in
     let root = {info; heritage = Root} in
 
@@ -288,18 +292,21 @@ let procede_mcts ?(debug = true) playout_selection_mode exploration_mode city_co
         if !playout_count = city_count - 1 then
             !arg.get_node_score <- get_node_score_fun root exploration_mode
     done;
-    if debug then begin
-        print_endline "\n\n _______________START DEBUG INFO_______________\n";
-        Printf.printf "\n%d playouts, %.0f s, %d max depth, best score : %d " !playout_count (Sys.time() -. start_time) deb.max_depth !arg.best_score;
-        Printf.printf "\n%.1f playout time, %.1f available time, %.3f playout time ratio\n %.3f creation time ratio in playout \n" deb.playout_time deb.available_time
-            (deb.playout_time /. (Sys.time() -. start_time)) (deb.pl_creation /. deb.playout_time);
-        Printf.printf "weight update ratio : %.3f, get lenght ratio : %.3f , store ratio : %.3f \n" (deb.pl_weight_update /. deb.playout_time) (deb.pl_getlent
-        /. deb.playout_time) (deb.pl_store /. deb.playout_time);
-        print_endline "\n________________END DEBUG INFO_________________\n";
+
+    print_endline "\n\n _______________START DEBUG INFO_______________\n";
+    Printf.printf "\n%d playouts, %.0f s, %d max depth, best score : %d " !playout_count (Sys.time() -. start_time) deb.max_depth !arg.best_score;
+    Printf.printf "\n%.1f playout time, %.1f available time, %.3f playout time ratio\n %.3f creation time ratio in playout \n" deb.playout_time deb.available_time
+        (deb.playout_time /. (Sys.time() -. start_time)) (deb.pl_creation /. deb.playout_time);
+    Printf.printf "weight update ratio : %.3f, get lenght ratio : %.3f , store ratio : %.3f \n" (deb.pl_weight_update /. deb.playout_time) (deb.pl_getlent
+    /. deb.playout_time) (deb.pl_store /. deb.playout_time);
+    print_endline "\n________________END DEBUG INFO_________________\n";
+
+    if debug_tree then begin
         print_endline "\n\n_________________START DEBUG TREE_______________\n";
         debug_mcts root;
         print_endline "\n\n_________________END DEBUG TREE_______________\n";
     end;
+    Printf.printf "\n%d arrays created, %d arrays reused (yes that's ridiculous)\n" queue_manager.d_created queue_manager.d_reused;
     !arg.best_path
 
 

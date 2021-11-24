@@ -30,5 +30,6 @@ let prerr_path path =
         if i = Array.length path - 1 then prerrf "-> [%d]\n" 
         else prerrf "-> %d ") v) path
 let print_best_path config = 
+    Printf.printf "\nbest path for %s :\n" config;
     print_path @@ Readertsp.open_path config
 
