@@ -71,7 +71,7 @@ let iter_two_opt n eval city_count rnd_mode =
     for _ = 1 to n do
         let path = random_path q eval rnd_mode city_count in
         let _ = opt_fast eval path in
-        let len = Basetsp.path_length eval path in
+        let len = Base_tsp.path_length eval path in
         if len < !best_len then (
             best_len := len;
             for i = 0 to city_count -1 do

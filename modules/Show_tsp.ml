@@ -60,5 +60,5 @@ let show_solution_list cities sol =
     lineto_city x
     )
 let show_best_path config =
-    let _, cities = Readertsp.open_tsp config in
-    show_solution cities (Readertsp.open_path config)
+    let _, cities = Reader_tsp.open_tsp config in
+    show_solution cities (Reader_tsp.open_path config)

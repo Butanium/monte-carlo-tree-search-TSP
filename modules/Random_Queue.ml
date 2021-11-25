@@ -1,11 +1,11 @@
-(*  permettant de cr�er une file al�atoire : chaque �l�ment
-� un certain poids qui d�termine la probabilit� qu'il a d'�tre tir� *)
+(*  permettant de créer une file aléatoire : chaque élément
+é un certain poids qui détermine la probabilité qu'il a d'être tiré *)
 
 exception Empty
 
 type 'a t = {mutable size: int; content : ('a * float) array; mutable tot : float}
-(* [size], la taille actuelle de la file, [content] une array dont les [size] premiers �l�ments
-repr�sentent les �l�ments restant dans la file avec leur probabilit�, [tot] est la somme des probabilit�s *)
+(* [size], la taille actuelle de la file, [content] une array dont les [size] premiers éléments
+représentent les éléments restant dans la file avec leur probabilité, [tot] est la somme des probabilités *)
 let replace_element queue index element =
     let _, w = queue.content.(index) in
     queue.content.(index) <- (element, w)
@@ -13,13 +13,13 @@ let replace_element queue index element =
 
 let simple_create size arr =
     {size; content = Array.map (fun x -> x, 1.) arr; tot = float_of_int size}
-(* Cr�er une file al�atoire contenant les [size] premiers �l�ments de [arr], o� tous les �l�ments
-ont les m�mes chances de sortir *)
+(* Créer une file aléatoire contenant les [size] premiers éléments de [arr], oé tous les éléments
+ont les mêmes chances de sortir *)
 
 let create size arr weights = let tot = Array.fold_left (+.) 0. weights in
     {size; content = Array.mapi (fun i x -> x, weights.(i)) arr; tot}
-(* Cr�er une file al�atoire contenant les [size] premiers �l�ments de [arr] o� les chances de sortir
-d'un �l�ment de arr est pond�r� par l'�l�ment de m�me index de [weights] *)
+(* Créer une file aléatoire contenant les [size] premiers éléments de [arr] oé les chances de sortir
+d'un élément de arr est pondéré par l'élément de même index de [weights] *)
 
 let is_empty q = q.size = 0
 (* Renvoie true si la file est vide *)
@@ -40,7 +40,7 @@ let set_size q size =
 
 
 let take q =
-(* Selectionne al�atoirement un �l�ment *)  
+(* Sélectionne aléatoirement un élément *)
     if q.size = 0 then raise Empty else
     let rec aux k acc = if k >= q.size - 1 then q.size - 1 else (
         let acc = acc -. let _, p = q.content.(k) in p in
@@ -48,22 +48,22 @@ let take q =
             )
     in
     let i = aux 0 @@ Random.float 1. *. q.tot  in
-    (* [i] l'index selectionn� al�atoirement *)
+    (* [i] l'index sélectionné aléatoirement *)
         let res, p as r = q.content.(i) in
             q.content.(i) <- q.content.(q.size - 1);
-            (* l'�l�ment i s�lectionn� est remplac� par le dernier �l�ment de la file *)
+            (* l'élément i sélectionné est remplacé par le dernier élément de la file *)
             q.content.(q.size - 1) <- r;
-            (* On conserve l'�l�ment selectionn� dans l'array mais il ne fait plus partie de la file.
-            On le conserve afin de pouvoir r�utiliser la file si besoin *)
+            (* On conserve l'élément sélectionné dans le tableau mais il ne fait plus partie de la file.
+            On le conserve afin de pouvoir réutiliser la file si besoin *)
             q.size <- q.size - 1;
-            (* taille r�duite de 1 *)
+            (* taille réduite de 1 *)
             q.tot <- q.tot -. p;
-            (* Poids total r�duit de la probabilit� de l'�l�ment choisi *)
+            (* Poids total réduit de la probabilité de l'élément choisi *)
             res
 
 let tot_empty q =
     Array.init q.size (fun _ -> take q)
-(* Cr�er une array contenant les �l�ments restant dans la file, dans un ordre al�atoire. *)
+(* Créer une array contenant les éléments restant dans la file, dans un ordre aléatoire. *)
 
 let change_weights f q =
     let tot = ref 0. in
@@ -75,9 +75,9 @@ let change_weights f q =
             tot := !tot +. new_w
     done;
     q.tot <- !tot
-(* change les poids des diff�rents �l�ments selon f *)
+(* change les poids des différents éléments selon f *)
 
 let reset q =
-(* Remet tous les �l�ments d�j� tir�s dans la file *)
+(* Remet tous les éléments déjà tirés dans la file *)
     q.size <- Array.length q.content;
     q.tot <- Array.fold_left (fun acc (_,w) -> acc +. w) 0. q.content

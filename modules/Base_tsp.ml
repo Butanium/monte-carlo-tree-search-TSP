@@ -16,7 +16,7 @@ let path_length eval path =
     !s + eval path.(0) path.(Array.length path - 1)
 
 let best_path_length config eval =
-    let path = Readertsp.open_path config in
+    let path = Reader_tsp.open_path config in
     path_length eval path
 
 let print_path path = 
@@ -31,5 +31,5 @@ let prerr_path path =
         else prerrf "-> %d ") v) path
 let print_best_path config = 
     Printf.printf "\nbest path for %s :\n" config;
-    print_path @@ Readertsp.open_path config
+    print_path @@ Reader_tsp.open_path config
 
