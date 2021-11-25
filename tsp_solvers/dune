@@ -1,0 +1,9 @@
+(library
+ (wrapped false)
+ (name tsp_solvers)
+ (modules
+  Two_Opt
+  Monte_Carlo
+  Simulated_Annealing
+  )
+ (libraries graphics tools tsp_modules))

@@ -1,5 +1,5 @@
 
-let open_tsp ?(file_path = "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp") tsp_name =
+let open_tsp ?(file_path = "tsp_instances") tsp_name =
 let city_count = Scanf.sscanf tsp_name "%[^0-9]%d" (fun _ c -> c)
 in
 let cities = Array.make city_count (0., 0.)
@@ -21,7 +21,7 @@ let rec loop started = try (let s = String.trim @@ input_line ic in
 in loop false;
 city_count, cities
 
-let open_path ?(file_path = "C:/Users/Clement/Documents/prepa/tipe/ocaml-tsp/tsp") tsp_name =
+let open_path ?(file_path = "tsp_instances") tsp_name =
 let city_count = Scanf.sscanf tsp_name "%[^0-9]%d" (fun _ c -> c)
 in
 let path = Array.make city_count 0

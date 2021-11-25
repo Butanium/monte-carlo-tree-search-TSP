@@ -54,18 +54,18 @@ type random_creation = Roulette | Random
 
 let weight_update eval last q = function
     | Random -> ()
-    | Roulette -> RndQ.change_weights (fun _ x -> 1. /. float_of_int(eval x last)) q
+    | Roulette -> Random_Queue.change_weights (fun _ x -> 1. /. float_of_int(eval x last)) q
 
 let random_path q eval mode city_count =
     Array.init city_count (
-        fun _ -> let v = RndQ.take q in
+        fun _ -> let v = Random_Queue.take q in
             weight_update eval v q mode;
             v
     )
 
 let iter_two_opt n eval city_count rnd_mode =
     let arr = Array.init city_count (Fun.id) in
-    let q = RndQ.simple_create city_count arr in
+    let q = Random_Queue.simple_create city_count arr in
     let best_len = ref max_int in
     let best_path = Array.make city_count (-1) in
     for _ = 1 to n do
@@ -78,7 +78,7 @@ let iter_two_opt n eval city_count rnd_mode =
                 best_path.(i) <- path.(i)
             done
         );
-        RndQ.reset q
+        Random_Queue.reset q
 
     done;
     best_path

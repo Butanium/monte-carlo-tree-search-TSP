@@ -1,0 +1,9 @@
+(library
+ (wrapped false)
+ (name tsp_modules)
+ (modules
+  Reader_tsp
+  Base_tsp
+  Show_tsp
+  )
+ (libraries graphics Str))

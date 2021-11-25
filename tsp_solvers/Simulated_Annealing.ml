@@ -37,8 +37,8 @@ let get_randomize_fun mode =
 
 
 let start_sa city_count eval init_T final_T iter_count cooling_ratio rnd_mode =
-    let q = RndQ.simple_create city_count @@ Array.init city_count Fun.id in
-    arg.solution <- RndQ.tot_empty q;
+    let q = Random_Queue.simple_create city_count @@ Array.init city_count Fun.id in
+    arg.solution <- Random_Queue.tot_empty q;
     arg.problem_size <- float_of_int @@ city_count - 1;
     arg.eval <- eval;
     arg.city_count <- city_count;

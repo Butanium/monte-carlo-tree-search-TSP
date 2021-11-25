@@ -1,8 +1,8 @@
 /_build/
-/.idea/
-/.vscode/
-todo
+/.*/
+todo*
 note
 commands
 /archive/
-/crash-test/
+/scratch*/
+/logs/

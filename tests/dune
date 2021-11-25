@@ -1,4 +1,4 @@
 (executables
  (names MCTS_main)
- (libraries graphics mcts)
+ (libraries tsp_modules tsp_solvers)
 )

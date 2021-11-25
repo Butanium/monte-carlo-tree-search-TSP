@@ -1,5 +1,5 @@
 module IntSet = Set.Make(Int)
-let primalg eval city_count =
+let prim_alg eval city_count =
     let init_visited = IntSet.singleton 0 in
     let init_visit =
         let rec aux1 i acc =
