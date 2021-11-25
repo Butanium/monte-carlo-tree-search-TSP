@@ -3,7 +3,7 @@ let file_path = "tsp_instances" (* your path to the tsp directory, use the path 
 let city_count, cities = Reader_tsp.open_tsp ~file_path city_config
 let eval = Base_tsp.dists cities
 let debug_tree = true 
-let max_time = 1. 
+let max_time = 180. (* 3 minute of sim, can be increased a lot *) 
 let max_playout = 100000000
 let path  = Monte_Carlo.proceed_mcts ~debug_tree ~city_config Monte_Carlo.Roulette Monte_Carlo.Min_spanning_tree city_count eval max_time max_playout
 
