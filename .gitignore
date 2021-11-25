@@ -1,4 +1,4 @@
-/_build/
+/_*/
 /.*/
 todo*
 note
@@ -6,3 +6,4 @@ commands
 /archive/
 /scratch*/
 /logs/
+/*/_*/

@@ -1,9 +1,10 @@
+(*run command : dune exec ./tests/MCTS_main.exe *)
 let city_config = "att48"
 let file_path = "tsp_instances" (* your path to the tsp directory, use the path from root if it doesn't work *)
 let city_count, cities = Reader_tsp.open_tsp ~file_path city_config
 let eval = Base_tsp.dists cities
 let debug_tree = true 
-let max_time = 1. 
+let max_time = 60. *. 30. 
 let max_playout = 100000000
 let path  = Monte_Carlo.proceed_mcts ~debug_tree ~city_config Monte_Carlo.Roulette Monte_Carlo.Min_spanning_tree city_count eval max_time max_playout
 
