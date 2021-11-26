@@ -9,7 +9,8 @@ let max_playout = 100000000
 let path  = Monte_Carlo.proceed_mcts ~debug_tree ~city_config Monte_Carlo.Roulette Monte_Carlo.Min_spanning_tree city_count eval max_time max_playout
 
 
-let () = print_endline "mcts path : "; Base_tsp.print_path path; Show_tsp.show_solution_and_wait cities path(* Show the computed solution *)
+let () = Graphics.sound 100 2000; Graphics.sound 200 1000; (*make some sound when monte carlo is complete *)
+    print_endline "mcts path : "; Base_tsp.print_path path; Show_tsp.show_solution_and_wait cities path(* Show the computed solution *)
 
 let () =
     let len = Base_tsp.path_length eval path in
