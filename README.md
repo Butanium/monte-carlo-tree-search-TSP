@@ -1,7 +1,6 @@
-# Travelling on ocaml salesman problem
+# Monte Carlo Tree Search for TSP
 
-Different heuristic solutions for the TSP written in ocaml. My main goal is to study the effectiveness of the Monte
-Carlo Tree Search to solve the TSP.
+In this repo, I made different heuristic solutions for the TSP written in ocaml. My main goal is to study the effectiveness of the Monte Carlo Tree Search to solve the TSP.
 
 ## Available heuristics :
 
