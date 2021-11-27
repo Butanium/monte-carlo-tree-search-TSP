@@ -1,3 +1,4 @@
+module RndQ = Random_Queue
 let invertPath i j path =
     for k = 0 to (j - i)/2 - 1 do
          let t = path.(i+1+k) in
@@ -30,23 +31,32 @@ let opt_best ?(debug = false) ?(partial_path = false) ?(maxi = -1) eval path =
         )
     in loop 1
 
-let opt_fast ?(debug = false) ?(partial_path = false) ?(maxi = -1) eval path =
-    let bound = Array.length path in
+exception Timed_Out
+let opt_fast ?(debug = false) ?(partial_path = false) ?(maxi = -1) ?(max_time = infinity) 
+             ?(lower_bound = 0) ?(upper_bound = -1) eval path =
+    (* If `partial_path` is set to true the algorithm won't try to optimize the edge between the end of the path and the beginning. 
+       It's useful if you want to optimize the part of a path *)
+    let bound = if upper_bound < 0 then Array.length path else upper_bound in
     let partial = if partial_path then 1 else 0 in
+    let start_time = Sys.time() in 
     let rec rec_while i = (i < maxi || maxi < 0) &&
-        not (loop1 0) && rec_while (i+1)
+        not (loop1 lower_bound) && Sys.time() -. start_time < max_time && rec_while (i+1)
     and loop1 i = i >= bound - 3 - partial  || (loop2 i (i+2) && loop1 (i+1))
-    and loop2 i j = j >= bound - max (2*partial) (1-i)  || (
-        let diff = eval path.(i) path.(j) + eval path.(i+1) path.((j+1) mod bound)
-                               - eval path.(i) path.(i+1) - eval path.(j) path.((j+1) mod bound)  in
-        if diff < 0 then (
-            invertPath i j path;
-            if debug then Printf.printf "\ninverted %d and %d, diff : %d" i j diff;
-            false
-        ) else true
-    ) && loop2 i (j+1)
+    and loop2 i j = if Sys.time() -. start_time > max_time then raise Timed_Out;
+        j >= bound - max (2*partial) (1-i)  || 
+        begin
+            let diff = eval path.(i) path.(j) + eval path.(i+1) path.((j+1) mod bound)
+                                - eval path.(i) path.(i+1) - eval path.(j) path.((j+1) mod bound)  in
+            if diff < 0 then (
+                invertPath i j path;
+                if debug then Printf.printf "\ninverted %d and %d, diff : %d" i j diff;
+                false
+            ) else true
+        end && loop2 i (j+1)
     in
-    rec_while 0
+    try 
+        let _ = rec_while 0  in ()
+    with Timed_Out -> ()
 
 
 
@@ -54,32 +64,36 @@ type random_creation = Roulette | Random
 
 let weight_update eval last q = function
     | Random -> ()
-    | Roulette -> Random_Queue.change_weights (fun _ x -> 1. /. float_of_int(eval x last)) q
+    | Roulette -> RndQ.change_weights (fun _ x -> 1. /. float_of_int(eval x last)) q
 
-let random_path q eval mode city_count =
-    Array.init city_count (
-        fun _ -> let v = Random_Queue.take q in
-            weight_update eval v q mode;
-            v
-    )
 
-let iter_two_opt n eval city_count rnd_mode =
-    let arr = Array.init city_count (Fun.id) in
-    let q = Random_Queue.simple_create city_count arr in
+let randomize_path q eval mode path_arr =
+    for i = 0 to Array.length path_arr do
+        let v = RndQ.take q in
+        weight_update eval v q mode;
+        path_arr.(i) <- v
+    done
+
+let iter_two_opt eval city_count rnd_mode max_time max_try =
+    let create_arr() = Array.init city_count (Fun.id) in
+    let queue = RndQ.simple_create city_count @@ create_arr() in
+    let path_arr = create_arr () in 
     let best_len = ref max_int in
-    let best_path = Array.make city_count (-1) in
-    for _ = 1 to n do
-        let path = random_path q eval rnd_mode city_count in
-        let _ = opt_fast eval path in
-        let len = Base_tsp.path_length eval path in
+    let best_path = create_arr() in
+    let i = ref 0 in 
+    let start_time = Sys.time() in 
+    while !i < max_try && Sys.time() -. start_time < max_time do
+        randomize_path queue eval rnd_mode path_arr;
+        let max_time = max_time -. (Sys.time() -. start_time) in 
+        opt_fast ~max_time eval path_arr;
+        let len = Base_tsp.path_length eval path_arr in
         if len < !best_len then (
             best_len := len;
             for i = 0 to city_count -1 do
-                best_path.(i) <- path.(i)
+                best_path.(i) <- path_arr.(i)
             done
         );
-        Random_Queue.reset q
-
+        RndQ.reset queue
     done;
     best_path
 
