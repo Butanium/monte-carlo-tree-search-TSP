@@ -6,10 +6,11 @@ In this repo, I made different heuristic solutions for the TSP written in OCaml.
 
 - [**2-opt**](https://en.wikipedia.org/wiki/2-opt) : classic 2-opt algorithm, which makes a locally optimized solution
   from any path.
-- [**Monte-Carlo tree search**](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search)
-- [**Simulated annealing**](http://rbanchs.com/documents/THFEL_PR15.pdf)
+- [**Monte-Carlo tree search**](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search) or *MCTS*
+- [**Simulated annealing**](http://rbanchs.com/documents/THFEL_PR15.pdf) or *SA*
 - [**Genetic algorithm**](https://en.wikipedia.org/wiki/Genetic_algorithm) : maybe one day... For now, I only did it in
   [python](https://github.com/Butanium/Genetic_algorithm_for_TSP_python)
+- **Greedy Random** : try to find a solution by generating bunch of random solutions (with or without heuristics). It as not meant to be good, it's just to compare with the MCTS performances
 
 ## Objectives :
 
@@ -23,7 +24,7 @@ If you don't want to use dune you can still run an old version of the project on
 
 If you have dune, be sure that the Graphics library is installed in your opam switch
 - Open and build the project using `dune build`. 
-- Then chose a test or an example from the `test`or `example` directory you want and run it using `dune exec ./dir_name/exec_name.exe`. For example : `dune exec ./tests/MCTS_main.exe` or `dune exec ./examples/MCTS_vs_SA.exe`
+- Then chose an example from the `example` directory and run it using `dune exec ./examples/example_name.exe`
 
 ## Ressources
 

@@ -1,0 +1,1547 @@
+_______________START DEBUG INFO_______________
+
+
+18128445 playouts, 1800 s, 48 max depth, best score : 40583, exploration constat : 27642.0
+45.1 playout time, 10.5 available time, 0.025 playout time ratio
+ 0.689 creation time ratio in playout
+weight update ratio : 0.169, get length ratio : 0.038 , store ratio : 0.006
+
+________________END DEBUG INFO________________
+
+
+
+________________START DEBUG TREE_______________
+
+
+
+chosen :
+
+visits : 18128445, best score : 40583.0, average score : 62960.0, city : 0, depth : 1, not developed : 0
+
+children :
+
+conv : 97.8%  |  visits : 17724254, best score : 40583.0, average score : 60820.0, city : 7, depth : 2, not developed : 0
+conv : 0.2%  |  visits : 36613, best score : 109883.0, average score : 155400.1, city : 8, depth : 2, not developed : 0
+conv : 0.2%  |  visits : 27986, best score : 113465.0, average score : 155614.4, city : 21, depth : 2, not developed : 0
+conv : 0.1%  |  visits : 26695, best score : 109807.0, average score : 155655.1, city : 37, depth : 2, not developed : 0
+conv : 0.1%  |  visits : 24882, best score : 111685.0, average score : 155717.7, city : 15, depth : 2, not developed : 0
+conv : 0.1%  |  visits : 17823, best score : 113336.0, average score : 156045.7, city : 39, depth : 2, not developed : 0
+conv : 0.1%  |  visits : 12103, best score : 110380.0, average score : 156502.0, city : 30, depth : 2, not developed : 0
+conv : 0.1%  |  visits : 11726, best score : 117053.0, average score : 156543.1, city : 40, depth : 2, not developed : 0
+conv : 0.1%  |  visits : 11149, best score : 111529.0, average score : 156610.9, city : 43, depth : 2, not developed : 0
+conv : 0.1%  |  visits : 10659, best score : 107586.0, average score : 156671.8, city : 2, depth : 2, not developed : 0
+conv : 0.1%  |  visits : 9807, best score : 109095.0, average score : 156789.4, city : 14, depth : 2, not developed : 0
+conv : 0.1%  |  visits : 9739, best score : 119605.0, average score : 156799.7, city : 45, depth : 2, not developed : 0
+conv : 0.1%  |  visits : 9130, best score : 110398.0, average score : 156896.5, city : 6, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 8683, best score : 116444.0, average score : 156970.0, city : 17, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 7949, best score : 112958.0, average score : 157109.1, city : 27, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 7745, best score : 114962.0, average score : 157151.4, city : 32, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 7628, best score : 108296.0, average score : 157174.7, city : 33, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 7515, best score : 113117.0, average score : 157199.1, city : 11, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 7186, best score : 112586.0, average score : 157274.7, city : 5, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 7154, best score : 116712.0, average score : 157281.4, city : 35, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 6847, best score : 116619.0, average score : 157357.5, city : 22, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 6775, best score : 111115.0, average score : 157376.5, city : 10, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 6720, best score : 117198.0, average score : 157388.3, city : 29, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 6704, best score : 110817.0, average score : 157392.5, city : 18, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 6612, best score : 103994.0, average score : 157417.0, city : 16, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 6304, best score : 118888.0, average score : 157501.4, city : 13, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 6298, best score : 120396.0, average score : 157503.1, city : 36, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 6157, best score : 115370.0, average score : 157544.5, city : 26, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 6083, best score : 113051.0, average score : 157566.7, city : 19, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 5855, best score : 116214.0, average score : 157636.9, city : 12, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 5677, best score : 116552.0, average score : 157694.3, city : 24, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 5634, best score : 118342.0, average score : 157709.6, city : 42, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 5500, best score : 117486.0, average score : 157757.2, city : 28, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 5478, best score : 119217.0, average score : 157764.8, city : 1, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 4652, best score : 121606.0, average score : 158090.7, city : 46, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 4644, best score : 121689.0, average score : 158094.2, city : 20, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 4480, best score : 115735.0, average score : 158172.8, city : 44, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 4473, best score : 122332.0, average score : 158175.1, city : 3, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 4449, best score : 117833.0, average score : 158186.4, city : 4, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 4374, best score : 121946.0, average score : 158222.9, city : 25, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 4347, best score : 121996.0, average score : 158235.7, city : 34, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 4339, best score : 119849.0, average score : 158238.9, city : 9, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 4251, best score : 112058.0, average score : 158285.6, city : 41, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 4207, best score : 117525.0, average score : 158308.5, city : 38, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 4156, best score : 112396.0, average score : 158333.7, city : 47, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 3814, best score : 121824.0, average score : 158528.5, city : 31, depth : 2, not developed : 0
+conv : 0.0%  |  visits : 3189, best score : 124084.0, average score : 158961.5, city : 23, depth : 2, not developed : 0
+
+
+chosen :
+
+visits : 17724254, best score : 40583.0, average score : 60820.0, city : 7, depth : 2, not developed : 0
+
+children :
+
+conv : 97.3%  |  visits : 17239116, best score : 40583.0, average score : 58190.9, city : 37, depth : 3, not developed : 0
+conv : 0.4%  |  visits : 63953, best score : 105761.0, average score : 152818.9, city : 8, depth : 3, not developed : 0
+conv : 0.3%  |  visits : 45057, best score : 104161.0, average score : 153035.2, city : 15, depth : 3, not developed : 0
+conv : 0.2%  |  visits : 30862, best score : 107831.0, average score : 153315.2, city : 21, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 25343, best score : 114991.0, average score : 153483.6, city : 30, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 16503, best score : 112848.0, average score : 153913.0, city : 43, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 14179, best score : 113597.0, average score : 154088.2, city : 39, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 13751, best score : 112252.0, average score : 154125.2, city : 45, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 13482, best score : 112880.0, average score : 154150.4, city : 2, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 12808, best score : 112614.0, average score : 154214.5, city : 40, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 12198, best score : 106479.0, average score : 154275.9, city : 17, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 11880, best score : 106404.0, average score : 154310.1, city : 6, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 11083, best score : 112716.0, average score : 154403.6, city : 36, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 10849, best score : 114172.0, average score : 154432.1, city : 27, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 10407, best score : 115091.0, average score : 154491.5, city : 14, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 10099, best score : 116100.0, average score : 154532.3, city : 35, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 10011, best score : 113881.0, average score : 154546.2, city : 18, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 9386, best score : 115578.0, average score : 154638.3, city : 26, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 9152, best score : 112803.0, average score : 154676.0, city : 32, depth : 3, not developed : 0
+conv : 0.1%  |  visits : 9086, best score : 113167.0, average score : 154686.4, city : 16, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 8671, best score : 110316.0, average score : 154756.9, city : 5, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 8097, best score : 115442.0, average score : 154864.1, city : 29, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 7559, best score : 109021.0, average score : 154974.9, city : 33, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 7537, best score : 111617.0, average score : 154980.7, city : 10, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 7485, best score : 112646.0, average score : 154991.6, city : 22, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 7351, best score : 117778.0, average score : 155021.9, city : 11, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 7331, best score : 114137.0, average score : 155026.8, city : 42, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 6742, best score : 114641.0, average score : 155168.2, city : 28, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 6541, best score : 117962.0, average score : 155223.4, city : 1, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 5878, best score : 112142.0, average score : 155415.4, city : 19, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 5672, best score : 117403.0, average score : 155483.1, city : 13, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 5458, best score : 113775.0, average score : 155555.9, city : 4, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 5436, best score : 115526.0, average score : 155563.8, city : 46, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 5161, best score : 114050.0, average score : 155665.6, city : 12, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 4851, best score : 112902.0, average score : 155791.2, city : 24, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 4728, best score : 114020.0, average score : 155846.6, city : 25, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 4616, best score : 119969.0, average score : 155895.3, city : 47, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 4383, best score : 120579.0, average score : 156005.1, city : 3, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 4316, best score : 113227.0, average score : 156038.2, city : 34, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 4173, best score : 120335.0, average score : 156115.3, city : 9, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 4122, best score : 114879.0, average score : 156138.5, city : 41, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 4005, best score : 112304.0, average score : 156203.9, city : 20, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 3841, best score : 111879.0, average score : 156300.8, city : 38, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 3801, best score : 118332.0, average score : 156324.5, city : 31, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 3683, best score : 119795.0, average score : 156397.8, city : 44, depth : 3, not developed : 0
+conv : 0.0%  |  visits : 3610, best score : 114686.0, average score : 156448.6, city : 23, depth : 3, not developed : 0
+
+
+chosen :
+
+visits : 17239116, best score : 40583.0, average score : 58190.9, city : 37, depth : 3, not developed : 0
+
+children :
+
+conv : 98.0%  |  visits : 16888157, best score : 40583.0, average score : 56237.8, city : 30, depth : 4, not developed : 0
+conv : 0.2%  |  visits : 28755, best score : 108654.0, average score : 150867.4, city : 43, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 21088, best score : 105478.0, average score : 151146.6, city : 8, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 18947, best score : 106967.0, average score : 151253.3, city : 6, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 16639, best score : 108749.0, average score : 151392.3, city : 27, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 16581, best score : 110340.0, average score : 151394.8, city : 17, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 14181, best score : 115458.0, average score : 151573.8, city : 45, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 13999, best score : 110883.0, average score : 151588.7, city : 5, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 13494, best score : 113976.0, average score : 151633.0, city : 36, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 12657, best score : 108234.0, average score : 151711.6, city : 35, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 12115, best score : 109655.0, average score : 151767.2, city : 18, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 11659, best score : 112268.0, average score : 151817.0, city : 16, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 11408, best score : 102680.0, average score : 151846.2, city : 29, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 10515, best score : 110901.0, average score : 151956.7, city : 26, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 9746, best score : 111573.0, average score : 152062.4, city : 39, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 9580, best score : 106977.0, average score : 152086.8, city : 14, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 8800, best score : 105375.0, average score : 152212.4, city : 42, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 8658, best score : 110117.0, average score : 152237.3, city : 15, depth : 4, not developed : 0
+conv : 0.1%  |  visits : 8622, best score : 104007.0, average score : 152243.3, city : 32, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 7705, best score : 113173.0, average score : 152418.2, city : 21, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 7437, best score : 112743.0, average score : 152476.3, city : 11, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 6357, best score : 108341.0, average score : 152742.6, city : 40, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 6106, best score : 112532.0, average score : 152816.7, city : 19, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 5884, best score : 112628.0, average score : 152882.4, city : 2, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 5506, best score : 107096.0, average score : 153007.1, city : 10, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 5197, best score : 114583.0, average score : 153120.8, city : 22, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 4161, best score : 115461.0, average score : 153578.1, city : 13, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 3953, best score : 114289.0, average score : 153696.8, city : 46, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 3943, best score : 110510.0, average score : 153698.3, city : 12, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 3803, best score : 114782.0, average score : 153783.0, city : 33, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 3494, best score : 110427.0, average score : 153978.6, city : 24, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 3489, best score : 114209.0, average score : 153985.5, city : 28, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 3347, best score : 113004.0, average score : 154082.6, city : 20, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 3194, best score : 108260.0, average score : 154197.0, city : 1, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 3175, best score : 117104.0, average score : 154212.5, city : 47, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 2912, best score : 118488.0, average score : 154433.8, city : 3, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 2897, best score : 113196.0, average score : 154446.6, city : 38, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 2876, best score : 118454.0, average score : 154471.2, city : 4, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 2835, best score : 112855.0, average score : 154503.9, city : 31, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 2664, best score : 119443.0, average score : 154674.0, city : 34, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 2625, best score : 116769.0, average score : 154712.7, city : 41, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 2563, best score : 116863.0, average score : 154782.0, city : 44, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 2563, best score : 115756.0, average score : 154778.6, city : 9, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 2455, best score : 118789.0, average score : 154903.7, city : 25, depth : 4, not developed : 0
+conv : 0.0%  |  visits : 2373, best score : 114126.0, average score : 154996.5, city : 23, depth : 4, not developed : 0
+
+
+chosen :
+
+visits : 16888157, best score : 40583.0, average score : 56237.8, city : 30, depth : 4, not developed : 0
+
+children :
+
+conv : 97.8%  |  visits : 16520908, best score : 40583.0, average score : 54168.8, city : 43, depth : 5, not developed : 0
+conv : 0.2%  |  visits : 32828, best score : 105887.0, average score : 148135.5, city : 6, depth : 5, not developed : 0
+conv : 0.2%  |  visits : 29843, best score : 102067.0, average score : 148211.2, city : 17, depth : 5, not developed : 0
+conv : 0.2%  |  visits : 27549, best score : 100846.0, average score : 148277.9, city : 36, depth : 5, not developed : 0
+conv : 0.2%  |  visits : 26754, best score : 98965.0, average score : 148302.6, city : 5, depth : 5, not developed : 0
+conv : 0.1%  |  visits : 24022, best score : 106763.0, average score : 148398.4, city : 27, depth : 5, not developed : 0
+conv : 0.1%  |  visits : 21078, best score : 107387.0, average score : 148520.5, city : 18, depth : 5, not developed : 0
+conv : 0.1%  |  visits : 18657, best score : 106279.0, average score : 148642.5, city : 29, depth : 5, not developed : 0
+conv : 0.1%  |  visits : 14535, best score : 104235.0, average score : 148916.4, city : 16, depth : 5, not developed : 0
+conv : 0.1%  |  visits : 14516, best score : 105727.0, average score : 148918.2, city : 26, depth : 5, not developed : 0
+conv : 0.1%  |  visits : 13563, best score : 107021.0, average score : 148998.5, city : 45, depth : 5, not developed : 0
+conv : 0.1%  |  visits : 13442, best score : 104443.0, average score : 149009.4, city : 35, depth : 5, not developed : 0
+conv : 0.1%  |  visits : 11460, best score : 109273.0, average score : 149212.4, city : 8, depth : 5, not developed : 0
+conv : 0.1%  |  visits : 10360, best score : 108888.0, average score : 149348.0, city : 42, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 7937, best score : 113320.0, average score : 149741.5, city : 32, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 7300, best score : 111452.0, average score : 149876.0, city : 14, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 7138, best score : 105263.0, average score : 149913.8, city : 39, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 6121, best score : 111106.0, average score : 150180.0, city : 19, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 5944, best score : 112370.0, average score : 150232.5, city : 11, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 4945, best score : 104734.0, average score : 150590.9, city : 21, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 4715, best score : 110428.0, average score : 150681.7, city : 2, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 4705, best score : 110704.0, average score : 150688.3, city : 15, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 4103, best score : 113153.0, average score : 150979.2, city : 10, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 3962, best score : 109112.0, average score : 151056.5, city : 22, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 3712, best score : 112379.0, average score : 151205.9, city : 40, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 3594, best score : 107813.0, average score : 151279.4, city : 46, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 3528, best score : 116081.0, average score : 151325.2, city : 12, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 3314, best score : 113360.0, average score : 151479.5, city : 13, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 3191, best score : 107029.0, average score : 151569.5, city : 20, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 3169, best score : 97445.0, average score : 151589.0, city : 33, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 2777, best score : 110023.0, average score : 151931.1, city : 24, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 2703, best score : 114898.0, average score : 152001.0, city : 38, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 2452, best score : 117512.0, average score : 152272.3, city : 4, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 2387, best score : 109430.0, average score : 152347.1, city : 28, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 2320, best score : 112743.0, average score : 152432.5, city : 41, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 2254, best score : 110717.0, average score : 152517.3, city : 31, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 2239, best score : 114149.0, average score : 152540.0, city : 23, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 2227, best score : 112931.0, average score : 152551.9, city : 1, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 2203, best score : 110602.0, average score : 152590.5, city : 47, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 2121, best score : 114228.0, average score : 152703.9, city : 9, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 2076, best score : 118019.0, average score : 152766.1, city : 25, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 1948, best score : 112232.0, average score : 152964.9, city : 3, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 1818, best score : 116600.0, average score : 153197.6, city : 44, depth : 5, not developed : 0
+conv : 0.0%  |  visits : 1738, best score : 114563.0, average score : 153341.5, city : 34, depth : 5, not developed : 0
+
+
+chosen :
+
+visits : 16520908, best score : 40583.0, average score : 54168.8, city : 43, depth : 5, not developed : 0
+
+children :
+
+conv : 98.2%  |  visits : 16217851, best score : 40583.0, average score : 52443.6, city : 18, depth : 6, not developed : 0
+conv : 0.2%  |  visits : 31785, best score : 98964.0, average score : 145189.6, city : 6, depth : 6, not developed : 0
+conv : 0.2%  |  visits : 28287, best score : 98971.0, average score : 145283.7, city : 36, depth : 6, not developed : 0
+conv : 0.2%  |  visits : 26840, best score : 97250.0, average score : 145327.8, city : 17, depth : 6, not developed : 0
+conv : 0.2%  |  visits : 26753, best score : 103084.0, average score : 145330.5, city : 27, depth : 6, not developed : 0
+conv : 0.1%  |  visits : 22863, best score : 104303.0, average score : 145469.7, city : 5, depth : 6, not developed : 0
+conv : 0.1%  |  visits : 15538, best score : 100626.0, average score : 145862.4, city : 35, depth : 6, not developed : 0
+conv : 0.1%  |  visits : 13999, best score : 104405.0, average score : 145982.5, city : 26, depth : 6, not developed : 0
+conv : 0.1%  |  visits : 13607, best score : 102476.0, average score : 146015.8, city : 29, depth : 6, not developed : 0
+conv : 0.1%  |  visits : 13269, best score : 101658.0, average score : 146046.8, city : 16, depth : 6, not developed : 0
+conv : 0.1%  |  visits : 12563, best score : 102587.0, average score : 146113.3, city : 42, depth : 6, not developed : 0
+conv : 0.1%  |  visits : 9268, best score : 102141.0, average score : 146521.7, city : 45, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 6803, best score : 105575.0, average score : 147007.2, city : 32, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 5884, best score : 110198.0, average score : 147260.7, city : 8, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 5770, best score : 107110.0, average score : 147296.2, city : 14, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 4859, best score : 109116.0, average score : 147627.2, city : 39, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 4679, best score : 106611.0, average score : 147702.3, city : 19, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 4132, best score : 109503.0, average score : 147963.5, city : 11, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 3877, best score : 105966.0, average score : 148103.8, city : 21, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 3667, best score : 113830.0, average score : 148232.2, city : 10, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 3235, best score : 112190.0, average score : 148531.1, city : 15, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 3121, best score : 114885.0, average score : 148622.5, city : 2, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 2952, best score : 110695.0, average score : 148759.2, city : 46, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 2657, best score : 114849.0, average score : 149034.2, city : 13, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 2604, best score : 102832.0, average score : 149092.6, city : 20, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 2578, best score : 111829.0, average score : 149124.9, city : 22, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 2395, best score : 112135.0, average score : 149323.3, city : 24, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 2379, best score : 113258.0, average score : 149343.9, city : 40, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 2372, best score : 114413.0, average score : 149357.7, city : 33, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 2361, best score : 110487.0, average score : 149365.1, city : 12, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 2053, best score : 113810.0, average score : 149781.5, city : 28, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1931, best score : 115479.0, average score : 149970.0, city : 31, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1915, best score : 117458.0, average score : 149998.6, city : 23, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1718, best score : 114547.0, average score : 150357.0, city : 41, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1705, best score : 119894.0, average score : 150377.8, city : 4, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1697, best score : 113083.0, average score : 150393.3, city : 38, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1649, best score : 117497.0, average score : 150492.7, city : 34, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1609, best score : 109274.0, average score : 150577.9, city : 9, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1595, best score : 114909.0, average score : 150608.7, city : 1, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1584, best score : 117084.0, average score : 150632.4, city : 47, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1566, best score : 109903.0, average score : 150673.9, city : 25, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1493, best score : 119670.0, average score : 150841.8, city : 3, depth : 6, not developed : 0
+conv : 0.0%  |  visits : 1444, best score : 115431.0, average score : 150970.6, city : 44, depth : 6, not developed : 0
+
+
+chosen :
+
+visits : 16217851, best score : 40583.0, average score : 52443.6, city : 18, depth : 6, not developed : 0
+
+children :
+
+conv : 99.2%  |  visits : 16083284, best score : 40583.0, average score : 51680.4, city : 26, depth : 7, not developed : 0
+conv : 0.1%  |  visits : 22108, best score : 96675.0, average score : 141438.6, city : 36, depth : 7, not developed : 0
+conv : 0.1%  |  visits : 21760, best score : 94013.0, average score : 141452.4, city : 16, depth : 7, not developed : 0
+conv : 0.1%  |  visits : 11581, best score : 99996.0, average score : 142133.3, city : 5, depth : 7, not developed : 0
+conv : 0.1%  |  visits : 9459, best score : 100385.0, average score : 142400.8, city : 42, depth : 7, not developed : 0
+conv : 0.1%  |  visits : 8439, best score : 104823.0, average score : 142564.0, city : 29, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 5899, best score : 104628.0, average score : 143143.8, city : 27, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 5393, best score : 108538.0, average score : 143303.3, city : 6, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 5348, best score : 99302.0, average score : 143319.5, city : 17, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 4377, best score : 101914.0, average score : 143708.6, city : 35, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 2180, best score : 110549.0, average score : 145418.8, city : 45, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1935, best score : 109426.0, average score : 145770.3, city : 8, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1855, best score : 103805.0, average score : 145905.5, city : 19, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1842, best score : 110328.0, average score : 145925.9, city : 14, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1840, best score : 108607.0, average score : 145930.9, city : 32, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1790, best score : 114980.0, average score : 146016.6, city : 11, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1530, best score : 96281.0, average score : 146538.3, city : 46, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1521, best score : 112386.0, average score : 146561.7, city : 21, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1480, best score : 111817.0, average score : 146659.5, city : 39, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1424, best score : 112244.0, average score : 146800.6, city : 20, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1379, best score : 111269.0, average score : 146914.0, city : 10, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1337, best score : 115650.0, average score : 147019.7, city : 22, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1269, best score : 111577.0, average score : 147215.5, city : 15, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1249, best score : 112228.0, average score : 147288.9, city : 12, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1127, best score : 105608.0, average score : 147689.6, city : 4, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1126, best score : 115073.0, average score : 147688.0, city : 33, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1125, best score : 114811.0, average score : 147691.0, city : 38, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1107, best score : 114979.0, average score : 147754.7, city : 2, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1051, best score : 116243.0, average score : 147980.6, city : 13, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1025, best score : 112123.0, average score : 148073.9, city : 24, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 1007, best score : 115766.0, average score : 148149.3, city : 31, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 999, best score : 112031.0, average score : 148185.8, city : 40, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 941, best score : 117721.0, average score : 148442.5, city : 23, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 935, best score : 109875.0, average score : 148470.1, city : 47, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 926, best score : 115072.0, average score : 148524.4, city : 28, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 917, best score : 119150.0, average score : 148561.1, city : 1, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 915, best score : 115050.0, average score : 148577.3, city : 44, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 915, best score : 119844.0, average score : 148570.4, city : 34, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 910, best score : 117340.0, average score : 148602.5, city : 9, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 869, best score : 114781.0, average score : 148802.5, city : 25, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 861, best score : 118667.0, average score : 148845.1, city : 41, depth : 7, not developed : 0
+conv : 0.0%  |  visits : 815, best score : 118938.0, average score : 149105.9, city : 3, depth : 7, not developed : 0
+
+
+chosen :
+
+visits : 16083284, best score : 40583.0, average score : 51680.4, city : 26, depth : 7, not developed : 0
+
+children :
+
+conv : 99.3%  |  visits : 15974596, best score : 40583.0, average score : 51079.7, city : 16, depth : 8, not developed : 0
+conv : 0.1%  |  visits : 17613, best score : 87399.0, average score : 137501.0, city : 36, depth : 8, not developed : 0
+conv : 0.1%  |  visits : 12894, best score : 100474.0, average score : 137842.4, city : 42, depth : 8, not developed : 0
+conv : 0.1%  |  visits : 10647, best score : 95183.0, average score : 138080.6, city : 29, depth : 8, not developed : 0
+conv : 0.1%  |  visits : 10054, best score : 96839.0, average score : 138156.3, city : 5, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 6051, best score : 103413.0, average score : 138930.8, city : 27, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 5155, best score : 104694.0, average score : 139217.8, city : 6, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 4002, best score : 95213.0, average score : 139722.7, city : 17, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 3853, best score : 106208.0, average score : 139804.3, city : 35, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 2230, best score : 107231.0, average score : 141169.9, city : 45, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 2151, best score : 107641.0, average score : 141271.6, city : 32, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 2026, best score : 111793.0, average score : 141444.5, city : 19, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1738, best score : 106320.0, average score : 141923.7, city : 11, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1565, best score : 95395.0, average score : 142266.4, city : 14, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1542, best score : 101143.0, average score : 142320.9, city : 8, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1448, best score : 109877.0, average score : 142543.4, city : 39, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1425, best score : 101177.0, average score : 142596.5, city : 10, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1415, best score : 112208.0, average score : 142623.0, city : 46, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1354, best score : 107779.0, average score : 142785.5, city : 20, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1216, best score : 109811.0, average score : 143182.5, city : 15, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1170, best score : 108370.0, average score : 143332.2, city : 22, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1144, best score : 113672.0, average score : 143425.4, city : 12, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1130, best score : 112120.0, average score : 143469.5, city : 2, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1123, best score : 113111.0, average score : 143509.6, city : 31, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1081, best score : 106965.0, average score : 143647.3, city : 21, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1013, best score : 109011.0, average score : 143916.1, city : 24, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 1005, best score : 107178.0, average score : 143953.0, city : 40, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 997, best score : 113426.0, average score : 143993.1, city : 38, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 993, best score : 115836.0, average score : 144012.9, city : 25, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 988, best score : 112121.0, average score : 144029.3, city : 47, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 968, best score : 106803.0, average score : 144114.3, city : 33, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 952, best score : 109940.0, average score : 144182.2, city : 23, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 932, best score : 109165.0, average score : 144287.3, city : 13, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 923, best score : 106280.0, average score : 144317.8, city : 28, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 880, best score : 109970.0, average score : 144532.9, city : 41, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 874, best score : 107021.0, average score : 144578.8, city : 4, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 861, best score : 114901.0, average score : 144631.9, city : 44, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 843, best score : 110973.0, average score : 144740.0, city : 9, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 820, best score : 117898.0, average score : 144859.9, city : 34, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 817, best score : 105871.0, average score : 144875.7, city : 3, depth : 8, not developed : 0
+conv : 0.0%  |  visits : 794, best score : 113084.0, average score : 145016.2, city : 1, depth : 8, not developed : 0
+
+
+chosen :
+
+visits : 15974596, best score : 40583.0, average score : 51079.7, city : 16, depth : 8, not developed : 0
+
+children :
+
+conv : 99.4%  |  visits : 15873589, best score : 40583.0, average score : 50540.8, city : 36, depth : 9, not developed : 0
+conv : 0.1%  |  visits : 21925, best score : 92912.0, average score : 132988.0, city : 42, depth : 9, not developed : 0
+conv : 0.1%  |  visits : 11972, best score : 96020.0, average score : 133627.3, city : 5, depth : 9, not developed : 0
+conv : 0.1%  |  visits : 9118, best score : 89516.0, average score : 133984.2, city : 29, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 5257, best score : 103773.0, average score : 134873.7, city : 27, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 4991, best score : 98029.0, average score : 134972.0, city : 6, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 4556, best score : 99552.0, average score : 135150.3, city : 35, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 4472, best score : 101108.0, average score : 135186.1, city : 17, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 2145, best score : 105162.0, average score : 136963.2, city : 45, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 2113, best score : 105274.0, average score : 137009.2, city : 32, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 2037, best score : 105552.0, average score : 137119.4, city : 19, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1836, best score : 97159.0, average score : 137431.7, city : 14, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1683, best score : 102859.0, average score : 137711.8, city : 8, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1525, best score : 99824.0, average score : 138049.7, city : 46, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1492, best score : 106559.0, average score : 138130.0, city : 39, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1478, best score : 111218.0, average score : 138151.3, city : 20, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1449, best score : 107148.0, average score : 138218.4, city : 11, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1419, best score : 104547.0, average score : 138296.3, city : 10, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1178, best score : 107429.0, average score : 138986.0, city : 22, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1177, best score : 106335.0, average score : 138991.8, city : 21, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1131, best score : 103059.0, average score : 139153.1, city : 12, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1104, best score : 106218.0, average score : 139242.5, city : 38, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1069, best score : 107186.0, average score : 139375.6, city : 31, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1066, best score : 109298.0, average score : 139396.7, city : 13, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1064, best score : 106595.0, average score : 139397.9, city : 24, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1045, best score : 108166.0, average score : 139466.8, city : 15, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 1039, best score : 110275.0, average score : 139498.8, city : 2, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 994, best score : 103917.0, average score : 139679.0, city : 47, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 962, best score : 112678.0, average score : 139819.8, city : 33, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 945, best score : 109762.0, average score : 139897.7, city : 41, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 941, best score : 105222.0, average score : 139915.1, city : 40, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 932, best score : 109689.0, average score : 139965.1, city : 3, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 928, best score : 103135.0, average score : 139980.2, city : 23, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 905, best score : 109144.0, average score : 140088.9, city : 4, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 897, best score : 107192.0, average score : 140141.6, city : 44, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 877, best score : 109931.0, average score : 140225.5, city : 1, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 875, best score : 114239.0, average score : 140239.5, city : 34, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 829, best score : 108086.0, average score : 140484.5, city : 9, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 797, best score : 109685.0, average score : 140668.9, city : 28, depth : 9, not developed : 0
+conv : 0.0%  |  visits : 783, best score : 106425.0, average score : 140756.1, city : 25, depth : 9, not developed : 0
+
+
+chosen :
+
+visits : 15873589, best score : 40583.0, average score : 50540.8, city : 36, depth : 9, not developed : 0
+
+children :
+
+conv : 99.4%  |  visits : 15780355, best score : 40583.0, average score : 50061.1, city : 5, depth : 10, not developed : 0
+conv : 0.1%  |  visits : 13672, best score : 94412.0, average score : 129200.6, city : 42, depth : 10, not developed : 0
+conv : 0.1%  |  visits : 12211, best score : 92742.0, average score : 129333.3, city : 29, depth : 10, not developed : 0
+conv : 0.1%  |  visits : 9348, best score : 87708.0, average score : 129680.2, city : 27, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 5913, best score : 94877.0, average score : 130390.9, city : 17, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 5695, best score : 94185.0, average score : 130457.6, city : 35, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 5620, best score : 90859.0, average score : 130480.7, city : 6, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 2574, best score : 103385.0, average score : 132184.4, city : 45, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 2347, best score : 103424.0, average score : 132433.0, city : 19, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 2328, best score : 95291.0, average score : 132459.9, city : 32, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1940, best score : 100601.0, average score : 132984.1, city : 8, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1880, best score : 104000.0, average score : 133081.0, city : 11, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1771, best score : 99330.0, average score : 133267.4, city : 14, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1538, best score : 98473.0, average score : 133734.1, city : 46, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1490, best score : 100780.0, average score : 133843.3, city : 39, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1381, best score : 100162.0, average score : 134109.0, city : 10, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1356, best score : 100470.0, average score : 134175.5, city : 20, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1347, best score : 106314.0, average score : 134205.3, city : 15, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1288, best score : 98941.0, average score : 134370.5, city : 21, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1222, best score : 103461.0, average score : 134566.7, city : 2, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1209, best score : 104509.0, average score : 134603.9, city : 22, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1184, best score : 107452.0, average score : 134688.1, city : 12, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1175, best score : 102806.0, average score : 134722.2, city : 13, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1114, best score : 91634.0, average score : 134937.8, city : 24, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1112, best score : 102427.0, average score : 134931.3, city : 38, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1072, best score : 98865.0, average score : 135081.2, city : 33, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1051, best score : 101424.0, average score : 135163.0, city : 31, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1029, best score : 106645.0, average score : 135250.0, city : 40, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 1003, best score : 107269.0, average score : 135360.2, city : 44, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 937, best score : 107146.0, average score : 135659.0, city : 23, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 874, best score : 106162.0, average score : 135961.9, city : 3, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 872, best score : 105129.0, average score : 135972.8, city : 9, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 867, best score : 107402.0, average score : 135994.6, city : 28, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 840, best score : 105975.0, average score : 136144.5, city : 34, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 818, best score : 108176.0, average score : 136285.5, city : 47, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 805, best score : 108166.0, average score : 136357.7, city : 41, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 795, best score : 110415.0, average score : 136408.9, city : 25, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 788, best score : 102208.0, average score : 136446.4, city : 1, depth : 10, not developed : 0
+conv : 0.0%  |  visits : 767, best score : 108611.0, average score : 136569.9, city : 4, depth : 10, not developed : 0
+
+
+chosen :
+
+visits : 15780355, best score : 40583.0, average score : 50061.1, city : 5, depth : 10, not developed : 0
+
+children :
+
+conv : 99.4%  |  visits : 15687576, best score : 40583.0, average score : 49603.1, city : 29, depth : 11, not developed : 0
+conv : 0.1%  |  visits : 15558, best score : 90630.0, average score : 124865.6, city : 42, depth : 11, not developed : 0
+conv : 0.1%  |  visits : 10906, best score : 92491.0, average score : 125282.7, city : 27, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 7845, best score : 92206.0, average score : 125741.1, city : 6, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 6886, best score : 95432.0, average score : 125943.9, city : 35, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 6676, best score : 90777.0, average score : 125995.6, city : 17, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 2968, best score : 96033.0, average score : 127632.3, city : 45, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 2869, best score : 96757.0, average score : 127716.0, city : 32, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 2398, best score : 94379.0, average score : 128186.2, city : 19, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 2222, best score : 94055.0, average score : 128395.0, city : 8, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 2211, best score : 99720.0, average score : 128410.7, city : 14, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 2121, best score : 94649.0, average score : 128529.3, city : 11, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1853, best score : 92431.0, average score : 128934.2, city : 46, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1774, best score : 94893.0, average score : 129071.2, city : 39, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1764, best score : 102108.0, average score : 129090.0, city : 10, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1392, best score : 100120.0, average score : 129892.0, city : 21, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1388, best score : 92967.0, average score : 129901.7, city : 2, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1303, best score : 106846.0, average score : 130133.8, city : 12, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1297, best score : 99464.0, average score : 130152.8, city : 22, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1265, best score : 102290.0, average score : 130243.8, city : 15, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1262, best score : 98804.0, average score : 130261.4, city : 13, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1198, best score : 103224.0, average score : 130453.3, city : 20, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1148, best score : 104156.0, average score : 130625.0, city : 31, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1127, best score : 104523.0, average score : 130690.7, city : 24, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1095, best score : 99984.0, average score : 130811.3, city : 33, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1069, best score : 92828.0, average score : 130908.3, city : 38, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1039, best score : 105543.0, average score : 131019.9, city : 9, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1006, best score : 97156.0, average score : 131155.0, city : 40, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1003, best score : 106780.0, average score : 131170.5, city : 23, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1002, best score : 103659.0, average score : 131172.7, city : 44, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 1000, best score : 100829.0, average score : 131195.9, city : 47, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 979, best score : 102879.0, average score : 131282.6, city : 28, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 931, best score : 100668.0, average score : 131488.4, city : 4, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 887, best score : 102060.0, average score : 131703.7, city : 34, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 879, best score : 105696.0, average score : 131752.5, city : 41, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 847, best score : 103930.0, average score : 131912.8, city : 3, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 811, best score : 107424.0, average score : 132115.3, city : 25, depth : 11, not developed : 0
+conv : 0.0%  |  visits : 799, best score : 92712.0, average score : 132197.2, city : 1, depth : 11, not developed : 0
+
+
+chosen :
+
+visits : 15687576, best score : 40583.0, average score : 49603.1, city : 29, depth : 11, not developed : 0
+
+children :
+
+conv : 99.5%  |  visits : 15603560, best score : 40583.0, average score : 49205.0, city : 42, depth : 12, not developed : 0
+conv : 0.1%  |  visits : 14507, best score : 86191.0, average score : 120721.2, city : 27, depth : 12, not developed : 0
+conv : 0.1%  |  visits : 9075, best score : 80776.0, average score : 121309.0, city : 6, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 6718, best score : 88011.0, average score : 121764.2, city : 35, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 6566, best score : 85517.0, average score : 121802.6, city : 17, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 3171, best score : 94538.0, average score : 123251.2, city : 45, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 3044, best score : 93029.0, average score : 123352.4, city : 32, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 2891, best score : 89682.0, average score : 123478.3, city : 19, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 2339, best score : 90578.0, average score : 124034.0, city : 14, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 2305, best score : 93956.0, average score : 124073.0, city : 8, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 2018, best score : 93988.0, average score : 124457.1, city : 11, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1936, best score : 96350.0, average score : 124583.4, city : 39, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1774, best score : 95181.0, average score : 124856.7, city : 46, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1713, best score : 96172.0, average score : 124969.2, city : 20, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1615, best score : 97428.0, average score : 125163.0, city : 10, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1545, best score : 93518.0, average score : 125311.1, city : 21, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1460, best score : 96994.0, average score : 125503.1, city : 12, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1392, best score : 89210.0, average score : 125672.5, city : 15, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1350, best score : 98973.0, average score : 125785.6, city : 2, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1339, best score : 95747.0, average score : 125817.9, city : 22, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1266, best score : 94483.0, average score : 126030.3, city : 31, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1175, best score : 99521.0, average score : 126313.6, city : 38, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1172, best score : 99489.0, average score : 126319.0, city : 24, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1085, best score : 99098.0, average score : 126630.9, city : 47, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1085, best score : 95133.0, average score : 126626.9, city : 40, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1071, best score : 99534.0, average score : 126679.8, city : 13, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1059, best score : 96691.0, average score : 126722.9, city : 33, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1041, best score : 96163.0, average score : 126801.3, city : 4, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 1009, best score : 96838.0, average score : 126924.4, city : 3, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 997, best score : 96082.0, average score : 126976.1, city : 28, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 953, best score : 101679.0, average score : 127186.1, city : 44, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 941, best score : 100648.0, average score : 127221.5, city : 23, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 901, best score : 101883.0, average score : 127417.8, city : 9, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 886, best score : 101293.0, average score : 127503.0, city : 1, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 882, best score : 100509.0, average score : 127522.2, city : 34, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 873, best score : 99901.0, average score : 127568.0, city : 25, depth : 12, not developed : 0
+conv : 0.0%  |  visits : 861, best score : 97657.0, average score : 127624.9, city : 41, depth : 12, not developed : 0
+
+
+chosen :
+
+visits : 15603560, best score : 40583.0, average score : 49205.0, city : 42, depth : 12, not developed : 0
+
+children :
+
+conv : 99.4%  |  visits : 15515935, best score : 40583.0, average score : 48809.1, city : 27, depth : 13, not developed : 0
+conv : 0.1%  |  visits : 14168, best score : 84686.0, average score : 116656.6, city : 6, depth : 13, not developed : 0
+conv : 0.1%  |  visits : 10117, best score : 83825.0, average score : 117068.4, city : 35, depth : 13, not developed : 0
+conv : 0.1%  |  visits : 8738, best score : 82222.0, average score : 117270.1, city : 17, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 4055, best score : 87673.0, average score : 118607.4, city : 45, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 3648, best score : 83152.0, average score : 118835.4, city : 19, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 3392, best score : 90885.0, average score : 119002.4, city : 32, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 2666, best score : 91691.0, average score : 119587.0, city : 14, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 2610, best score : 90423.0, average score : 119641.7, city : 11, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 2340, best score : 91842.0, average score : 119935.1, city : 8, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 2213, best score : 93826.0, average score : 120091.4, city : 39, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 2205, best score : 88048.0, average score : 120103.3, city : 46, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1978, best score : 88850.0, average score : 120419.4, city : 10, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1911, best score : 94469.0, average score : 120525.7, city : 20, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1677, best score : 86754.0, average score : 120940.7, city : 22, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1657, best score : 91762.0, average score : 120976.8, city : 15, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1636, best score : 90705.0, average score : 121024.6, city : 12, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1564, best score : 94751.0, average score : 121170.5, city : 2, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1530, best score : 89265.0, average score : 121250.3, city : 21, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1502, best score : 93059.0, average score : 121319.6, city : 31, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1440, best score : 91751.0, average score : 121456.9, city : 38, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1312, best score : 89920.0, average score : 121788.0, city : 24, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1242, best score : 87270.0, average score : 122003.3, city : 23, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1233, best score : 94294.0, average score : 122020.2, city : 44, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1209, best score : 93989.0, average score : 122104.1, city : 33, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1193, best score : 93585.0, average score : 122153.8, city : 41, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1187, best score : 95536.0, average score : 122167.0, city : 40, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1185, best score : 84274.0, average score : 122182.5, city : 13, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1075, best score : 92256.0, average score : 122560.4, city : 47, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1070, best score : 96157.0, average score : 122584.7, city : 34, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1066, best score : 91501.0, average score : 122596.8, city : 4, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 1040, best score : 93539.0, average score : 122700.0, city : 28, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 978, best score : 95550.0, average score : 122960.9, city : 9, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 974, best score : 99043.0, average score : 122980.4, city : 25, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 925, best score : 94504.0, average score : 123208.1, city : 1, depth : 13, not developed : 0
+conv : 0.0%  |  visits : 888, best score : 97664.0, average score : 123383.3, city : 3, depth : 13, not developed : 0
+
+
+chosen :
+
+visits : 15515935, best score : 40583.0, average score : 48809.1, city : 27, depth : 13, not developed : 0
+
+children :
+
+conv : 99.5%  |  visits : 15432856, best score : 40583.0, average score : 48452.6, city : 6, depth : 14, not developed : 0
+conv : 0.1%  |  visits : 16538, best score : 77751.0, average score : 112276.6, city : 17, depth : 14, not developed : 0
+conv : 0.1%  |  visits : 14405, best score : 80560.0, average score : 112425.0, city : 35, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 4409, best score : 86625.0, average score : 114218.9, city : 45, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 3619, best score : 88394.0, average score : 114635.3, city : 32, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 3132, best score : 88245.0, average score : 114968.8, city : 19, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 2742, best score : 86519.0, average score : 115295.8, city : 8, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 2545, best score : 86708.0, average score : 115490.1, city : 14, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 2359, best score : 87863.0, average score : 115695.6, city : 11, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 2040, best score : 86153.0, average score : 116110.0, city : 39, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1886, best score : 87426.0, average score : 116348.7, city : 10, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1781, best score : 88324.0, average score : 116530.2, city : 46, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1774, best score : 83781.0, average score : 116539.3, city : 15, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1746, best score : 88650.0, average score : 116590.8, city : 2, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1726, best score : 88818.0, average score : 116625.6, city : 22, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1694, best score : 88352.0, average score : 116690.4, city : 20, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1602, best score : 89251.0, average score : 116871.8, city : 21, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1469, best score : 92840.0, average score : 117173.0, city : 12, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1307, best score : 90418.0, average score : 117587.0, city : 40, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1284, best score : 92881.0, average score : 117659.5, city : 13, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1271, best score : 85971.0, average score : 117694.0, city : 24, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1222, best score : 89677.0, average score : 117848.0, city : 31, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1125, best score : 88631.0, average score : 118168.4, city : 33, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1102, best score : 95014.0, average score : 118243.6, city : 38, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1034, best score : 87838.0, average score : 118505.3, city : 44, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 1012, best score : 92904.0, average score : 118617.4, city : 47, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 993, best score : 92446.0, average score : 118684.3, city : 4, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 966, best score : 90767.0, average score : 118798.6, city : 23, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 940, best score : 94326.0, average score : 118917.3, city : 3, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 933, best score : 92579.0, average score : 118943.3, city : 1, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 928, best score : 90326.0, average score : 118969.1, city : 28, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 921, best score : 92022.0, average score : 119009.5, city : 41, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 893, best score : 88472.0, average score : 119144.7, city : 25, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 853, best score : 92965.0, average score : 119344.1, city : 34, depth : 14, not developed : 0
+conv : 0.0%  |  visits : 827, best score : 93556.0, average score : 119491.3, city : 9, depth : 14, not developed : 0
+
+
+chosen :
+
+visits : 15432856, best score : 40583.0, average score : 48452.6, city : 6, depth : 14, not developed : 0
+
+children :
+
+conv : 99.5%  |  visits : 15360390, best score : 40583.0, average score : 48157.0, city : 17, depth : 15, not developed : 0
+conv : 0.1%  |  visits : 17685, best score : 75617.0, average score : 107924.0, city : 35, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 5078, best score : 79365.0, average score : 109657.2, city : 45, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 3872, best score : 84907.0, average score : 110201.1, city : 32, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 3199, best score : 83757.0, average score : 110629.0, city : 8, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 3045, best score : 77806.0, average score : 110746.8, city : 14, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 2917, best score : 81954.0, average score : 110854.2, city : 19, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 2627, best score : 83247.0, average score : 111119.8, city : 11, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 2422, best score : 75572.0, average score : 111332.2, city : 39, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 2098, best score : 84600.0, average score : 111736.0, city : 10, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1966, best score : 88531.0, average score : 111932.7, city : 46, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1760, best score : 81954.0, average score : 112271.1, city : 22, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1759, best score : 85792.0, average score : 112271.9, city : 21, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1759, best score : 87738.0, average score : 112276.0, city : 15, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1700, best score : 85145.0, average score : 112382.5, city : 2, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1508, best score : 88197.0, average score : 112780.9, city : 20, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1365, best score : 89348.0, average score : 113138.4, city : 33, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1279, best score : 78810.0, average score : 113379.8, city : 40, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1271, best score : 89122.0, average score : 113392.4, city : 24, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1265, best score : 84985.0, average score : 113414.6, city : 13, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1261, best score : 89154.0, average score : 113425.7, city : 12, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1196, best score : 85709.0, average score : 113625.5, city : 38, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1136, best score : 87607.0, average score : 113831.8, city : 31, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1083, best score : 83302.0, average score : 114018.4, city : 4, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 1025, best score : 88509.0, average score : 114254.4, city : 23, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 968, best score : 87682.0, average score : 114488.9, city : 9, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 960, best score : 81846.0, average score : 114524.9, city : 41, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 955, best score : 89763.0, average score : 114554.1, city : 44, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 952, best score : 90282.0, average score : 114558.0, city : 28, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 926, best score : 87386.0, average score : 114679.2, city : 47, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 921, best score : 90549.0, average score : 114699.5, city : 34, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 853, best score : 93618.0, average score : 115057.0, city : 1, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 836, best score : 88334.0, average score : 115134.9, city : 3, depth : 15, not developed : 0
+conv : 0.0%  |  visits : 818, best score : 90486.0, average score : 115238.7, city : 25, depth : 15, not developed : 0
+
+
+chosen :
+
+visits : 15360390, best score : 40583.0, average score : 48157.0, city : 17, depth : 15, not developed : 0
+
+children :
+
+conv : 99.5%  |  visits : 15290941, best score : 40583.0, average score : 47887.9, city : 35, depth : 16, not developed : 0
+conv : 0.1%  |  visits : 7962, best score : 71875.0, average score : 104896.2, city : 45, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 5100, best score : 77481.0, average score : 105645.8, city : 32, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 4149, best score : 71886.0, average score : 106055.8, city : 14, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 4013, best score : 79100.0, average score : 106126.3, city : 8, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 3843, best score : 81018.0, average score : 106217.5, city : 19, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 3433, best score : 79759.0, average score : 106469.3, city : 11, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 3342, best score : 80443.0, average score : 106532.9, city : 39, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 2598, best score : 83004.0, average score : 107158.3, city : 21, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 2390, best score : 78216.0, average score : 107385.2, city : 10, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 2297, best score : 79157.0, average score : 107490.0, city : 46, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 2208, best score : 78573.0, average score : 107603.3, city : 15, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 2007, best score : 76161.0, average score : 107882.9, city : 2, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1921, best score : 78205.0, average score : 108014.7, city : 22, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1882, best score : 79402.0, average score : 108085.0, city : 20, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1731, best score : 85554.0, average score : 108342.0, city : 12, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1564, best score : 82679.0, average score : 108678.7, city : 24, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1505, best score : 85578.0, average score : 108811.1, city : 40, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1499, best score : 81893.0, average score : 108824.0, city : 13, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1474, best score : 81156.0, average score : 108883.4, city : 31, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1412, best score : 79512.0, average score : 109033.2, city : 33, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1338, best score : 81152.0, average score : 109234.0, city : 38, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1216, best score : 82902.0, average score : 109588.0, city : 44, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1162, best score : 80363.0, average score : 109766.0, city : 23, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1155, best score : 82403.0, average score : 109789.1, city : 4, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1151, best score : 84710.0, average score : 109807.0, city : 28, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1062, best score : 81958.0, average score : 110129.3, city : 47, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1062, best score : 84109.0, average score : 110131.4, city : 1, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1019, best score : 87987.0, average score : 110308.6, city : 41, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1019, best score : 78391.0, average score : 110303.8, city : 9, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 1013, best score : 88639.0, average score : 110326.8, city : 25, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 963, best score : 86597.0, average score : 110541.1, city : 3, depth : 16, not developed : 0
+conv : 0.0%  |  visits : 958, best score : 82218.0, average score : 110563.8, city : 34, depth : 16, not developed : 0
+
+
+chosen :
+
+visits : 15290941, best score : 40583.0, average score : 47887.9, city : 35, depth : 16, not developed : 0
+
+children :
+
+conv : 99.2%  |  visits : 15162064, best score : 40583.0, average score : 47422.4, city : 45, depth : 17, not developed : 0
+conv : 0.1%  |  visits : 21878, best score : 72346.0, average score : 100602.1, city : 32, depth : 17, not developed : 0
+conv : 0.1%  |  visits : 10797, best score : 71346.0, average score : 101383.5, city : 14, depth : 17, not developed : 0
+conv : 0.1%  |  visits : 10700, best score : 70656.0, average score : 101395.0, city : 19, depth : 17, not developed : 0
+conv : 0.1%  |  visits : 9150, best score : 72576.0, average score : 101609.7, city : 8, depth : 17, not developed : 0
+conv : 0.1%  |  visits : 8232, best score : 72967.0, average score : 101764.5, city : 11, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 6533, best score : 75368.0, average score : 102134.6, city : 39, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 5159, best score : 75471.0, average score : 102559.5, city : 46, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 5047, best score : 73489.0, average score : 102599.9, city : 10, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 4032, best score : 73656.0, average score : 103057.5, city : 21, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 3596, best score : 76659.0, average score : 103313.0, city : 22, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 3240, best score : 73467.0, average score : 103554.9, city : 15, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 3224, best score : 79958.0, average score : 103566.9, city : 2, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 3072, best score : 77065.0, average score : 103686.4, city : 20, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 2889, best score : 78135.0, average score : 103839.2, city : 12, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 2373, best score : 77209.0, average score : 104364.4, city : 13, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 2341, best score : 77993.0, average score : 104402.3, city : 33, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 2277, best score : 77823.0, average score : 104481.8, city : 24, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 2245, best score : 80349.0, average score : 104525.4, city : 31, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 2164, best score : 77610.0, average score : 104632.3, city : 40, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 2097, best score : 79324.0, average score : 104726.4, city : 38, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 1856, best score : 76272.0, average score : 105103.6, city : 4, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 1793, best score : 80684.0, average score : 105211.1, city : 23, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 1710, best score : 76479.0, average score : 105370.0, city : 28, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 1641, best score : 82001.0, average score : 105503.5, city : 9, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 1636, best score : 81440.0, average score : 105511.3, city : 47, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 1567, best score : 84029.0, average score : 105659.0, city : 41, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 1554, best score : 80924.0, average score : 105688.6, city : 44, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 1549, best score : 83133.0, average score : 105698.8, city : 3, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 1512, best score : 78979.0, average score : 105785.2, city : 1, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 1509, best score : 83484.0, average score : 105790.2, city : 34, depth : 17, not developed : 0
+conv : 0.0%  |  visits : 1503, best score : 79659.0, average score : 105816.5, city : 25, depth : 17, not developed : 0
+
+
+chosen :
+
+visits : 15162064, best score : 40583.0, average score : 47422.4, city : 45, depth : 17, not developed : 0
+
+children :
+
+conv : 99.0%  |  visits : 15014854, best score : 40583.0, average score : 46912.3, city : 32, depth : 18, not developed : 0
+conv : 0.2%  |  visits : 24121, best score : 66668.0, average score : 97633.8, city : 14, depth : 18, not developed : 0
+conv : 0.1%  |  visits : 14757, best score : 69789.0, average score : 98125.2, city : 8, depth : 18, not developed : 0
+conv : 0.1%  |  visits : 12262, best score : 67825.0, average score : 98343.8, city : 11, depth : 18, not developed : 0
+conv : 0.1%  |  visits : 11712, best score : 66854.0, average score : 98401.6, city : 19, depth : 18, not developed : 0
+conv : 0.1%  |  visits : 10180, best score : 74080.0, average score : 98585.4, city : 39, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 5802, best score : 70650.0, average score : 99465.8, city : 46, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 5716, best score : 72274.0, average score : 99493.3, city : 10, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 5439, best score : 75730.0, average score : 99584.1, city : 21, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 4999, best score : 73830.0, average score : 99745.5, city : 15, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 4243, best score : 72382.0, average score : 100076.6, city : 2, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 4131, best score : 72746.0, average score : 100131.6, city : 20, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 3964, best score : 75373.0, average score : 100223.0, city : 22, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 3569, best score : 74925.0, average score : 100456.2, city : 12, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 2980, best score : 72078.0, average score : 100888.1, city : 24, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 2893, best score : 72107.0, average score : 100965.5, city : 40, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 2844, best score : 71211.0, average score : 101005.7, city : 13, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 2781, best score : 77037.0, average score : 101064.6, city : 31, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 2668, best score : 74988.0, average score : 101174.3, city : 33, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 2596, best score : 75775.0, average score : 101251.1, city : 38, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 2018, best score : 74240.0, average score : 101972.5, city : 47, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 1922, best score : 77047.0, average score : 102123.1, city : 4, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 1887, best score : 75366.0, average score : 102185.7, city : 28, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 1871, best score : 76609.0, average score : 102211.8, city : 23, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 1783, best score : 78578.0, average score : 102362.8, city : 25, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 1769, best score : 77036.0, average score : 102393.9, city : 44, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 1748, best score : 77722.0, average score : 102433.2, city : 1, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 1676, best score : 78457.0, average score : 102577.1, city : 3, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 1652, best score : 76795.0, average score : 102617.5, city : 34, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 1621, best score : 73539.0, average score : 102682.8, city : 9, depth : 18, not developed : 0
+conv : 0.0%  |  visits : 1605, best score : 78790.0, average score : 102721.1, city : 41, depth : 18, not developed : 0
+
+
+chosen :
+
+visits : 15014854, best score : 40583.0, average score : 46912.3, city : 32, depth : 18, not developed : 0
+
+children :
+
+conv : 98.7%  |  visits : 14820389, best score : 40583.0, average score : 46264.1, city : 14, depth : 19, not developed : 0
+conv : 0.2%  |  visits : 37192, best score : 64524.0, average score : 94734.5, city : 19, depth : 19, not developed : 0
+conv : 0.2%  |  visits : 27439, best score : 61196.0, average score : 94969.6, city : 11, depth : 19, not developed : 0
+conv : 0.1%  |  visits : 19285, best score : 65355.0, average score : 95291.4, city : 8, depth : 19, not developed : 0
+conv : 0.1%  |  visits : 15586, best score : 66587.0, average score : 95514.7, city : 39, depth : 19, not developed : 0
+conv : 0.1%  |  visits : 8907, best score : 69898.0, average score : 96229.9, city : 46, depth : 19, not developed : 0
+conv : 0.1%  |  visits : 8346, best score : 68475.0, average score : 96326.5, city : 10, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 6331, best score : 67097.0, average score : 96773.8, city : 15, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 6077, best score : 70355.0, average score : 96845.7, city : 21, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 5619, best score : 69987.0, average score : 96988.0, city : 20, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 5536, best score : 70605.0, average score : 97015.2, city : 22, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 4977, best score : 70904.0, average score : 97219.0, city : 12, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 4948, best score : 65502.0, average score : 97229.2, city : 2, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 3849, best score : 68531.0, average score : 97755.5, city : 13, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 3591, best score : 68888.0, average score : 97913.3, city : 33, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 3548, best score : 72592.0, average score : 97939.8, city : 24, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 3348, best score : 72246.0, average score : 98076.6, city : 40, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 3143, best score : 70858.0, average score : 98229.9, city : 31, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 3087, best score : 72738.0, average score : 98274.8, city : 38, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 2414, best score : 74542.0, average score : 98924.4, city : 23, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 2407, best score : 72316.0, average score : 98934.0, city : 4, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 2390, best score : 73440.0, average score : 98952.9, city : 47, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 2191, best score : 71890.0, average score : 99209.4, city : 28, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 2134, best score : 76587.0, average score : 99282.7, city : 44, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 2090, best score : 70752.0, average score : 99346.6, city : 1, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 2084, best score : 73837.0, average score : 99354.7, city : 9, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 2046, best score : 76938.0, average score : 99409.1, city : 34, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 1982, best score : 70868.0, average score : 99510.8, city : 3, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 1978, best score : 74634.0, average score : 99513.7, city : 41, depth : 19, not developed : 0
+conv : 0.0%  |  visits : 1939, best score : 76290.0, average score : 99579.8, city : 25, depth : 19, not developed : 0
+
+
+chosen :
+
+visits : 14820389, best score : 40583.0, average score : 46264.1, city : 14, depth : 19, not developed : 0
+
+children :
+
+conv : 98.7%  |  visits : 14624303, best score : 40583.0, average score : 45628.3, city : 8, depth : 20, not developed : 0
+conv : 0.2%  |  visits : 36489, best score : 64449.0, average score : 92201.0, city : 39, depth : 20, not developed : 0
+conv : 0.2%  |  visits : 36070, best score : 63190.0, average score : 92209.3, city : 11, depth : 20, not developed : 0
+conv : 0.1%  |  visits : 19518, best score : 65439.0, average score : 92732.7, city : 19, depth : 20, not developed : 0
+conv : 0.1%  |  visits : 9796, best score : 70487.0, average score : 93547.5, city : 10, depth : 20, not developed : 0
+conv : 0.1%  |  visits : 8925, best score : 66348.0, average score : 93680.8, city : 21, depth : 20, not developed : 0
+conv : 0.1%  |  visits : 7432, best score : 67561.0, average score : 93961.3, city : 46, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 7153, best score : 67936.0, average score : 94024.4, city : 15, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 7071, best score : 67871.0, average score : 94042.9, city : 22, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 6574, best score : 65714.0, average score : 94164.1, city : 2, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 5113, best score : 70777.0, average score : 94621.5, city : 20, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 5094, best score : 67106.0, average score : 94628.1, city : 12, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 4246, best score : 72272.0, average score : 94998.9, city : 13, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 3898, best score : 72999.0, average score : 95184.5, city : 40, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 3864, best score : 71262.0, average score : 95204.8, city : 33, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 3651, best score : 69268.0, average score : 95331.7, city : 24, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 3372, best score : 71448.0, average score : 95516.5, city : 38, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 3126, best score : 71078.0, average score : 95701.2, city : 31, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 2720, best score : 69875.0, average score : 96057.4, city : 47, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 2550, best score : 70057.0, average score : 96233.5, city : 28, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 2430, best score : 74757.0, average score : 96366.2, city : 4, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 2407, best score : 70778.0, average score : 96391.0, city : 23, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 2256, best score : 75370.0, average score : 96576.0, city : 44, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 2246, best score : 73975.0, average score : 96591.5, city : 1, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 2052, best score : 74978.0, average score : 96862.3, city : 34, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 2043, best score : 72318.0, average score : 96873.2, city : 25, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 2033, best score : 68574.0, average score : 96890.6, city : 9, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 1987, best score : 73401.0, average score : 96958.4, city : 3, depth : 20, not developed : 0
+conv : 0.0%  |  visits : 1969, best score : 72930.0, average score : 96990.6, city : 41, depth : 20, not developed : 0
+
+
+chosen :
+
+visits : 14624303, best score : 40583.0, average score : 45628.3, city : 8, depth : 20, not developed : 0
+
+children :
+
+conv : 98.9%  |  visits : 14469455, best score : 40583.0, average score : 45137.4, city : 39, depth : 21, not developed : 0
+conv : 0.2%  |  visits : 25033, best score : 64382.0, average score : 89925.0, city : 21, depth : 21, not developed : 0
+conv : 0.1%  |  visits : 19537, best score : 59352.0, average score : 90154.9, city : 15, depth : 21, not developed : 0
+conv : 0.1%  |  visits : 16651, best score : 62942.0, average score : 90319.0, city : 11, depth : 21, not developed : 0
+conv : 0.1%  |  visits : 10680, best score : 64764.0, average score : 90850.6, city : 19, depth : 21, not developed : 0
+conv : 0.1%  |  visits : 9246, best score : 65139.0, average score : 91050.4, city : 2, depth : 21, not developed : 0
+conv : 0.1%  |  visits : 7340, best score : 67719.0, average score : 91400.7, city : 10, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 6385, best score : 66828.0, average score : 91633.5, city : 22, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 6058, best score : 69767.0, average score : 91725.3, city : 46, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 5912, best score : 66894.0, average score : 91768.9, city : 40, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 4359, best score : 66557.0, average score : 92359.2, city : 33, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 4298, best score : 67046.0, average score : 92390.0, city : 12, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 4039, best score : 68083.0, average score : 92521.6, city : 13, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 3916, best score : 68152.0, average score : 92590.1, city : 20, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 3257, best score : 62882.0, average score : 93014.8, city : 24, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 2654, best score : 70610.0, average score : 93541.7, city : 31, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 2600, best score : 70188.0, average score : 93592.2, city : 28, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 2577, best score : 71166.0, average score : 93616.1, city : 38, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 2502, best score : 71049.0, average score : 93697.2, city : 47, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 2414, best score : 68508.0, average score : 93795.9, city : 4, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 2251, best score : 69107.0, average score : 94000.3, city : 1, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 2093, best score : 67142.0, average score : 94210.7, city : 23, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 1918, best score : 71558.0, average score : 94485.6, city : 25, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 1909, best score : 74811.0, average score : 94495.2, city : 3, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 1877, best score : 74339.0, average score : 94549.2, city : 41, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 1876, best score : 73754.0, average score : 94554.0, city : 9, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 1755, best score : 73948.0, average score : 94765.3, city : 44, depth : 21, not developed : 0
+conv : 0.0%  |  visits : 1710, best score : 74880.0, average score : 94855.5, city : 34, depth : 21, not developed : 0
+
+
+chosen :
+
+visits : 14469455, best score : 40583.0, average score : 45137.4, city : 39, depth : 21, not developed : 0
+
+children :
+
+conv : 98.6%  |  visits : 14265895, best score : 40583.0, average score : 44516.5, city : 11, depth : 22, not developed : 0
+conv : 0.3%  |  visits : 36217, best score : 61308.0, average score : 87283.7, city : 21, depth : 22, not developed : 0
+conv : 0.2%  |  visits : 24649, best score : 60841.0, average score : 87592.4, city : 19, depth : 22, not developed : 0
+conv : 0.2%  |  visits : 21979, best score : 63073.0, average score : 87696.5, city : 15, depth : 22, not developed : 0
+conv : 0.1%  |  visits : 16356, best score : 61688.0, average score : 87993.8, city : 2, depth : 22, not developed : 0
+conv : 0.1%  |  visits : 14264, best score : 63792.0, average score : 88147.6, city : 10, depth : 22, not developed : 0
+conv : 0.1%  |  visits : 10617, best score : 61640.0, average score : 88516.3, city : 22, depth : 22, not developed : 0
+conv : 0.1%  |  visits : 8689, best score : 63801.0, average score : 88799.4, city : 46, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 6571, best score : 63868.0, average score : 89245.2, city : 12, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 6242, best score : 62913.0, average score : 89334.5, city : 40, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 5887, best score : 65191.0, average score : 89438.0, city : 33, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 5718, best score : 65542.0, average score : 89491.3, city : 20, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 5620, best score : 63097.0, average score : 89522.5, city : 13, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 5188, best score : 64365.0, average score : 89675.7, city : 24, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 3798, best score : 69412.0, average score : 90323.0, city : 38, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 3390, best score : 69277.0, average score : 90586.8, city : 31, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 3262, best score : 68881.0, average score : 90681.5, city : 28, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 3019, best score : 66077.0, average score : 90869.0, city : 47, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 2948, best score : 68829.0, average score : 90930.1, city : 4, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 2842, best score : 65753.0, average score : 91024.6, city : 1, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 2467, best score : 71844.0, average score : 91403.8, city : 23, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 2404, best score : 68585.0, average score : 91477.3, city : 41, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 2312, best score : 68292.0, average score : 91588.5, city : 34, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 2301, best score : 71797.0, average score : 91601.9, city : 44, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 2286, best score : 68391.0, average score : 91620.4, city : 3, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 2279, best score : 69175.0, average score : 91631.4, city : 25, depth : 22, not developed : 0
+conv : 0.0%  |  visits : 2254, best score : 66651.0, average score : 91661.5, city : 9, depth : 22, not developed : 0
+
+
+chosen :
+
+visits : 14265895, best score : 40583.0, average score : 44516.5, city : 11, depth : 22, not developed : 0
+
+children :
+
+conv : 99.1%  |  visits : 14141965, best score : 40583.0, average score : 44145.9, city : 19, depth : 23, not developed : 0
+conv : 0.1%  |  visits : 16396, best score : 60860.0, average score : 85274.0, city : 10, depth : 23, not developed : 0
+conv : 0.1%  |  visits : 13676, best score : 55544.0, average score : 85476.6, city : 46, depth : 23, not developed : 0
+conv : 0.1%  |  visits : 9913, best score : 63485.0, average score : 85885.2, city : 21, depth : 23, not developed : 0
+conv : 0.1%  |  visits : 7970, best score : 60564.0, average score : 86201.7, city : 22, depth : 23, not developed : 0
+conv : 0.1%  |  visits : 7808, best score : 60016.0, average score : 86233.4, city : 15, depth : 23, not developed : 0
+conv : 0.1%  |  visits : 7416, best score : 63092.0, average score : 86314.6, city : 2, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 6262, best score : 65647.0, average score : 86595.3, city : 12, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 6059, best score : 63405.0, average score : 86652.0, city : 20, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 4880, best score : 63042.0, average score : 87053.8, city : 13, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 4406, best score : 65327.0, average score : 87258.8, city : 40, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 4328, best score : 64748.0, average score : 87295.6, city : 24, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 4239, best score : 64391.0, average score : 87340.6, city : 33, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 3484, best score : 66483.0, average score : 87773.1, city : 31, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 3312, best score : 64641.0, average score : 87891.1, city : 38, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 2515, best score : 66543.0, average score : 88596.1, city : 4, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 2507, best score : 66999.0, average score : 88600.8, city : 28, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 2490, best score : 68708.0, average score : 88622.8, city : 47, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 2188, best score : 66925.0, average score : 88985.9, city : 1, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 2158, best score : 64560.0, average score : 89028.6, city : 41, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 2155, best score : 69206.0, average score : 89030.9, city : 23, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 2066, best score : 68549.0, average score : 89156.6, city : 25, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 2032, best score : 67589.0, average score : 89209.3, city : 44, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 1928, best score : 67251.0, average score : 89368.0, city : 34, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 1909, best score : 66592.0, average score : 89398.3, city : 9, depth : 23, not developed : 0
+conv : 0.0%  |  visits : 1832, best score : 66242.0, average score : 89534.6, city : 3, depth : 23, not developed : 0
+
+
+chosen :
+
+visits : 14141965, best score : 40583.0, average score : 44145.9, city : 19, depth : 23, not developed : 0
+
+children :
+
+conv : 99.0%  |  visits : 13994113, best score : 40583.0, average score : 43724.6, city : 46, depth : 24, not developed : 0
+conv : 0.2%  |  visits : 28019, best score : 56123.0, average score : 82396.6, city : 10, depth : 24, not developed : 0
+conv : 0.1%  |  visits : 13470, best score : 60901.0, average score : 83122.0, city : 20, depth : 24, not developed : 0
+conv : 0.1%  |  visits : 10369, best score : 59539.0, average score : 83452.1, city : 22, depth : 24, not developed : 0
+conv : 0.1%  |  visits : 10083, best score : 61081.0, average score : 83489.9, city : 21, depth : 24, not developed : 0
+conv : 0.1%  |  visits : 9342, best score : 62088.0, average score : 83596.4, city : 12, depth : 24, not developed : 0
+conv : 0.1%  |  visits : 8490, best score : 61265.0, average score : 83735.6, city : 2, depth : 24, not developed : 0
+conv : 0.1%  |  visits : 8091, best score : 58964.0, average score : 83808.4, city : 15, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 5966, best score : 60215.0, average score : 84310.8, city : 13, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 5826, best score : 62064.0, average score : 84352.6, city : 24, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 5400, best score : 60438.0, average score : 84492.6, city : 31, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 4746, best score : 64026.0, average score : 84740.5, city : 38, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 4554, best score : 60297.0, average score : 84824.5, city : 40, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 4289, best score : 60556.0, average score : 84948.9, city : 33, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 3037, best score : 64297.0, average score : 85740.3, city : 47, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 2974, best score : 63414.0, average score : 85793.5, city : 23, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 2924, best score : 63516.0, average score : 85837.7, city : 4, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 2841, best score : 66306.0, average score : 85912.5, city : 44, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 2813, best score : 59769.0, average score : 85935.6, city : 28, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 2694, best score : 61974.0, average score : 86052.1, city : 41, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 2660, best score : 64859.0, average score : 86083.8, city : 34, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 2492, best score : 66535.0, average score : 86261.2, city : 9, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 2300, best score : 64354.0, average score : 86488.0, city : 25, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 2250, best score : 64164.0, average score : 86551.3, city : 1, depth : 24, not developed : 0
+conv : 0.0%  |  visits : 2221, best score : 64382.0, average score : 86589.5, city : 3, depth : 24, not developed : 0
+
+
+chosen :
+
+visits : 13994113, best score : 40583.0, average score : 43724.6, city : 46, depth : 24, not developed : 0
+
+children :
+
+conv : 98.7%  |  visits : 13806287, best score : 40583.0, average score : 43211.2, city : 10, depth : 25, not developed : 0
+conv : 0.2%  |  visits : 33526, best score : 52116.0, average score : 80129.4, city : 20, depth : 25, not developed : 0
+conv : 0.2%  |  visits : 21353, best score : 56572.0, average score : 80511.5, city : 12, depth : 25, not developed : 0
+conv : 0.1%  |  visits : 18663, best score : 57897.0, average score : 80643.3, city : 22, depth : 25, not developed : 0
+conv : 0.1%  |  visits : 12220, best score : 59458.0, average score : 81120.6, city : 21, depth : 25, not developed : 0
+conv : 0.1%  |  visits : 10308, best score : 57910.0, average score : 81343.0, city : 2, depth : 25, not developed : 0
+conv : 0.1%  |  visits : 10289, best score : 59070.0, average score : 81345.1, city : 15, depth : 25, not developed : 0
+conv : 0.1%  |  visits : 9120, best score : 60202.0, average score : 81514.7, city : 13, depth : 25, not developed : 0
+conv : 0.1%  |  visits : 8859, best score : 58761.0, average score : 81557.0, city : 24, depth : 25, not developed : 0
+conv : 0.1%  |  visits : 7779, best score : 58032.0, average score : 81755.0, city : 31, depth : 25, not developed : 0
+conv : 0.1%  |  visits : 7448, best score : 61192.0, average score : 81823.7, city : 38, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 5670, best score : 62539.0, average score : 82291.7, city : 33, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 4871, best score : 61973.0, average score : 82582.0, city : 40, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 4299, best score : 61099.0, average score : 82838.1, city : 47, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 4001, best score : 62331.0, average score : 82992.3, city : 23, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 3979, best score : 60715.0, average score : 83004.0, city : 4, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 3551, best score : 61065.0, average score : 83261.4, city : 44, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 3473, best score : 61514.0, average score : 83314.3, city : 28, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 3330, best score : 58733.0, average score : 83412.9, city : 34, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 3263, best score : 64666.0, average score : 83462.3, city : 41, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 3217, best score : 60674.0, average score : 83499.0, city : 9, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 3189, best score : 58617.0, average score : 83519.6, city : 1, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 2740, best score : 64059.0, average score : 83903.8, city : 25, depth : 25, not developed : 0
+conv : 0.0%  |  visits : 2677, best score : 57828.0, average score : 83967.9, city : 3, depth : 25, not developed : 0
+
+
+chosen :
+
+visits : 13806287, best score : 40583.0, average score : 43211.2, city : 10, depth : 25, not developed : 0
+
+children :
+
+conv : 98.8%  |  visits : 13639245, best score : 40583.0, average score : 42770.5, city : 21, depth : 26, not developed : 0
+conv : 0.2%  |  visits : 30886, best score : 52135.0, average score : 77878.3, city : 22, depth : 26, not developed : 0
+conv : 0.1%  |  visits : 20197, best score : 56188.0, average score : 78246.4, city : 2, depth : 26, not developed : 0
+conv : 0.1%  |  visits : 16036, best score : 57653.0, average score : 78481.1, city : 12, depth : 26, not developed : 0
+conv : 0.1%  |  visits : 15546, best score : 58123.0, average score : 78514.8, city : 15, depth : 26, not developed : 0
+conv : 0.1%  |  visits : 12716, best score : 56240.0, average score : 78747.1, city : 20, depth : 26, not developed : 0
+conv : 0.1%  |  visits : 9836, best score : 58042.0, average score : 79078.4, city : 13, depth : 26, not developed : 0
+conv : 0.1%  |  visits : 8270, best score : 57692.0, average score : 79327.9, city : 24, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 6645, best score : 54532.0, average score : 79675.6, city : 33, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 6432, best score : 55697.0, average score : 79730.5, city : 40, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 4952, best score : 56655.0, average score : 80207.3, city : 38, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 4603, best score : 58883.0, average score : 80351.1, city : 31, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 3569, best score : 60770.0, average score : 80896.6, city : 4, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 3422, best score : 61862.0, average score : 80994.5, city : 47, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 3029, best score : 62968.0, average score : 81289.3, city : 28, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 3014, best score : 58830.0, average score : 81301.7, city : 23, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 2794, best score : 63529.0, average score : 81492.2, city : 41, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 2653, best score : 61806.0, average score : 81631.3, city : 1, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 2652, best score : 59101.0, average score : 81630.0, city : 34, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 2559, best score : 62794.0, average score : 81729.2, city : 44, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 2515, best score : 61445.0, average score : 81773.1, city : 9, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 2475, best score : 62827.0, average score : 81816.5, city : 3, depth : 26, not developed : 0
+conv : 0.0%  |  visits : 2240, best score : 62744.0, average score : 82100.0, city : 25, depth : 26, not developed : 0
+
+
+chosen :
+
+visits : 13639245, best score : 40583.0, average score : 42770.5, city : 21, depth : 26, not developed : 0
+
+children :
+
+conv : 99.6%  |  visits : 13584546, best score : 40583.0, average score : 42628.5, city : 15, depth : 27, not developed : 0
+conv : 0.1%  |  visits : 9735, best score : 54775.0, average score : 75766.2, city : 2, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 5346, best score : 54452.0, average score : 76705.3, city : 40, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 4437, best score : 56801.0, average score : 77058.7, city : 22, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 3717, best score : 60859.0, average score : 77427.9, city : 33, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 3273, best score : 58018.0, average score : 77713.6, city : 13, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 3108, best score : 54486.0, average score : 77833.6, city : 12, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 2582, best score : 61353.0, average score : 78296.2, city : 24, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 2453, best score : 59579.0, average score : 78435.3, city : 20, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1960, best score : 58412.0, average score : 79065.6, city : 28, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1803, best score : 62400.0, average score : 79322.9, city : 38, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1790, best score : 58445.0, average score : 79344.8, city : 31, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1789, best score : 63335.0, average score : 79348.8, city : 4, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1737, best score : 57966.0, average score : 79438.2, city : 1, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1660, best score : 56589.0, average score : 79584.9, city : 47, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1415, best score : 58800.0, average score : 80125.1, city : 41, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1396, best score : 55467.0, average score : 80177.2, city : 23, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1386, best score : 62346.0, average score : 80198.5, city : 3, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1297, best score : 62877.0, average score : 80439.9, city : 25, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1285, best score : 63999.0, average score : 80477.2, city : 34, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1268, best score : 64155.0, average score : 80527.0, city : 44, depth : 27, not developed : 0
+conv : 0.0%  |  visits : 1261, best score : 58602.0, average score : 80544.6, city : 9, depth : 27, not developed : 0
+
+
+chosen :
+
+visits : 13584546, best score : 40583.0, average score : 42628.5, city : 15, depth : 27, not developed : 0
+
+children :
+
+conv : 99.3%  |  visits : 13495466, best score : 40583.0, average score : 42420.5, city : 2, depth : 28, not developed : 0
+conv : 0.2%  |  visits : 22847, best score : 53175.0, average score : 72208.0, city : 40, depth : 28, not developed : 0
+conv : 0.1%  |  visits : 10032, best score : 55019.0, average score : 73116.5, city : 22, depth : 28, not developed : 0
+conv : 0.1%  |  visits : 8584, best score : 49803.0, average score : 73334.8, city : 33, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 5476, best score : 56524.0, average score : 74069.4, city : 13, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 4915, best score : 55548.0, average score : 74271.9, city : 12, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 3943, best score : 57325.0, average score : 74720.1, city : 24, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 3914, best score : 59242.0, average score : 74735.2, city : 20, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 3329, best score : 57154.0, average score : 75101.6, city : 28, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 2770, best score : 56237.0, average score : 75549.7, city : 1, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 2671, best score : 55137.0, average score : 75643.1, city : 38, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 2569, best score : 55991.0, average score : 75750.6, city : 4, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 2535, best score : 57876.0, average score : 75783.0, city : 47, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 2344, best score : 59948.0, average score : 75995.4, city : 31, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 2115, best score : 58663.0, average score : 76289.3, city : 41, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 1992, best score : 59848.0, average score : 76469.0, city : 3, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 1900, best score : 58808.0, average score : 76614.5, city : 25, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 1844, best score : 60453.0, average score : 76712.9, city : 23, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 1827, best score : 55277.0, average score : 76736.5, city : 9, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 1739, best score : 58126.0, average score : 76896.4, city : 44, depth : 28, not developed : 0
+conv : 0.0%  |  visits : 1733, best score : 59581.0, average score : 76904.5, city : 34, depth : 28, not developed : 0
+
+
+chosen :
+
+visits : 13495466, best score : 40583.0, average score : 42420.5, city : 2, depth : 28, not developed : 0
+
+children :
+
+conv : 99.1%  |  visits : 13370224, best score : 40583.0, average score : 42150.3, city : 22, depth : 29, not developed : 0
+conv : 0.2%  |  visits : 24742, best score : 50734.0, average score : 69911.9, city : 40, depth : 29, not developed : 0
+conv : 0.1%  |  visits : 18631, best score : 49948.0, average score : 70175.7, city : 33, depth : 29, not developed : 0
+conv : 0.1%  |  visits : 13664, best score : 52740.0, average score : 70510.0, city : 13, depth : 29, not developed : 0
+conv : 0.1%  |  visits : 11568, best score : 53821.0, average score : 70712.2, city : 12, depth : 29, not developed : 0
+conv : 0.1%  |  visits : 8928, best score : 50923.0, average score : 71062.7, city : 24, depth : 29, not developed : 0
+conv : 0.1%  |  visits : 7622, best score : 53009.0, average score : 71300.4, city : 20, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 4600, best score : 51994.0, average score : 72200.8, city : 28, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 4230, best score : 56082.0, average score : 72372.8, city : 38, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 3744, best score : 50967.0, average score : 72639.4, city : 4, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 3582, best score : 54683.0, average score : 72738.8, city : 31, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 3489, best score : 54825.0, average score : 72799.3, city : 47, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 3436, best score : 55352.0, average score : 72835.6, city : 1, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 2648, best score : 55305.0, average score : 73486.5, city : 41, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 2600, best score : 57873.0, average score : 73536.4, city : 23, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 2502, best score : 57776.0, average score : 73640.2, city : 3, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 2432, best score : 52709.0, average score : 73719.3, city : 9, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 2359, best score : 57266.0, average score : 73807.0, city : 25, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 2267, best score : 57289.0, average score : 73917.5, city : 34, depth : 29, not developed : 0
+conv : 0.0%  |  visits : 2197, best score : 57984.0, average score : 74011.6, city : 44, depth : 29, not developed : 0
+
+
+chosen :
+
+visits : 13370224, best score : 40583.0, average score : 42150.3, city : 22, depth : 29, not developed : 0
+
+children :
+
+conv : 98.9%  |  visits : 13228726, best score : 40583.0, average score : 41863.6, city : 12, depth : 30, not developed : 0
+conv : 0.2%  |  visits : 29643, best score : 48493.0, average score : 67732.2, city : 13, depth : 30, not developed : 0
+conv : 0.1%  |  visits : 17236, best score : 50469.0, average score : 68225.9, city : 20, depth : 30, not developed : 0
+conv : 0.1%  |  visits : 16516, best score : 52035.0, average score : 68270.2, city : 33, depth : 30, not developed : 0
+conv : 0.1%  |  visits : 15744, best score : 50780.0, average score : 68321.7, city : 24, depth : 30, not developed : 0
+conv : 0.1%  |  visits : 14279, best score : 50599.0, average score : 68430.5, city : 40, depth : 30, not developed : 0
+conv : 0.1%  |  visits : 6862, best score : 51807.0, average score : 69445.1, city : 38, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 5663, best score : 52782.0, average score : 69777.8, city : 31, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 4525, best score : 53871.0, average score : 70210.1, city : 4, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 4363, best score : 51978.0, average score : 70285.6, city : 47, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 4283, best score : 51867.0, average score : 70323.5, city : 28, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 3478, best score : 52166.0, average score : 70784.0, city : 1, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 3069, best score : 53133.0, average score : 71083.1, city : 41, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 3062, best score : 54688.0, average score : 71090.2, city : 23, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 2611, best score : 55249.0, average score : 71500.4, city : 9, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 2567, best score : 55974.0, average score : 71545.9, city : 44, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 2551, best score : 56469.0, average score : 71562.2, city : 34, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 2534, best score : 55849.0, average score : 71581.8, city : 3, depth : 30, not developed : 0
+conv : 0.0%  |  visits : 2511, best score : 56822.0, average score : 71605.2, city : 25, depth : 30, not developed : 0
+
+
+chosen :
+
+visits : 13228726, best score : 40583.0, average score : 41863.6, city : 12, depth : 30, not developed : 0
+
+children :
+
+conv : 99.1%  |  visits : 13103381, best score : 40583.0, average score : 41622.6, city : 20, depth : 31, not developed : 0
+conv : 0.2%  |  visits : 25716, best score : 48787.0, average score : 65822.3, city : 13, depth : 31, not developed : 0
+conv : 0.2%  |  visits : 23996, best score : 46820.0, average score : 65882.4, city : 24, depth : 31, not developed : 0
+conv : 0.1%  |  visits : 11393, best score : 48663.0, average score : 66683.5, city : 33, depth : 31, not developed : 0
+conv : 0.1%  |  visits : 9662, best score : 50720.0, average score : 66904.9, city : 38, depth : 31, not developed : 0
+conv : 0.1%  |  visits : 8624, best score : 51749.0, average score : 67068.1, city : 31, depth : 31, not developed : 0
+conv : 0.1%  |  visits : 8168, best score : 50484.0, average score : 67149.8, city : 40, depth : 31, not developed : 0
+conv : 0.0%  |  visits : 5080, best score : 53755.0, average score : 67964.2, city : 4, depth : 31, not developed : 0
+conv : 0.0%  |  visits : 4960, best score : 52122.0, average score : 68010.8, city : 47, depth : 31, not developed : 0
+conv : 0.0%  |  visits : 4498, best score : 53284.0, average score : 68206.3, city : 28, depth : 31, not developed : 0
+conv : 0.0%  |  visits : 3650, best score : 53090.0, average score : 68657.8, city : 23, depth : 31, not developed : 0
+conv : 0.0%  |  visits : 3039, best score : 53610.0, average score : 69094.2, city : 1, depth : 31, not developed : 0
+conv : 0.0%  |  visits : 3031, best score : 52978.0, average score : 69100.1, city : 41, depth : 31, not developed : 0
+conv : 0.0%  |  visits : 2882, best score : 53566.0, average score : 69230.1, city : 9, depth : 31, not developed : 0
+conv : 0.0%  |  visits : 2764, best score : 54638.0, average score : 69336.2, city : 34, depth : 31, not developed : 0
+conv : 0.0%  |  visits : 2724, best score : 54085.0, average score : 69374.6, city : 44, depth : 31, not developed : 0
+conv : 0.0%  |  visits : 2579, best score : 54199.0, average score : 69520.3, city : 25, depth : 31, not developed : 0
+conv : 0.0%  |  visits : 2578, best score : 53056.0, average score : 69521.4, city : 3, depth : 31, not developed : 0
+
+
+chosen :
+
+visits : 13103381, best score : 40583.0, average score : 41622.6, city : 20, depth : 31, not developed : 0
+
+children :
+
+conv : 98.9%  |  visits : 12965121, best score : 40583.0, average score : 41374.3, city : 24, depth : 32, not developed : 0
+conv : 0.2%  |  visits : 32658, best score : 46565.0, average score : 63702.1, city : 13, depth : 32, not developed : 0
+conv : 0.2%  |  visits : 20370, best score : 47126.0, average score : 64104.4, city : 31, depth : 32, not developed : 0
+conv : 0.1%  |  visits : 18015, best score : 48657.0, average score : 64226.2, city : 38, depth : 32, not developed : 0
+conv : 0.1%  |  visits : 11045, best score : 47487.0, average score : 64790.2, city : 33, depth : 32, not developed : 0
+conv : 0.1%  |  visits : 8482, best score : 49950.0, average score : 65156.6, city : 40, depth : 32, not developed : 0
+conv : 0.0%  |  visits : 6392, best score : 48428.0, average score : 65607.5, city : 47, depth : 32, not developed : 0
+conv : 0.0%  |  visits : 5642, best score : 46234.0, average score : 65827.6, city : 23, depth : 32, not developed : 0
+conv : 0.0%  |  visits : 5626, best score : 49535.0, average score : 65833.2, city : 4, depth : 32, not developed : 0
+conv : 0.0%  |  visits : 4839, best score : 51259.0, average score : 66117.7, city : 28, depth : 32, not developed : 0
+conv : 0.0%  |  visits : 4178, best score : 51365.0, average score : 66417.1, city : 44, depth : 32, not developed : 0
+conv : 0.0%  |  visits : 3938, best score : 51532.0, average score : 66545.9, city : 41, depth : 32, not developed : 0
+conv : 0.0%  |  visits : 3880, best score : 50568.0, average score : 66577.9, city : 9, depth : 32, not developed : 0
+conv : 0.0%  |  visits : 3683, best score : 50585.0, average score : 66692.3, city : 34, depth : 32, not developed : 0
+conv : 0.0%  |  visits : 3263, best score : 51773.0, average score : 66974.2, city : 1, depth : 32, not developed : 0
+conv : 0.0%  |  visits : 3205, best score : 52453.0, average score : 67016.4, city : 25, depth : 32, not developed : 0
+conv : 0.0%  |  visits : 3043, best score : 49562.0, average score : 67144.6, city : 3, depth : 32, not developed : 0
+
+
+chosen :
+
+visits : 12965121, best score : 40583.0, average score : 41374.3, city : 24, depth : 32, not developed : 0
+
+children :
+
+conv : 99.4%  |  visits : 12892611, best score : 40583.0, average score : 41249.3, city : 13, depth : 33, not developed : 0
+conv : 0.1%  |  visits : 11750, best score : 48083.0, average score : 62359.5, city : 33, depth : 33, not developed : 0
+conv : 0.1%  |  visits : 9044, best score : 47201.0, average score : 62704.9, city : 38, depth : 33, not developed : 0
+conv : 0.1%  |  visits : 7915, best score : 49149.0, average score : 62899.9, city : 40, depth : 33, not developed : 0
+conv : 0.1%  |  visits : 7595, best score : 49485.0, average score : 62961.9, city : 31, depth : 33, not developed : 0
+conv : 0.0%  |  visits : 5013, best score : 48145.0, average score : 63671.8, city : 4, depth : 33, not developed : 0
+conv : 0.0%  |  visits : 4964, best score : 49516.0, average score : 63690.8, city : 47, depth : 33, not developed : 0
+conv : 0.0%  |  visits : 4382, best score : 48976.0, average score : 63935.5, city : 28, depth : 33, not developed : 0
+conv : 0.0%  |  visits : 3209, best score : 50708.0, average score : 64617.4, city : 23, depth : 33, not developed : 0
+conv : 0.0%  |  visits : 2967, best score : 51150.0, average score : 64806.7, city : 41, depth : 33, not developed : 0
+conv : 0.0%  |  visits : 2925, best score : 52320.0, average score : 64841.3, city : 1, depth : 33, not developed : 0
+conv : 0.0%  |  visits : 2708, best score : 52088.0, average score : 65036.3, city : 44, depth : 33, not developed : 0
+conv : 0.0%  |  visits : 2698, best score : 50481.0, average score : 65045.4, city : 9, depth : 33, not developed : 0
+conv : 0.0%  |  visits : 2684, best score : 52121.0, average score : 65059.5, city : 34, depth : 33, not developed : 0
+conv : 0.0%  |  visits : 2352, best score : 50642.0, average score : 65411.9, city : 25, depth : 33, not developed : 0
+conv : 0.0%  |  visits : 2303, best score : 51961.0, average score : 65471.3, city : 3, depth : 33, not developed : 0
+
+
+chosen :
+
+visits : 12892611, best score : 40583.0, average score : 41249.3, city : 13, depth : 33, not developed : 0
+
+children :
+
+conv : 99.5%  |  visits : 12831443, best score : 40583.0, average score : 41153.8, city : 33, depth : 34, not developed : 0
+conv : 0.1%  |  visits : 14466, best score : 46348.0, average score : 59669.9, city : 40, depth : 34, not developed : 0
+conv : 0.1%  |  visits : 7561, best score : 45490.0, average score : 60515.8, city : 38, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 5799, best score : 44976.0, average score : 60949.7, city : 31, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 4705, best score : 47802.0, average score : 61333.8, city : 47, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 4610, best score : 47621.0, average score : 61372.9, city : 28, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 4446, best score : 48856.0, average score : 61444.5, city : 4, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 3189, best score : 48286.0, average score : 62165.1, city : 1, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 2827, best score : 48094.0, average score : 62460.3, city : 23, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 2667, best score : 50735.0, average score : 62604.3, city : 41, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 2373, best score : 50334.0, average score : 62914.6, city : 9, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 2205, best score : 51113.0, average score : 63118.3, city : 44, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 2168, best score : 48116.0, average score : 63167.0, city : 34, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 2114, best score : 50260.0, average score : 63238.1, city : 3, depth : 34, not developed : 0
+conv : 0.0%  |  visits : 2037, best score : 49029.0, average score : 63346.3, city : 25, depth : 34, not developed : 0
+
+
+chosen :
+
+visits : 12831443, best score : 40583.0, average score : 41153.8, city : 33, depth : 34, not developed : 0
+
+children :
+
+conv : 99.6%  |  visits : 12785705, best score : 40583.0, average score : 41087.9, city : 40, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 6042, best score : 46701.0, average score : 58576.4, city : 28, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 5291, best score : 46735.0, average score : 58814.2, city : 38, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 5114, best score : 45568.0, average score : 58878.7, city : 4, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 4716, best score : 46822.0, average score : 59033.1, city : 47, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 4455, best score : 47388.0, average score : 59147.1, city : 31, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 4002, best score : 47688.0, average score : 59369.9, city : 1, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 2777, best score : 48151.0, average score : 60227.7, city : 41, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 2498, best score : 46664.0, average score : 60505.7, city : 23, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 2263, best score : 48481.0, average score : 60780.7, city : 9, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 2254, best score : 48358.0, average score : 60790.5, city : 25, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 2249, best score : 47662.0, average score : 60797.2, city : 3, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 2071, best score : 48549.0, average score : 61037.4, city : 34, depth : 35, not developed : 0
+conv : 0.0%  |  visits : 2005, best score : 48867.0, average score : 61135.7, city : 44, depth : 35, not developed : 0
+
+
+chosen :
+
+visits : 12785705, best score : 40583.0, average score : 41087.9, city : 40, depth : 35, not developed : 0
+
+children :
+
+conv : 99.2%  |  visits : 12678732, best score : 40583.0, average score : 40959.9, city : 28, depth : 36, not developed : 0
+conv : 0.2%  |  visits : 20857, best score : 43670.0, average score : 55392.0, city : 1, depth : 36, not developed : 0
+conv : 0.1%  |  visits : 15877, best score : 43370.0, average score : 55670.0, city : 4, depth : 36, not developed : 0
+conv : 0.1%  |  visits : 15564, best score : 44091.0, average score : 55691.8, city : 38, depth : 36, not developed : 0
+conv : 0.1%  |  visits : 12377, best score : 45850.0, average score : 55959.3, city : 47, depth : 36, not developed : 0
+conv : 0.1%  |  visits : 10325, best score : 45805.0, average score : 56193.9, city : 31, depth : 36, not developed : 0
+conv : 0.0%  |  visits : 5814, best score : 44528.0, average score : 57093.3, city : 41, depth : 36, not developed : 0
+conv : 0.0%  |  visits : 5126, best score : 44788.0, average score : 57327.4, city : 3, depth : 36, not developed : 0
+conv : 0.0%  |  visits : 5008, best score : 47244.0, average score : 57372.3, city : 25, depth : 36, not developed : 0
+conv : 0.0%  |  visits : 4463, best score : 46607.0, average score : 57603.6, city : 23, depth : 36, not developed : 0
+conv : 0.0%  |  visits : 4050, best score : 45876.0, average score : 57807.3, city : 9, depth : 36, not developed : 0
+conv : 0.0%  |  visits : 3895, best score : 47654.0, average score : 57893.3, city : 34, depth : 36, not developed : 0
+conv : 0.0%  |  visits : 3616, best score : 48353.0, average score : 58059.3, city : 44, depth : 36, not developed : 0
+
+
+chosen :
+
+visits : 12678732, best score : 40583.0, average score : 40959.9, city : 28, depth : 36, not developed : 0
+
+children :
+
+conv : 99.0%  |  visits : 12547215, best score : 40583.0, average score : 40818.9, city : 1, depth : 37, not developed : 0
+conv : 0.3%  |  visits : 37402, best score : 41744.0, average score : 53447.5, city : 4, depth : 37, not developed : 0
+conv : 0.2%  |  visits : 19388, best score : 44184.0, average score : 53998.2, city : 47, depth : 37, not developed : 0
+conv : 0.1%  |  visits : 14469, best score : 44099.0, average score : 54308.2, city : 38, depth : 37, not developed : 0
+conv : 0.1%  |  visits : 10510, best score : 44511.0, average score : 54703.0, city : 31, depth : 37, not developed : 0
+conv : 0.1%  |  visits : 10353, best score : 43325.0, average score : 54723.3, city : 41, depth : 37, not developed : 0
+conv : 0.1%  |  visits : 8297, best score : 44440.0, average score : 55038.3, city : 3, depth : 37, not developed : 0
+conv : 0.1%  |  visits : 8166, best score : 44639.0, average score : 55062.7, city : 25, depth : 37, not developed : 0
+conv : 0.0%  |  visits : 6213, best score : 43607.0, average score : 55506.1, city : 9, depth : 37, not developed : 0
+conv : 0.0%  |  visits : 5958, best score : 45173.0, average score : 55579.8, city : 23, depth : 37, not developed : 0
+conv : 0.0%  |  visits : 5509, best score : 45063.0, average score : 55721.7, city : 34, depth : 37, not developed : 0
+conv : 0.0%  |  visits : 5251, best score : 44998.0, average score : 55811.0, city : 44, depth : 37, not developed : 0
+
+
+chosen :
+
+visits : 12547215, best score : 40583.0, average score : 40818.9, city : 1, depth : 37, not developed : 0
+
+children :
+
+conv : 99.3%  |  visits : 12462186, best score : 40583.0, average score : 40735.2, city : 3, depth : 38, not developed : 0
+conv : 0.2%  |  visits : 19676, best score : 41443.0, average score : 52167.2, city : 25, depth : 38, not developed : 0
+conv : 0.1%  |  visits : 12172, best score : 42110.0, average score : 52684.7, city : 4, depth : 38, not developed : 0
+conv : 0.1%  |  visits : 9756, best score : 42103.0, average score : 52968.8, city : 41, depth : 38, not developed : 0
+conv : 0.1%  |  visits : 8799, best score : 43441.0, average score : 53112.1, city : 47, depth : 38, not developed : 0
+conv : 0.1%  |  visits : 6910, best score : 43031.0, average score : 53478.4, city : 34, depth : 38, not developed : 0
+conv : 0.1%  |  visits : 6343, best score : 43117.0, average score : 53619.4, city : 9, depth : 38, not developed : 0
+conv : 0.0%  |  visits : 6031, best score : 43613.0, average score : 53705.3, city : 38, depth : 38, not developed : 0
+conv : 0.0%  |  visits : 5692, best score : 43805.0, average score : 53806.5, city : 44, depth : 38, not developed : 0
+conv : 0.0%  |  visits : 5012, best score : 44046.0, average score : 54039.7, city : 31, depth : 38, not developed : 0
+conv : 0.0%  |  visits : 4637, best score : 44015.0, average score : 54189.2, city : 23, depth : 38, not developed : 0
+
+
+chosen :
+
+visits : 12462186, best score : 40583.0, average score : 40735.2, city : 3, depth : 38, not developed : 0
+
+children :
+
+conv : 99.7%  |  visits : 12428113, best score : 40583.0, average score : 40703.8, city : 25, depth : 39, not developed : 0
+conv : 0.1%  |  visits : 8648, best score : 41897.0, average score : 50923.0, city : 34, depth : 39, not developed : 0
+conv : 0.1%  |  visits : 6279, best score : 42293.0, average score : 51408.1, city : 44, depth : 39, not developed : 0
+conv : 0.0%  |  visits : 4444, best score : 42628.0, average score : 52028.4, city : 9, depth : 39, not developed : 0
+conv : 0.0%  |  visits : 3423, best score : 42599.0, average score : 52572.9, city : 41, depth : 39, not developed : 0
+conv : 0.0%  |  visits : 2770, best score : 44095.0, average score : 53068.8, city : 23, depth : 39, not developed : 0
+conv : 0.0%  |  visits : 2356, best score : 45227.0, average score : 53487.7, city : 4, depth : 39, not developed : 0
+conv : 0.0%  |  visits : 2234, best score : 44823.0, average score : 53631.5, city : 47, depth : 39, not developed : 0
+conv : 0.0%  |  visits : 1967, best score : 45425.0, average score : 53991.8, city : 38, depth : 39, not developed : 0
+conv : 0.0%  |  visits : 1951, best score : 45982.0, average score : 54016.5, city : 31, depth : 39, not developed : 0
+
+
+chosen :
+
+visits : 12428113, best score : 40583.0, average score : 40703.8, city : 25, depth : 39, not developed : 0
+
+children :
+
+conv : 99.8%  |  visits : 12399242, best score : 40583.0, average score : 40682.3, city : 34, depth : 40, not developed : 0
+conv : 0.1%  |  visits : 8057, best score : 40881.0, average score : 48650.6, city : 44, depth : 40, not developed : 0
+conv : 0.0%  |  visits : 5287, best score : 41135.0, average score : 49321.6, city : 9, depth : 40, not developed : 0
+conv : 0.0%  |  visits : 3832, best score : 41380.0, average score : 49940.0, city : 41, depth : 40, not developed : 0
+conv : 0.0%  |  visits : 2923, best score : 42221.0, average score : 50540.6, city : 23, depth : 40, not developed : 0
+conv : 0.0%  |  visits : 2593, best score : 42795.0, average score : 50833.2, city : 4, depth : 40, not developed : 0
+conv : 0.0%  |  visits : 2368, best score : 43905.0, average score : 51067.8, city : 47, depth : 40, not developed : 0
+conv : 0.0%  |  visits : 1910, best score : 44407.0, average score : 51668.9, city : 38, depth : 40, not developed : 0
+conv : 0.0%  |  visits : 1900, best score : 44434.0, average score : 51683.6, city : 31, depth : 40, not developed : 0
+
+
+chosen :
+
+visits : 12399242, best score : 40583.0, average score : 40682.3, city : 34, depth : 40, not developed : 0
+
+children :
+
+conv : 99.9%  |  visits : 12382802, best score : 40583.0, average score : 40671.3, city : 44, depth : 41, not developed : 0
+conv : 0.0%  |  visits : 4622, best score : 41932.0, average score : 47560.3, city : 9, depth : 41, not developed : 0
+conv : 0.0%  |  visits : 2915, best score : 42210.0, average score : 48548.7, city : 23, depth : 41, not developed : 0
+conv : 0.0%  |  visits : 2517, best score : 42761.0, average score : 48914.2, city : 41, depth : 41, not developed : 0
+conv : 0.0%  |  visits : 1684, best score : 44473.0, average score : 50065.8, city : 4, depth : 41, not developed : 0
+conv : 0.0%  |  visits : 1618, best score : 43812.0, average score : 50195.5, city : 47, depth : 41, not developed : 0
+conv : 0.0%  |  visits : 1587, best score : 44493.0, average score : 50256.5, city : 31, depth : 41, not developed : 0
+conv : 0.0%  |  visits : 1496, best score : 45004.0, average score : 50454.5, city : 38, depth : 41, not developed : 0
+
+
+chosen :
+
+visits : 12382802, best score : 40583.0, average score : 40671.3, city : 44, depth : 41, not developed : 0
+
+children :
+
+conv : 99.7%  |  visits : 12348849, best score : 40583.0, average score : 40657.4, city : 9, depth : 42, not developed : 0
+conv : 0.1%  |  visits : 13336, best score : 40607.0, average score : 44643.5, city : 23, depth : 42, not developed : 0
+conv : 0.1%  |  visits : 7029, best score : 41449.0, average score : 45514.0, city : 41, depth : 42, not developed : 0
+conv : 0.0%  |  visits : 3780, best score : 42873.0, average score : 46671.4, city : 31, depth : 42, not developed : 0
+conv : 0.0%  |  visits : 3327, best score : 42386.0, average score : 46958.0, city : 47, depth : 42, not developed : 0
+conv : 0.0%  |  visits : 3309, best score : 42526.0, average score : 46970.2, city : 4, depth : 42, not developed : 0
+conv : 0.0%  |  visits : 3171, best score : 42890.0, average score : 47071.0, city : 38, depth : 42, not developed : 0
+
+
+chosen :
+
+visits : 12348849, best score : 40583.0, average score : 40657.4, city : 9, depth : 42, not developed : 0
+
+children :
+
+conv : 99.5%  |  visits : 12289010, best score : 40583.0, average score : 40642.9, city : 23, depth : 43, not developed : 0
+conv : 0.3%  |  visits : 35868, best score : 40864.0, average score : 42800.0, city : 41, depth : 43, not developed : 0
+conv : 0.1%  |  visits : 6565, best score : 41979.0, average score : 44705.3, city : 4, depth : 43, not developed : 0
+conv : 0.1%  |  visits : 6373, best score : 41882.0, average score : 44755.0, city : 47, depth : 43, not developed : 0
+conv : 0.0%  |  visits : 5951, best score : 42735.0, average score : 44873.1, city : 31, depth : 43, not developed : 0
+conv : 0.0%  |  visits : 5081, best score : 42593.0, average score : 45160.8, city : 38, depth : 43, not developed : 0
+
+
+chosen :
+
+visits : 12289010, best score : 40583.0, average score : 40642.9, city : 23, depth : 43, not developed : 0
+
+children :
+
+conv : 99.5%  |  visits : 12221676, best score : 40583.0, average score : 40630.2, city : 41, depth : 44, not developed : 0
+conv : 0.2%  |  visits : 23810, best score : 41609.0, average score : 42587.0, city : 31, depth : 44, not developed : 0
+conv : 0.1%  |  visits : 15015, best score : 41754.0, average score : 43117.8, city : 47, depth : 44, not developed : 0
+conv : 0.1%  |  visits : 14594, best score : 42095.0, average score : 43154.8, city : 38, depth : 44, not developed : 0
+conv : 0.1%  |  visits : 13914, best score : 41975.0, average score : 43217.9, city : 4, depth : 44, not developed : 0
+
+
+chosen :
+
+visits : 12221676, best score : 40583.0, average score : 40630.2, city : 41, depth : 44, not developed : 0
+
+children :
+
+conv : 96.6%  |  visits : 11809987, best score : 40583.0, average score : 40608.0, city : 4, depth : 45, not developed : 0
+conv : 2.7%  |  visits : 328343, best score : 40871.0, average score : 41067.2, city : 47, depth : 45, not developed : 0
+conv : 0.4%  |  visits : 49021, best score : 41348.0, average score : 41942.5, city : 31, depth : 45, not developed : 0
+conv : 0.3%  |  visits : 34324, best score : 41555.0, average score : 42220.8, city : 38, depth : 45, not developed : 0
+
+
+chosen :
+
+visits : 11809987, best score : 40583.0, average score : 40608.0, city : 4, depth : 45, not developed : 0
+
+children :
+
+conv : 99.2%  |  visits : 11717545, best score : 40583.0, average score : 40597.2, city : 47, depth : 46, not developed : 0
+conv : 0.4%  |  visits : 47232, best score : 41744.0, average score : 41956.8, city : 38, depth : 46, not developed : 0
+conv : 0.4%  |  visits : 45209, best score : 41781.0, average score : 41988.9, city : 31, depth : 46, not developed : 0
+
+
+chosen :
+
+visits : 11717545, best score : 40583.0, average score : 40597.2, city : 47, depth : 46, not developed : 0
+
+children :
+
+conv : 64.5%  |  visits : 7560895, best score : 40583.0, average score : 40583.0, city : 31, depth : 47, not developed : 0
+conv : 35.5%  |  visits : 4156649, best score : 40623.0, average score : 40623.0, city : 38, depth : 47, not developed : 0
+
+
+chosen :
+
+visits : 7560895, best score : 40583.0, average score : 40583.0, city : 31, depth : 47, not developed : 0
+
+children :
+
+conv : 100.0%  |  visits : 7560894, best score : 40583.0, average score : 40583.0, city : 38, depth : 48, not developed : 0
+
+
+chosen :
+
+visits : 7560894, best score : 40583.0, average score : 40583.0, city : 38, depth : 48, not developed : 0
+
+children :
+
+
+
+_________________END DEBUG TREE_______________
+
+
+
+______START DEBUG INFO (same as above)________
+
+
+18128445 playouts, 1800 s, 48 max depth, best score : 40583, exploration constat : 27642.0
+45.1 playout time, 10.5 available time, 0.025 playout time ratio
+ 0.689 creation time ratio in playout
+weight update ratio : 0.169, get length ratio : 0.038 , store ratio : 0.006
+
+________________END DEBUG INFO________________
+
+simulation ref for log files : att48-1800s-Random-Min_spanning_tree-18128445_playouts
+mcts path :
+[0] -> 7 -> 37 -> 30 -> 43 -> 18 -> 26 -> 16 -> 36 -> 5 -> 29 -> 42 -> 27 -> 6 -> 17 -> 35 -> 45 -> 32 -> 14 -> 8 -> 39 -> 11 -> 19 -> 46 -> 10 -> 21 -> 15 -> 2 -> 22 -> 12 -> 20 -> 24 -> 13 -> 33 -> 40 -> 28 -> 1 -> 3 -> 25 -> 34 -> 44 -> 9 -> 23 -> 41 -> 4 -> 47 -> 31 -> [38]
+
+% of error : 21.06 %

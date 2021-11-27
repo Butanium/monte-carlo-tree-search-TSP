@@ -3,7 +3,8 @@
  (name tsp_solvers)
  (modules
   Two_Opt
-  Monte_Carlo
+  MCTS
   Simulated_Annealing
+  Greedy_Random
   )
  (libraries graphics tools tsp_modules))

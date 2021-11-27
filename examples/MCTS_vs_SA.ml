@@ -1,3 +1,5 @@
+(*run command : dune exec ./examples/MCTS_vs_SA.exe *)
+
 let foi = float_of_int
 let city_config = "att48"
 let city_count, cities = Reader_tsp.open_tsp city_config
@@ -9,7 +11,7 @@ let () =
     let max_time = Sys.time() -. start_time in
     Printf.printf "\nmax time for mcts : %.4f seconds" max_time;
     let debug_tree = false in 
-    let mcts_path  = Monte_Carlo.proceed_mcts ~debug_tree Monte_Carlo.Roulette Monte_Carlo.Standard_deviation city_count
+    let mcts_path  = MCTS.proceed_mcts ~debug_tree MCTS.Roulette MCTS.Standard_deviation city_count
         eval max_time (max_int-2) in
     let mst_length = foi @@ Prim_Alg.prim_alg eval city_count in
     Printf.printf "mst ratios : \n   - mcts : %.2f\n   - sa : %.2f\n\n" ((foi @@ Base_tsp.path_length eval mcts_path) /. mst_length)
