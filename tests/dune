@@ -1,4 +1,4 @@
 (executables
- (names MCTS_main)
+ (names MCTS_main two_opt_main)
  (libraries tsp_modules tsp_solvers)
 )

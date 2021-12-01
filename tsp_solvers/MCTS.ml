@@ -48,9 +48,19 @@ let str_of_exploration_mode = function
     | Min_spanning_tree -> "Min_spanning_tree"
     | Standard_deviation -> "Standard_deviation"
 
+type expected_expected_length_mode = Average | Best  
+(* [EN] define how the expected reward will be calculated in the selection formula : 
+- Average will use the average length that the node got in playouts
+- Best will use the best length that the node got in playouts*)
+
+let str_of_expected_expected_length_mode = function
+    | Average -> "Average"
+    | Best -> "Best"
+
 type arguments = {playout_selection_mode : playout_selection_mode; mutable visited : IntSet.t; city_count : int;
                     mutable path_size : int; eval : int -> int -> int; mutable get_node_score : node -> float;
-                    current_path : int array; best_path : int array; mutable best_score : int; mutable playout_count : int}
+                    current_path : int array; best_path : int array; mutable best_score : int; mutable playout_count : int;
+                    expected_length_mode : expected_expected_length_mode}
 (* [FR] Type contenant tous les arguments qui n'auront donc pas besoin d'être passés
 dans les différentes fonctions *)
 (* [EN] Type containing all the info needed in the functions in order to avoid
@@ -58,7 +68,7 @@ useless arguments*)
 
 let arg = ref {playout_selection_mode=Random; visited = IntSet.empty; city_count= -1; path_size = -1;
                 eval = (fun _ _ -> -1); get_node_score = (fun _ -> -1.); current_path = [||]; best_path = [||];
-                best_score = -1; playout_count = 0}
+                best_score = -1; playout_count = 0; expected_length_mode = Average}
 (* [FR] Référence au record qui est utilisé par toutes les fonctions *)
 (* [EN] Ref to the record that will be used by every functions *)
 
@@ -210,7 +220,7 @@ let expand node =
 
 let exploration_constant = ref @@ -1.
 
-let get_node_score_fun root exploration_mode =
+let get_node_score_fun root exploration_mode expected_length_mode =
 (* [FR] Renvoie la fonction d'évaluation qui sera utilisée pendant la sélection *)
 (* [EN] Return the function which will return the score of a node during selection *)
     let c = (match exploration_mode with
@@ -225,8 +235,11 @@ let get_node_score_fun root exploration_mode =
         | Root -> failwith "can't calculate score of the root"
         | Parent p -> p.info.visit
     in
-    fun node -> let average_node_score = node.info.score /. node.info.visit in
-                    average_node_score -. 2. *. c *. sqrt (2. *. log (get_parent_visit node) /. node.info.visit)
+    let get_expected_length = match expected_length_mode with 
+        | Average -> fun node -> node.info.score /. node.info.visit  
+        | Best -> fun node -> node.info.best_score
+    in
+    fun node -> get_expected_length node -. 2. *. c *. sqrt (2. *. log (get_parent_visit node) /. node.info.visit)
 
 
 let get_best_child node =
@@ -295,13 +308,17 @@ let rec debug_mcts root =
     end
 
 
-let proceed_mcts ?(generate_log_file=true) ?(debug_tree = true) ?(city_config = "")playout_selection_mode exploration_mode city_count eval max_time max_playout =
+let proceed_mcts ?(expected_length_mode=Average) ?(generate_log_file=true) ?(debug_tree = true) ?(city_config = "") playout_selection_mode exploration_mode 
+     city_count eval max_time max_playout =
+
+     let user_interrupt = ref false in 
+     Sys.set_signal Sys.sigint (Sys.Signal_handle (fun _ -> user_interrupt := true)); 
 (* [FR] Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout *)
 (* [EN] Create and develop the tree, keeping in memory the best path done during the playouts *)
     reset_deb();
     arg := {playout_selection_mode; visited = IntSet.empty; city_count; path_size = 0; eval;
             get_node_score = (fun _ -> -1.); current_path = Array.make city_count (-1);
-            best_path = Array.make city_count (-1); best_score = max_int; playout_count = 0};
+            best_path = Array.make city_count (-1); best_score = max_int; playout_count = 0; expected_length_mode};
     init();
 
     let start_time = Sys.time() in
@@ -333,7 +350,7 @@ let proceed_mcts ?(generate_log_file=true) ?(debug_tree = true) ?(city_config = 
         !arg.playout_count <- !arg.playout_count + 1;
         selection root;
         if !arg.playout_count = city_count - 1 then
-            !arg.get_node_score <- get_node_score_fun root exploration_mode
+            !arg.get_node_score <- get_node_score_fun root exploration_mode expected_length_mode
     done;
     let spent_time = Sys.time() -. start_time in 
     print_endline "\n\n_______________START DEBUG INFO_______________\n";

@@ -68,11 +68,13 @@ let weight_update eval last q = function
 
 
 let randomize_path q eval mode path_arr =
-    for i = 0 to Array.length path_arr do
+    for i = 0 to Array.length path_arr - 1 do
         let v = RndQ.take q in
         weight_update eval v q mode;
         path_arr.(i) <- v
     done
+
+(* type debug = {mutable } *)
 
 let iter_two_opt eval city_count rnd_mode max_time max_try =
     let create_arr() = Array.init city_count (Fun.id) in
@@ -81,10 +83,12 @@ let iter_two_opt eval city_count rnd_mode max_time max_try =
     let best_len = ref max_int in
     let best_path = create_arr() in
     let i = ref 0 in 
+    let acc_scores = ref 0 in 
     let start_time = Sys.time() in 
-    while !i < max_try && Sys.time() -. start_time < max_time do
+    let get_time () = Sys.time() -. start_time in
+    while !i < max_try && get_time() < max_time do
         randomize_path queue eval rnd_mode path_arr;
-        let max_time = max_time -. (Sys.time() -. start_time) in 
+        let max_time = max_time -. get_time() in 
         opt_fast ~max_time eval path_arr;
         let len = Base_tsp.path_length eval path_arr in
         if len < !best_len then (
@@ -93,7 +97,13 @@ let iter_two_opt eval city_count rnd_mode max_time max_try =
                 best_path.(i) <- path_arr.(i)
             done
         );
+        incr i;
+        acc_scores := !acc_scores + len;
         RndQ.reset queue
     done;
+    Printf.printf "iterated two opt achieved in %.1f s, %d iterations.\nBest score : %d | Average score : %d"
+        (get_time()) !i !best_len (!acc_scores / !i);
+    Printf.printf "best path : ";
+    Base_tsp.print_path best_path;
     best_path
 
