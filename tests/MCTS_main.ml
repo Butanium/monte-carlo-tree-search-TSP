@@ -5,12 +5,19 @@ let city_config = "att48"
 let file_path = "tsp_instances" (* your path to the tsp directory, use the path from root if it doesn't work *)
 let city_count, cities = Reader_tsp.open_tsp ~file_path city_config
 let eval = Base_tsp.dists cities
-let debug_tree = true 
 let max_time = 1800. (* 3 minute run, can be longer like 30 minutes for good results *)
 let max_playout = 100000000
-let playout_mode = MCTS.Random
+let playout_selection_mode = MCTS.Random
+
+let exploration_mode = MCTS.Min_spanning_tree
 let expected_length_mode = MCTS.Average
-let path  = MCTS.proceed_mcts ~debug_tree ~city_config ~expected_length_mode playout_mode MCTS.Min_spanning_tree 
+
+let optimization_mode = MCTS.Two_opt (100, 100, 1.)
+(* let optimization_mode = MCTS.No_opt *)
+let generate_log_file = false
+let debug_tree = false
+let path, tree = MCTS.proceed_mcts ~debug_tree ~city_config ~expected_length_mode ~playout_selection_mode 
+    ~exploration_mode ~optimization_mode ~generate_log_file 
      city_count eval max_time max_playout
 
 

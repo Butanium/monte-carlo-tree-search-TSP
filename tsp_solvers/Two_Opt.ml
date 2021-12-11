@@ -36,7 +36,7 @@ let opt_fast ?(debug = false) ?(partial_path = false) ?(maxi = -1) ?(max_time = 
              ?(lower_bound = 0) ?(upper_bound = -1) eval path =
     (* If `partial_path` is set to true the algorithm won't try to optimize the edge between the end of the path and the beginning. 
        It's useful if you want to optimize the part of a path *)
-    let bound = if upper_bound < 0 then Array.length path else upper_bound in
+    let bound = if upper_bound < 0 then Array.length path else min upper_bound @@ Array.length path in
     let partial = if partial_path then 1 else 0 in
     let start_time = Sys.time() in 
     let rec rec_while i = (i < maxi || maxi < 0) &&
