@@ -398,6 +398,11 @@ CgggbU8OU qOp qOdoUOdcb
             !arg.get_node_score <- get_node_score_fun root exploration_mode expected_length_mode
     done;
     let spent_time = Sys.time() -. start_time in 
+    if optimize_end_path then begin
+        let start_time = Sys.time() in 
+        Two_Opt.opt_fast eval ~max_time:optimize_end_path_time !arg.best_path;
+        Printf.printf "Optimized returned path in %.0f/%.0f seconds\n" (Sys.time() -. start_time) (optimize_end_path_time);
+    end;
     print_endline "\n\n_______________START DEBUG INFO_______________\n";
     let debug_info oc = 
         Printf.fprintf oc "\n%d playouts, %.0f s, %d max depth, best score : %d, exploration constat : %.1f, random seed : %d " !arg.playout_count spent_time deb.max_depth !arg.best_score !exploration_constant seed;
@@ -406,9 +411,10 @@ CgggbU8OU qOp qOdoUOdcb
             (deb.playout_time /. spent_time) (deb.pl_creation /. deb.playout_time) (deb.opt_time /. spent_time) (deb.opt_time /. deb.playout_time);
         Printf.fprintf oc "weight update ratio : %.3f, get length ratio : %.3f , store ratio : %.3f \n" (deb.pl_weight_update /. deb.playout_time) (deb.pl_get_length_t
         /. deb.playout_time) (deb.pl_store /. deb.playout_time);
+        Base_tsp.print_path ~oc !arg.best_path;
         Printf.fprintf oc "\n________________END DEBUG INFO________________\n\n";
     in
-    debug_info stdout; 
+    debug_info stdout;
     if debug_tree then begin
         print_endline "\n\n________________START DEBUG TREE_______________\n";
         debug_mcts stdout root;
@@ -440,11 +446,6 @@ CgggbU8OU qOp qOdoUOdcb
                 String.length file_path - start;
     end;
     assert (Base_tsp.check_path_validity !arg.best_path);
-    if optimize_end_path then begin
-        let start_time = Sys.time() in 
-        Two_Opt.opt_fast eval ~max_time:optimize_end_path_time !arg.best_path;
-        Printf.printf "Optimized returned path in %.0f/%.0f seconds\n" (Sys.time() -. start_time) (optimize_end_path_time);
-    end;
     !arg.best_path, root
 
 
