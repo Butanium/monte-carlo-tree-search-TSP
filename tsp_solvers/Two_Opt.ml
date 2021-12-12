@@ -77,6 +77,7 @@ let randomize_path q eval mode path_arr =
 (* type debug = {mutable } *)
 
 let iter_two_opt eval city_count rnd_mode max_time max_try =
+    Random.self_init();
     let create_arr() = Array.init city_count (Fun.id) in
     let queue = RndQ.simple_create city_count @@ create_arr() in
     let path_arr = create_arr () in 
