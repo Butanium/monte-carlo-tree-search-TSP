@@ -1,13 +1,15 @@
-
-let dists cities =
+let get_adj_matrix cities = 
     let dist (c1x,c1y) (c2x,c2y) =
         int_of_float (0.5 +. sqrt ((c1x -. c2x)*.(c1x -. c2x) +. (c1y -. c2y)*. (c1y -. c2y)))
     in
     let city_count = Array.length cities in
-    let adj_matrix = Array.init city_count (fun i -> Array.init city_count (fun j -> dist cities.(i) cities.(j)))
-    in
+    Array.init city_count (fun i -> Array.init city_count (fun j -> dist cities.(i) cities.(j)))
+    
+let dists cities =
+    let adj_matrix = get_adj_matrix cities in 
     fun c1 c2 -> try (adj_matrix.(c1).(c2)) with Invalid_argument e -> raise @@ 
         Invalid_argument (Printf.sprintf "get dist %d %d failed : " c1 c2 ^ e)
+
 
 let path_length eval path =
     let s = ref 0 in
@@ -15,6 +17,10 @@ let path_length eval path =
         s := !s + eval path.(i) path.(i+1)
     done;
     !s + eval path.(0) path.(Array.length path - 1)
+
+let random_path city_count = 
+    let rndQ = Random_Queue.simple_create city_count (Array.init city_count Fun.id) in 
+    Random_Queue.tot_empty rndQ
 
 let best_path_length config eval =
     let path = Reader_tsp.open_path config in
@@ -41,9 +47,9 @@ let check_path_validity path =
         i > l || (path.(i) <= l && not @@ search (i+1) path.(i) && aux (i+1)) 
     in aux 0
 
+(* let check_path_validity *)
+
 let path_of_string path_string = 
     (*[0] -> 2 -> 1 -> 3 -> 7 -> 15 -> 12 -> 11 -> 9 -> 8 -> 10 -> 4 -> 14 -> 5 -> 6 -> [13]*)
-    let cleaned_string = Str.(global_replace (regexp {|[][> \n]|}) "" path_string) in 
+    let cleaned_string = Str.(global_replace (regexp "[][> \n]") "" path_string) in 
     Array.of_list @@ List.map int_of_string @@ String.split_on_char '-' cleaned_string
-    
-
