@@ -26,16 +26,13 @@ let best_path_length config eval =
     let path = Reader_tsp.open_path config in
     path_length eval path
 
-let print_path path = 
-    Array.iteri (fun i v -> (if i = 0 then Printf.printf "[%d] " else 
-        if i = Array.length path - 1 then Printf.printf "-> [%d]\n" 
-        else Printf.printf "-> %d ") v) path
+let print_path ?(oc = stdout) path = 
+    Array.iteri (fun i v -> (if i = 0 then Printf.fprintf oc "[%d] " else 
+        if i = Array.length path - 1 then Printf.fprintf oc "-> [%d]\n" 
+        else Printf.fprintf oc "-> %d ") v) path
 
-let prerr_path path = 
-    let prerrf = fun f x-> prerr_string (Printf.sprintf f x) in 
-    Array.iteri (fun i v -> (if i = 0 then prerrf "[%d] " else 
-        if i = Array.length path - 1 then prerrf "-> [%d]\n" 
-        else prerrf "-> %d ") v) path
+let prerr_path = 
+    print_path ~oc:stderr 
 let print_best_path config = 
     Printf.printf "\nbest path for %s :\n" config;
     print_path @@ Reader_tsp.open_path config
