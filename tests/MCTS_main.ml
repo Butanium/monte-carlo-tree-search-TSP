@@ -2,10 +2,9 @@
 dune exec ./tests/MCTS_main.exe 
 *)
 let city_config = "att48"
-let file_path = "tsp_instances" (* your path to the tsp directory, use the path from root if it doesn't work *)
-let city_count, cities = Reader_tsp.open_tsp ~file_path city_config
+let city_count, cities = Reader_tsp.open_tsp city_config
 let eval = Base_tsp.dists cities
-let max_time = 1800. (* 3 minute run, can be longer like 30 minutes for good results *)
+let max_time = 1800. 
 let max_playout = 100000000
 let playout_selection_mode = MCTS.Random
 let exploration_mode = MCTS.Min_spanning_tree
