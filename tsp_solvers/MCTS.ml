@@ -68,7 +68,8 @@ type optimization_mode = No_opt | Two_opt of int*int*float | Simulated_Annealing
 *)
 let str_of_optimization_mode = function
     | No_opt -> "No_optimization"
-    | Two_opt _ -> "Two_opt_optimization"
+    | Two_opt (max_lenght, max_iter, max_time) -> 
+        Printf.sprintf "Two_opt_optimization_%dlen_%diter_%.0fs" max_lenght max_iter max_time
     | Simulated_Annealing -> "Simulated_annealing_optimization"
 
 type arguments = {playout_selection_mode : playout_selection_mode; mutable visited : IntSet.t; city_count : int;
@@ -88,10 +89,10 @@ let arg = ref {playout_selection_mode=Random; visited = IntSet.empty; city_count
 (* [EN] Ref to the record that will be used by every functions *)
 
 let get_node_info node = 
-    Printf.sprintf "visits : %.0f, best score : %.1f, average score : %.1f, city : %d, depth : %d, not developed : %d\n"
+    Printf.sprintf "visits : %.0f, best score : %.0f, average score : %.0f, city : %d, depth : %d, not developed : %d\n"
         node.info.visit node.info.best_score (node.info.score /. node.info.visit) node.info.city node.info.depth (!arg.city_count - node.info.depth - node.info.developed)
 
-let debug_node node = Printf.printf "%s%!" @@ get_node_info node    
+let debug_node oc node = Printf.fprintf oc "%s" @@ get_node_info node    
 
 
 let update_weights queue last = match !arg.playout_selection_mode with
@@ -110,9 +111,12 @@ let playout_path = ref [||]
 
 let init() =
     Random.self_init();
+    let seed = Random.int 1073741823 in 
     playout_path := Array.make !arg.city_count (-1);
     let arr = Array.make !arg.city_count (-1) in
-    playout_queue := RndQ.simple_create !arg.city_count arr
+    playout_queue := RndQ.simple_create !arg.city_count arr;
+    Random.init seed; 
+    seed
 
 let create_city_generator set = 
     let i = ref 0 in 
@@ -171,7 +175,8 @@ let playout last_city start_dist =
     if size > 0 then (
         update_weights queue last_city;
         let cr_st = Sys.time() in
-        for k = 0 to size - 1 do
+        !playout_path.(0) <- last_city;
+        for k = 1 to size do
             let c = RndQ.take queue in
             let st_wu = Sys.time() in
             update_weights queue c;
@@ -184,10 +189,10 @@ let playout last_city start_dist =
         deb.opt_time <- deb.opt_time +. Sys.time() -. opt_st;
         let end_path = !playout_path in
         let gl_st = Sys.time() in
-        let score = ref @@ !arg.eval last_city end_path.(0) + !arg.eval 0 end_path.(size - 1) + start_dist
+        let score = ref @@ !arg.eval last_city end_path.(1) + !arg.eval 0 end_path.(size) + start_dist
         in
         for i = 1 to size - 1 do
-            score := !score + !arg.eval end_path.(i-1) end_path.(i)
+            score := !score + !arg.eval end_path.(i) end_path.(i+1)
         done;
         deb.pl_get_length_t <- deb.pl_get_length_t +. Sys.time() -. gl_st;
         !score
@@ -200,7 +205,7 @@ let playout last_city start_dist =
             !arg.best_path.(i) <- !arg.current_path.(i)
         done;
         for i = 0 to size - 1 do
-            !arg.best_path.(!arg.path_size + i) <- !playout_path.(i)
+            !arg.best_path.(!arg.path_size + i) <- !playout_path.(i+1)
         done;
         if deb.generate_log_file then 
             deb.best_score_hist <- (Sys.time(), !arg.playout_count, score) :: deb.best_score_hist
@@ -234,7 +239,6 @@ let expand node =
     !arg.current_path.(!arg.path_size) <- city;
     !arg.path_size <- !arg.path_size + 1;
     !arg.visited <- IntSet.add city !arg.visited;
-    deb.max_depth <- max deb.max_depth !arg.path_size;
     let depth = node.info.depth + 1 in 
     let tot_dist = node.info.tot_dist + !arg.eval node.info.city city in
     let info = {visit = 0.; score = 0.; best_score = infinity; city; depth; tot_dist; children=[]; developed=0} in
@@ -295,6 +299,7 @@ let rec selection node =
 (* [EN] Browse through the tree, picking the best child recursively until it reaches a leaf
 or a node with undeveloped children *)
     update_arg node;
+    deb.max_depth <- max deb.max_depth !arg.path_size;
     if node.info.developed + node.info.depth = !arg.city_count then
         match node.info.children with
             | [] -> let dist = node.info.tot_dist + !arg.eval node.info.city !arg.current_path.(0) in
@@ -317,27 +322,35 @@ let reset_arg() =
     !arg.visited <- IntSet.empty
 
 
-let rec debug_mcts root =
-    print_endline "\n\nchosen : \n";
-    debug_node root;
-    print_endline "\nchildren : \n";
+let rec debug_mcts oc root =
+    Printf.fprintf oc "\n\nchosen : \n\n";
+    debug_node oc root;
+    Printf.fprintf oc "\nchildren : \n\n";
     match root.info.children with
     | [] -> ()
     | l -> begin
         List.iter (fun n ->
             (match n.heritage with Root -> () | Parent f ->
-                Printf.printf "conv : %.1f%%  |  " @@ (100. *. n.info.visit /. f.info.visit); debug_node n;))
+                Printf.fprintf oc "conv : %.1f%%  |  " @@ (100. *. n.info.visit /. f.info.visit); debug_node oc n;))
                 @@ List.sort (fun n1 n2 -> -compare n1.info.visit n2.info.visit) l;
         let n,_ = List.fold_left (fun ((_, acc_s) as acc) n -> let s = n.info.score /. n.info.visit in
             if s < acc_s then n,s else acc) (root, infinity) l in
-        debug_mcts n;
+        debug_mcts oc n;
 
     end
 
 
-let proceed_mcts ?(expected_length_mode=Average) ?(generate_log_file=true) ?(debug_tree = true) 
-        ?(city_config = "") ?(playout_selection_mode=Roulette)  ?(exploration_mode=Standard_deviation) 
+let proceed_mcts 
+        ?(generate_log_file=false) 
+        ?(debug_tree = true) 
+        ?(expected_length_mode=Average) 
+        ?(city_config = "") 
+        ?(playout_selection_mode=Roulette)  
+        ?(exploration_mode=Standard_deviation) 
         ?(optimization_mode=No_opt)
+        ?(stop_on_leaf = true)
+        ?(optimize_end_path = false)
+        ?(optimize_end_path_time = -.1.)
         city_count eval max_time max_playout =
 (* [FR] Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout *)
 (* [EN] Create and develop the tree, keeping in memory the best path done during the playouts *)
@@ -349,7 +362,7 @@ let proceed_mcts ?(expected_length_mode=Average) ?(generate_log_file=true) ?(deb
             get_node_score = (fun _ -> -1.); current_path = Array.make city_count (-1);
             best_path = Array.make city_count (-1); best_score = max_int; playout_count = 0; expected_length_mode;
             optimization_mode};
-    init();
+    let seed = init() in 
     let start_time = Sys.time() in
     let info = {visit = 0.; score = 0.; best_score = infinity; depth = 1; city = 0; tot_dist = 0; children = []; 
         developed = 0} in
@@ -357,24 +370,26 @@ let proceed_mcts ?(expected_length_mode=Average) ?(generate_log_file=true) ?(deb
     let next_debug_print = ref 60. in 
     let minutes = ref 0 in 
     let get_time() = Sys.time() -. start_time in 
-    Printf.printf "Starting MCTS, I'll keep informed every minutes :) \n
-    You can stop the program at anytime by pressing Ctrl+C and it'll return you its current progress \n\n
-    ccee88oo
-    C8O8O8Q8PoOb o8oo
-   dOB69QO8PdUOpugoO9bD
-  CgggbU8OU qOp qOdoUOdcb
-      6OuU  /p u gcoUodpP
-        \\\\\\//  /douUP
-          \\\\\\////
-           |||/\\
-           |||\\/
-           |||||
-     .....//||||\\....%!\n\n";
-    while !arg.playout_count < max_playout && get_time() < max_time && not !user_interrupt do
+    Printf.printf @@"\n\nStarting MCTS, I'll keep informed every minutes :)\n" ^^
+"You can stop the program at anytime by pressing Ctrl+C and it'll return you its current progress \n\n" ^^
+"    ccee88oo
+  C8O8O8Q8PoOb o8oo
+ dOB69QO8PdUOpugoO9bD
+CgggbU8OU qOp qOdoUOdcb
+    6OuU  /p u gcoUodpP
+      \\\\\\//  /douUP
+        \\\\\\////
+         |||/\\
+         |||\\/
+         |:)|
+   .....//||||\\....%!\n\n";
+    while !arg.playout_count < max_playout && get_time() < max_time 
+          && (not stop_on_leaf || deb.max_depth < city_count) && not !user_interrupt do
         if get_time() > !next_debug_print then (
             next_debug_print := 60. +. !next_debug_print;
             incr minutes;
-            Printf.eprintf "\n Running for %d minutes, %d playout done | Best score : %d\n%!" !minutes !arg.playout_count !arg.best_score
+            Printf.eprintf "\n Running for %d minutes, %d playout done | Best score : %d | Max depth : %d/%d\n%!" 
+                !minutes !arg.playout_count !arg.best_score deb.max_depth city_count
         );
         reset_arg();
         !arg.playout_count <- !arg.playout_count + 1;
@@ -384,36 +399,51 @@ let proceed_mcts ?(expected_length_mode=Average) ?(generate_log_file=true) ?(deb
     done;
     let spent_time = Sys.time() -. start_time in 
     print_endline "\n\n_______________START DEBUG INFO_______________\n";
-    let debug_info() = 
-        Printf.printf "\n%d playouts, %.0f s, %d max depth, best score : %d, exploration constat : %.1f " !arg.playout_count spent_time deb.max_depth !arg.best_score !exploration_constant;
-        Printf.printf "\n%.1f playout time, %.1f available time, %.3f playout time ratio\n %.3f creation time ratio in playout,
-                %.3f playout optimization ratio, %.3f opt ratio in playout\n" deb.playout_time deb.available_time
+    let debug_info oc = 
+        Printf.fprintf oc "\n%d playouts, %.0f s, %d max depth, best score : %d, exploration constat : %.1f, random seed : %d " !arg.playout_count spent_time deb.max_depth !arg.best_score !exploration_constant seed;
+        Printf.fprintf oc ("\n%.1f playout time, %.1f available time, %.3f playout time ratio\n%.3f creation time ratio in playout,"
+                ^^ " %.3f playout optimization ratio, %.3f opt ratio in playout\n") deb.playout_time deb.available_time
             (deb.playout_time /. spent_time) (deb.pl_creation /. deb.playout_time) (deb.opt_time /. spent_time) (deb.opt_time /. deb.playout_time);
-        Printf.printf "weight update ratio : %.3f, get length ratio : %.3f , store ratio : %.3f \n" (deb.pl_weight_update /. deb.playout_time) (deb.pl_get_length_t
+        Printf.fprintf oc "weight update ratio : %.3f, get length ratio : %.3f , store ratio : %.3f \n" (deb.pl_weight_update /. deb.playout_time) (deb.pl_get_length_t
         /. deb.playout_time) (deb.pl_store /. deb.playout_time);
-        print_endline   "\n________________END DEBUG INFO________________\n";
+        Printf.fprintf oc "\n________________END DEBUG INFO________________\n\n";
     in
-    debug_info(); 
+    debug_info stdout; 
     if debug_tree then begin
         print_endline "\n\n________________START DEBUG TREE_______________\n";
-        debug_mcts root;
+        debug_mcts stdout root;
         print_endline "\n\n_________________END DEBUG TREE_______________\n";
         print_endline "\n\n______START DEBUG INFO (same as above)________\n";
-        debug_info()
+        debug_info stdout
     end;
     if generate_log_file then begin
-        let suffix = Printf.sprintf "-MCTS-%s-%.0fs-%s-%s-%s-%d_playouts" city_config spent_time (str_of_selection_mode playout_selection_mode)
-        (str_of_exploration_mode exploration_mode) (str_of_optimization_mode optimization_mode) (!arg.playout_count) in 
-        let file_path, file_name = "logs/score_logs", "all_scores" ^ suffix in 
-        let file = File_log.create_file ~file_path ~file_name () in 
+        let suffix = Printf.sprintf "MCTS-%s-%.0fs-%s-%s-%s" city_config spent_time (str_of_selection_mode playout_selection_mode) 
+        (str_of_exploration_mode exploration_mode) (str_of_optimization_mode optimization_mode) in 
+        let file_path = File_log.create_log_dir @@ "logs/"^suffix in 
+
+        let file = File_log.create_file ~file_path ~file_name:"all_scores" () in 
         File_log.log_datas (fun (t, s) -> Printf.sprintf "%f,%d;" t s) file @@ List.rev deb.score_hist;
-        let file_path, file_name = "logs/best_score_logs", "best_scores" ^ suffix in 
-        let file = File_log.create_file ~file_path ~file_name () in
+
+        let file = File_log.create_file ~file_path ~file_name:"best_scores" () in
         File_log.log_datas (fun (t,x,y) -> Printf.sprintf "%d,%f,%d;" x t y) file  @@ List.rev @@ (Sys.time(),!arg.playout_count, !arg.best_score) :: deb.best_score_hist;
-        let start = String.length "best_scores" + 1 in
-        Printf.printf "simulation ref for log files : %s\n" @@ 
-            String.sub file.file_name start @@
-                String.length file.file_name - start;
+        let file = File_log.create_file ~file_path ~file_name:"debug" () in
+        let oc = File_log.get_oc file in 
+        Printf.fprintf oc "\n\n_______________START DEBUG INFO_______________\n\n";
+        debug_info oc;
+        debug_mcts oc root;
+        close_out oc;
+
+
+        let start = String.length "logs/" in
+        Printf.printf "simulation directory for log files : %s\n" @@ 
+            String.sub file_path start @@
+                String.length file_path - start;
+    end;
+    assert (Base_tsp.check_path_validity !arg.best_path);
+    if optimize_end_path then begin
+        let start_time = Sys.time() in 
+        Two_Opt.opt_fast eval ~max_time:optimize_end_path_time !arg.best_path;
+        Printf.printf "Optimized returned path in %.0f/%.0f seconds\n" (Sys.time() -. start_time) (optimize_end_path_time);
     end;
     !arg.best_path, root
 

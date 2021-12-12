@@ -7,11 +7,11 @@ let create_dir_if_not_exist dir =
       | x :: xs -> "" :: List.map (fun s -> if s = "" then x else x ^ "/" ^s) (aux xs)
     in 
     let dirs = List.tl @@ aux dirs in 
-    List.iter (fun dir -> if not (Sys.file_exists dir && Sys.is_directory dir) then 
-    Sys.mkdir dir 0) dirs
+    List.fold_left (fun acc dir -> if not (Sys.file_exists dir && Sys.is_directory dir) then (
+    Sys.mkdir dir 0; false) else acc) true dirs
 
 let create_file ?(file_name = "log") ?(file_path = "logs") () = 
-  create_dir_if_not_exist file_path;
+  let _ = create_dir_if_not_exist file_path in
   let base_file_name =  file_name in 
   let file_name = ref @@ base_file_name in 
   let i = ref 0 in 
@@ -21,18 +21,23 @@ let create_file ?(file_name = "log") ?(file_path = "logs") () =
   done;
   {file_name = !file_name; file_path = file_path ^ "/"}
 
+let create_log_dir dir_name = 
+  if create_dir_if_not_exist dir_name then begin
+    let rec aux i = 
+      let name = Printf.sprintf "%s--%d" dir_name i in
+      if create_dir_if_not_exist (name) then aux (i+1) else name
+    in 
+    aux 1 
+  end else dir_name
+    
+let get_oc file = open_out @@ file.file_path ^ file.file_name
 let log_data file data = 
-  let oc = open_out @@ file.file_path ^ file.file_name in 
+  let oc = get_oc file in 
     Printf.fprintf oc "%s\n" data;
     close_out oc
 
-(* let log_datas ?(f:'a -> string = fun x -> x) file (datas: 'a list) = 
-  let oc = open_out file.file_name in 
-    List.iter (fun x -> Printf.fprintf oc "%s" @@ f x) datas;
-    close_out oc *)
 let log_datas f file (datas: 'a list) = 
-  let oc = open_out @@ file.file_path ^ file.file_name in 
+  let oc = get_oc file in 
     List.iter (fun x -> Printf.fprintf oc "%s" @@ f x) datas;
     close_out oc
 
-(* let () = let f = string_of_int in  log_datas f {file_name="log"} [1;2] *)
