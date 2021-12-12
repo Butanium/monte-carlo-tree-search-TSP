@@ -350,7 +350,7 @@ let proceed_mcts
         ?(optimization_mode=No_opt)
         ?(stop_on_leaf = true)
         ?(optimize_end_path = false)
-        ?(optimize_end_path_time = -.1.)
+        ?(optimize_end_path_time = infinity)
         city_count eval max_time max_playout =
 (* [FR] Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout *)
 (* [EN] Create and develop the tree, keeping in memory the best path done during the playouts *)
@@ -412,6 +412,7 @@ CgggbU8OU qOp qOdoUOdcb
         Printf.fprintf oc "weight update ratio : %.3f, get length ratio : %.3f , store ratio : %.3f \n" (deb.pl_weight_update /. deb.playout_time) (deb.pl_get_length_t
         /. deb.playout_time) (deb.pl_store /. deb.playout_time);
         Base_tsp.print_path ~oc !arg.best_path;
+
         Printf.fprintf oc "\n________________END DEBUG INFO________________\n\n";
     in
     debug_info stdout;
@@ -428,14 +429,16 @@ CgggbU8OU qOp qOdoUOdcb
         let file_path = File_log.create_log_dir @@ "logs/"^suffix in 
 
         let file = File_log.create_file ~file_path ~file_name:"all_scores" () in 
-        File_log.log_datas (fun (t, s) -> Printf.sprintf "%f,%d;" t s) file @@ List.rev deb.score_hist;
+        File_log.log_datas (fun (t, s) -> Printf.sprintf "%g,%d;" t s) file @@ List.rev deb.score_hist;
 
         let file = File_log.create_file ~file_path ~file_name:"best_scores" () in
-        File_log.log_datas (fun (t,x,y) -> Printf.sprintf "%d,%f,%d;" x t y) file  @@ List.rev @@ (Sys.time(),!arg.playout_count, !arg.best_score) :: deb.best_score_hist;
+        File_log.log_datas (fun (t,x,y) -> Printf.sprintf "%d,%g,%d;" x t y) file  @@ List.rev @@ (Sys.time(),!arg.playout_count, !arg.best_score) :: deb.best_score_hist;
         let file = File_log.create_file ~file_path ~file_name:"debug" () in
         let oc = File_log.get_oc file in 
         Printf.fprintf oc "\n\n_______________START DEBUG INFO_______________\n\n";
         debug_info oc;
+        Base_tsp.print_error_ratio ~oc !arg.best_path eval city_config;
+        Printf.fprintf oc "\n\n________________START DEBUG TREE_______________\n";
         debug_mcts oc root;
         close_out oc;
 
