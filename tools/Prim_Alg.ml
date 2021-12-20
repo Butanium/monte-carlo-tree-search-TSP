@@ -27,5 +27,3 @@ let prim_alg eval city_count =
         )
     in
     aux init_visit init_visited 0
-
-
