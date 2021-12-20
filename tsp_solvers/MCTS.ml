@@ -1,4 +1,3 @@
-module IntSet = Set.Make(Int)
 module RndQ = Random_Queue 
 type debug = {mutable playout_time : float; mutable available_time : float; mutable pl_creation : float;
     mutable pl_get_length_t : float; mutable pl_store : float; mutable pl_weight_update : float; mutable max_depth : int;
@@ -72,7 +71,7 @@ let str_of_optimization_mode = function
         Printf.sprintf "Two_opt_optimization_%dlen_%diter_%.0fs" max_lenght max_iter max_time
     | Simulated_Annealing -> "Simulated_annealing_optimization"
 
-type arguments = {playout_selection_mode : playout_selection_mode; mutable visited : IntSet.t; city_count : int;
+type arguments = {playout_selection_mode : playout_selection_mode; visited : bool array; city_count : int;
                     mutable path_size : int; eval : int -> int -> int; mutable get_node_score : node -> float;
                     current_path : int array; best_path : int array; mutable best_score : int; mutable playout_count : int;
                     expected_length_mode : expected_expected_length_mode; 
@@ -82,7 +81,7 @@ dans les différentes fonctions *)
 (* [EN] Type containing all the info needed in the functions in order to avoid
 useless arguments*)
 
-let arg = ref {playout_selection_mode=Random; visited = IntSet.empty; city_count= -1; path_size = -1;
+let arg = ref {playout_selection_mode=Random; visited = [||]; city_count= -1; path_size = -1;
                 eval = (fun _ _ -> -1); get_node_score = (fun _ -> -1.); current_path = [||]; best_path = [||];
                 best_score = -1; playout_count = 0; expected_length_mode = Average; optimization_mode = No_opt}
 (* [FR] Référence au record qui est utilisé par toutes les fonctions *)
@@ -102,10 +101,10 @@ pour le chemin aléatoire du playout *)
     | Random -> ()
     | Roulette -> RndQ.change_weights (fun _ city -> 1. /. float_of_int (!arg.eval city last)) queue
 
-let playout_queue = ref @@ RndQ.simple_create 0 [||]
+let creation_queue = ref @@ RndQ.simple_create 0 [||]
 
 let playout_path = ref [||]
-
+let get_next_city_arr = ref [||]
 
 
 
@@ -113,19 +112,23 @@ let init() =
     Random.self_init();
     let seed = Random.int 1073741823 in 
     playout_path := Array.make !arg.city_count (-1);
+    get_next_city_arr := Array.make !arg.city_count false;
     let arr = Array.make !arg.city_count (-1) in
-    playout_queue := RndQ.simple_create !arg.city_count arr;
+    creation_queue := RndQ.simple_create !arg.city_count arr;
     Random.init seed; 
     seed
 
-let create_city_generator set = 
+let create_city_generator visited = 
+    (* [EN] Create a function that will return the next non visited city everytime it's called *)
     let i = ref 0 in 
     let rec aux set () =
         let x = !i in
             incr i;
-            if x >= !arg.city_count then raise @@ Invalid_argument "ville invalide [available]";
-            if IntSet.mem x set then aux set () else x
-    in aux set
+            if x >= !arg.city_count then raise @@ Invalid_argument "ville invalide [city generator]";
+            if visited.(x) then aux set () else x
+    in aux visited
+
+
 let available queue =
 (* [FR] Renvoie une file aléatoire contenant toutes les villes non visitées *)
 (* [EN] Returns a random queue containing all non visited cities *)
@@ -144,19 +147,6 @@ let available queue =
     deb.available_time <- deb.available_time +. Sys.time() -. st;
     queue
 
-let get_next_node node = 
-    let set = List.fold_left (fun acc x -> IntSet.add x.info.city acc) !arg.visited node.info.children in 
-    let aux = create_city_generator set in  
-    let size = !arg.city_count - node.info.depth - node.info.developed in 
-    RndQ.set_size !playout_queue 1;
-    for i = 0 to size - 1 do 
-        try (
-        RndQ.replace_element !playout_queue i (aux ())
-        ) with Invalid_argument e -> raise @@ Invalid_argument (e ^ Printf.sprintf "%d size, %d i " size i)
-    done;
-    update_weights !playout_queue node.info.city;
-    RndQ.take !playout_queue
-
 let optimize_path size = match !arg.optimization_mode with 
     | No_opt -> ()
     | Two_opt (max_lenght, max_iter, max_time) ->  
@@ -167,7 +157,7 @@ let playout last_city start_dist =
 (* [FR] Termine aléatoirement le trajet commencé lors de l'exploration *)
 (* [EN] Finish randomly the path started during the exploration *)
     let st = Sys.time() in
-    let queue = available !playout_queue
+    let queue = available !creation_queue
     in
     let size = !arg.city_count - !arg.path_size
     in
@@ -230,15 +220,31 @@ let rec retropropagation node value =
         | Parent parent -> retropropagation parent value
 
 
+let get_next_city node = 
+    (* [EN] get the next city to expand *)
+    Util.copy_in_place !get_next_city_arr !arg.visited;
+    List.iter (fun x -> !get_next_city_arr.(x.info.city) <- true) node.info.children;
+    let aux = create_city_generator !get_next_city_arr in  
+    let size = !arg.city_count - node.info.depth - node.info.developed in 
+    RndQ.set_size !creation_queue size;
+    for i = 0 to size - 1 do 
+        try (
+        RndQ.replace_element !creation_queue i (aux ())
+        ) with Invalid_argument e -> raise @@ Invalid_argument (e ^ Printf.sprintf "%d size, %d i " size i)
+    done;
+    update_weights !creation_queue node.info.city;
+    RndQ.take !creation_queue
+        
+
 let expand node =
 (* [FR] Développe l'arbre en créant un nouveau noeud relié é 'node' *)
 (* [EN] Expand the tree by adding a new node linked to 'node' *)
     let city = try(
-        get_next_node node
+        get_next_city node
      ) with Invalid_argument e -> raise @@ Invalid_argument (e ^ ": get next node failed") in 
     !arg.current_path.(!arg.path_size) <- city;
     !arg.path_size <- !arg.path_size + 1;
-    !arg.visited <- IntSet.add city !arg.visited;
+    !arg.visited.(city) <- true;
     let depth = node.info.depth + 1 in 
     let tot_dist = node.info.tot_dist + !arg.eval node.info.city city in
     let info = {visit = 0.; score = 0.; best_score = infinity; city; depth; tot_dist; children=[]; developed=0} in
@@ -288,7 +294,7 @@ let get_best_child node =
 let update_arg node =
 (* [FR] Actualise les arguments de arg au fur é mesure que l'on progresse dans l'arbre *)
 (* [EN] Update the arguments while exploring the tree *)
-    !arg.visited <- IntSet.add node.info.city !arg.visited;
+    !arg.visited.(node.info.city) <- true;
     !arg.current_path.(!arg.path_size) <- node.info.city;
     !arg.path_size <- !arg.path_size + 1
 
@@ -319,10 +325,11 @@ let reset_arg() =
 (* [FR] Réinitialise les villes visitées et la taille du chemin é chaque fois qu'on repart de la racine de l'arbre *)
 (* [EN] Reset the visited cities and the path size every time we restart our exploration from the root *)
     !arg.path_size <- 0;
-    !arg.visited <- IntSet.empty
+    Util.map_in_place (fun _ -> false) !arg.visited
 
 
 let rec debug_mcts oc root =
+(* [EN] Debug the tree from the root the the most promising leaf *)
     Printf.fprintf oc "\n\nchosen : \n\n";
     debug_node oc root;
     Printf.fprintf oc "\nchildren : \n\n";
@@ -358,7 +365,7 @@ let proceed_mcts
     Sys.set_signal Sys.sigint (Sys.Signal_handle (fun _ -> user_interrupt := true)); 
     (* allow user exit with Ctrl+C sigint*)
     reset_deb generate_log_file;
-    arg := {playout_selection_mode; visited = IntSet.empty; city_count; path_size = 0; eval;
+    arg := {playout_selection_mode; visited = Array.make city_count false; city_count; path_size = 0; eval;
             get_node_score = (fun _ -> -1.); current_path = Array.make city_count (-1);
             best_path = Array.make city_count (-1); best_score = max_int; playout_count = 0; expected_length_mode;
             optimization_mode};
@@ -401,7 +408,7 @@ CgggbU8OU qOp qOdoUOdcb
     if optimize_end_path then begin
         let start_time = Sys.time() in 
         Two_Opt.opt_fast eval ~max_time:optimize_end_path_time !arg.best_path;
-        Printf.printf "Optimized returned path in %.0f/%.0f seconds\n" (Sys.time() -. start_time) (optimize_end_path_time);
+        Printf.printf "Optimized returned path in %g/%.0f seconds\n" (Sys.time() -. start_time) (optimize_end_path_time);
     end;
     print_endline "\n\n_______________START DEBUG INFO_______________\n";
     let debug_info oc = 
@@ -426,14 +433,18 @@ CgggbU8OU qOp qOdoUOdcb
     if generate_log_file then begin
         let suffix = Printf.sprintf "MCTS-%s-%.0fs-%s-%s-%s" city_config spent_time (str_of_selection_mode playout_selection_mode) 
         (str_of_exploration_mode exploration_mode) (str_of_optimization_mode optimization_mode) in 
+        
         let file_path = File_log.create_log_dir @@ "logs/"^suffix in 
-
         let file = File_log.create_file ~file_path ~file_name:"all_scores" () in 
-        File_log.log_datas (fun (t, s) -> Printf.sprintf "%g,%d;" t s) file @@ List.rev deb.score_hist;
+        let oc = File_log.log_single_data ~close:false file "timestamp,length" in 
+        Util.iter_rev (fun (t, s) -> (if t = 0. then Printf.fprintf oc "0,%d\n" else Printf.fprintf oc "%g,%d\n" t) s) deb.score_hist;
 
         let file = File_log.create_file ~file_path ~file_name:"best_scores" () in
-        File_log.log_datas (fun (t,x,y) -> Printf.sprintf "%d,%g,%d;" x t y) file  @@ List.rev @@ (Sys.time(),!arg.playout_count, !arg.best_score) :: deb.best_score_hist;
-        let file = File_log.create_file ~file_path ~file_name:"debug" () in
+        let oc = File_log.log_single_data ~close:false file "playout,timestamp,length" in
+        Util.iter_rev (fun (t,p,len) ->  (if t = 0. then Printf.fprintf oc "%d,0,%d\n" p len else Printf.fprintf oc "%d,%g,%d\n" p t len)) 
+            @@ (Sys.time(),!arg.playout_count, !arg.best_score) :: deb.best_score_hist;
+        
+            let file = File_log.create_file ~file_path ~file_name:"debug" ~extension:"txt" () in
         let oc = File_log.get_oc file in 
         Printf.fprintf oc "\n\n_______________START DEBUG INFO_______________\n\n";
         debug_info oc;
