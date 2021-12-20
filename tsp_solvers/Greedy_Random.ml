@@ -44,11 +44,11 @@ let greedy ?(generate_log_file = true) eval city_count rnd_mode max_time max_try
       (string_of_rnd_mode rnd_mode) (get_time()) !try_count in 
     let file_path, file_name = "logs/score_logs", "all_scores" ^ suffix in 
     let file = File_log.create_file ~file_path ~file_name () in 
-    File_log.log_datas (fun (t, s) -> Printf.sprintf "%g,%d;" t s) file @@ List.rev !scores_hist;
+    let _ = File_log.log_datas (fun (t, s) -> Printf.sprintf "%g,%d;" t s) file @@ List.rev !scores_hist in
     let file_path, file_name = "logs/best_score_logs", "best_scores" ^ suffix in 
     let file = File_log.create_file ~file_path ~file_name () in
-    File_log.log_datas (fun (t,x,y) -> Printf.sprintf "%d,%g,%d;" x t y) file  
-      @@ List.rev @@ (get_time(),!try_count, !best_score) :: !best_scores_hist;
+    let _ = File_log.log_datas (fun (t,x,y) -> Printf.sprintf "%d,%g,%d;" x t y) file  
+      @@ List.rev @@ (get_time(),!try_count, !best_score) :: !best_scores_hist in
     let start = String.length "best_scores" + 1 in
     Printf.printf "simulation ref for log files : %s\n" @@ 
         String.sub file.file_name start @@
