@@ -37,7 +37,7 @@ let solver_simulation city_config city_count eval sim_name =
         MCTS.proceed_mcts ~debug_tree ~city_config ~expected_length_mode
           ~playout_selection_mode ~exploration_mode ~optimization_mode
           ~generate_log_file ~stop_on_leaf ~optimize_end_path ~name:solver.name
-          ~log_files_path ~verbose:false ~hidden_opt ~catch_SIGINT:false
+          ~log_files_path ~verbose:(-1) ~hidden_opt ~catch_SIGINT:false
           city_count eval max_time
           max_playout
       in

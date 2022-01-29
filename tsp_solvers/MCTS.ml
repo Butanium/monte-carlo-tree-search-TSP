@@ -517,7 +517,7 @@ let proceed_mcts ?(generate_log_file = false) ?(log_files_path = "logs")
     ?(debug_tree = false) ?(expected_length_mode = Average) ?(city_config = "")
     ?(config_path = "tsp_instances") ?(playout_selection_mode = Roulette)
     ?(exploration_mode = Standard_deviation) ?(optimization_mode = No_opt)
-    ?(stop_on_leaf = true) ?(optimize_end_path = true) ?(verbose = true)
+    ?(stop_on_leaf = true) ?(optimize_end_path = true) ?(verbose = 1)
     ?(hidden_opt = No_opt) ?(optimize_end_path_time = infinity) ?(name = "")
     ?(catch_SIGINT = true) ?seed city_count eval max_time max_playout =
   (* [FR] Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout *)
@@ -564,7 +564,7 @@ let proceed_mcts ?(generate_log_file = false) ?(log_files_path = "logs")
   let next_debug_print = ref 60. in
   let minutes = ref 0 in
   let get_time () = Sys.time () -. start_time in
-  if verbose then
+  if verbose = 1 then
     Printf.printf @@ "\n\nStarting MCTS, I'll keep informed every minutes :)\n"
     ^^ "You can stop the program at anytime by pressing Ctrl+C and it'll \
         return you its current progress \n\n"
@@ -586,7 +586,7 @@ let proceed_mcts ?(generate_log_file = false) ?(log_files_path = "logs")
        && ((not stop_on_leaf) || deb.max_depth < city_count)
        && not !user_interrupt
   do
-    if get_time () > !next_debug_print && verbose then (
+    if get_time () > !next_debug_print && verbose = 1 then (
       next_debug_print := 60. +. !next_debug_print;
       incr minutes;
       Printf.eprintf
@@ -667,7 +667,7 @@ let proceed_mcts ?(generate_log_file = false) ?(log_files_path = "logs")
 
     Printf.fprintf oc "\n________________END DEBUG INFO________________\n\n"
   in
-  debug_info stdout;
+  if verbose >= 0 then debug_info stdout;
   if debug_tree then (
     print_endline "\n\n________________START DEBUG TREE_______________\n";
     debug_mcts stdout root;
