@@ -2,10 +2,10 @@ open Simulations
 open Run_tests
 
 let file_path = "tsp_instances"
-let max_time = 10.
+let max_time = 30.
 let test_set = 50
 
-let amount = 2
+let amount = 1
 
 let sim_name = Printf.sprintf "TSP%d-experimentTest" test_set
 let configs =
