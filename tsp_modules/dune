@@ -6,5 +6,5 @@
   Base_tsp
   Show_tsp
   )
- (libraries graphics Str tools ANSITerminal)
+ (libraries graphics str tools ANSITerminal)
 )
