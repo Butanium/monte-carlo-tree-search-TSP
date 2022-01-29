@@ -711,8 +711,9 @@ let proceed_mcts ?(generate_log_file = false) ?(log_files_path = "logs")
     Printf.fprintf oc "\n\n________________START DEBUG TREE_______________\n";
     debug_mcts oc root;
     close_out oc;
-    let start = String.length "logs/" in
-    Printf.printf "simulation directory for log files : %s\n"
-    @@ String.sub file_path start
-    @@ (String.length file_path - start));
+    if verbose >= 0 then
+      let start = String.length "logs/" in
+      Printf.printf "simulation directory for log files : %s\n"
+      @@ String.sub file_path start
+      @@ (String.length file_path - start));
   ((best_path, best_score), (opt_path, opt_score), root)

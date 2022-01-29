@@ -45,7 +45,7 @@ let solver_simulation city_config city_count eval log_path =
   | Iter solver ->
       let path =
         Two_Opt.iter_two_opt eval city_count solver.random_mode solver.max_time
-          solver.max_iter ~name:solver.name ~city_config ~logs_path:log_files_path
+          solver.max_iter ~name:solver.name ~city_config ~logs_path:log_files_path ~verbose:false
       in
       let score = Base_tsp.path_length eval path in
       (score, score)
