@@ -1,9 +1,9 @@
 open Simulations
-open All_tests_MCTS
+open Run_tests
 
 let file_path = "tsp_instances"
 
-let experiment_id = 3
+let experiment_id = 1
 
 let test_set = 50
 
@@ -28,7 +28,7 @@ let base_opt = opt_of_time 1.
 let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int }
 
 let models =
-  All_tests_MCTS.create_models max_time
+  create_models max_time
     ~iter2opt_list:(max_int *$ [ Two_Opt.Random; Roulette ])
     ~mcts_opt_list:
       ([ MCTS.Random; Roulette ]
@@ -40,4 +40,4 @@ let models =
       ([ MCTS.Roulette; Random ]
       $$ [ full_opt; base_opt; No_opt; divide_opt 1 2 base_opt ])
 
-let () = All_tests_MCTS.run_models ~sim_name configs models
+let () = run_models ~sim_name configs models

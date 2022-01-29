@@ -519,12 +519,13 @@ let proceed_mcts ?(generate_log_file = false) ?(log_files_path = "logs")
     ?(exploration_mode = Standard_deviation) ?(optimization_mode = No_opt)
     ?(stop_on_leaf = true) ?(optimize_end_path = true) ?(verbose = true)
     ?(hidden_opt = No_opt) ?(optimize_end_path_time = infinity) ?(name = "")
-    ?seed city_count eval max_time max_playout =
+    ?(catch_SIGINT = true) ?seed city_count eval max_time max_playout =
   (* [FR] Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout *)
   (* [EN] Create and develop the tree, keeping in memory the best path done during the playouts *)
   let user_interrupt = ref false in
-  Sys.set_signal Sys.sigint
-    (Sys.Signal_handle (fun _ -> user_interrupt := true));
+  if catch_SIGINT then
+    Sys.set_signal Sys.sigint
+      (Sys.Signal_handle (fun _ -> user_interrupt := true));
   (* allow user exit with Ctrl+C sigint*)
   let start_time = Sys.time () in
 

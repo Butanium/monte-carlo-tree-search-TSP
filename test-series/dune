@@ -1,4 +1,4 @@
 (library
   (name simulations)
-  (modules MCTS_sim All_tests_MCTS)
+  (modules Simulator Run_tests)
   (libraries tsp_modules tsp_solvers tools base))

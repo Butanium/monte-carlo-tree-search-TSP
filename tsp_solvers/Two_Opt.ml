@@ -106,8 +106,11 @@ let iter_two_opt ?city_config ?name ?(verbose = true) eval city_count rnd_mode
   let acc_scores = ref 0 in
   let start_time = Sys.time () in
   let get_time () = Sys.time () -. start_time in
+  let total_randomize_time = ref 0. in
   while !i < max_try && get_time () < max_time do
+    let st = Sys.time () in 
     randomize_path queue eval rnd_mode path_arr;
+    total_randomize_time := !total_randomize_time +. Sys.time() -. st;
     let max_time = max_time -. get_time () in
     opt_fast ~max_time eval path_arr;
     let len = Base_tsp.path_length eval path_arr in
@@ -122,10 +125,12 @@ let iter_two_opt ?city_config ?name ?(verbose = true) eval city_count rnd_mode
   done;
   if verbose then (
     Printf.printf
-      "iterated two opt achieved in %.1f s, %d iterations.\n\
+      "iterated two opt achieved in %.1f s (%f s of randomization), %d iterations.\n\
        %s%s\n\
        Best score : %d | Average score : %d\n"
-      (get_time ()) !i
+      (get_time ())
+      !total_randomize_time 
+      !i
       (match name with
       | None -> ""
       | Some s -> Printf.sprintf "Simulation %s " s)
