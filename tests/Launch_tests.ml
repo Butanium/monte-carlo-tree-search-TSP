@@ -1,5 +1,5 @@
 open Simulations
-open Run_tests
+open Experiment_Runner
 
 let file_path = "tsp_instances"
 
