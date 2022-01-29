@@ -30,6 +30,7 @@ let open_tsp ?(file_path = "tsp_instances") tsp_name =
     with _ -> ()
   in
   loop false;
+  close_in ic;
   (city_count, cities)
 
 let open_path ?(file_path = "tsp_instances") tsp_name =
@@ -52,4 +53,5 @@ let open_path ?(file_path = "tsp_instances") tsp_name =
     with _ -> ()
   in
   loop false;
+  close_in ic;
   path
