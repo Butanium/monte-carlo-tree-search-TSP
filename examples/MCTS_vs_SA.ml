@@ -10,7 +10,7 @@ let () =
     let sa_path = Simulated_Annealing.start_sa city_count eval 10000. 0.1 1000 0.9 Simulated_Annealing.Swap in
     let max_time = Sys.time() -. start_time in
     Printf.printf "\nmax time for mcts : %.4f seconds" max_time;
-    let mcts_path, _  = MCTS.proceed_mcts ~debug_tree:false ~generate_log_file:false city_count
+    let (mcts_path,_), _, _  = MCTS.proceed_mcts ~debug_tree:false ~generate_log_file:false city_count
         eval max_time (max_int-2) in
     let mst_length = foi @@ Prim_Alg.prim_alg eval city_count in
     Printf.printf "mst ratios : \n   - mcts : %.2f\n   - sa : %.2f\n\n" ((foi @@ Base_tsp.path_length eval mcts_path) /. mst_length)

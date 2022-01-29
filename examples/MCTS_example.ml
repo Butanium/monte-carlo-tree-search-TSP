@@ -9,7 +9,7 @@ let max_time = 180. (* 3 minute run, can be longer like 30 minutes for good resu
 let max_playout = 100000000 
 let playout_selection_mode = MCTS.Roulette
 let exploration_mode = MCTS.Min_spanning_tree
-let path, tree  = MCTS.proceed_mcts ~debug_tree ~generate_log_file ~city_config ~playout_selection_mode ~exploration_mode
+let (path,length), (opt_path,opt_length), root  = MCTS.proceed_mcts ~debug_tree ~generate_log_file ~city_config ~playout_selection_mode ~exploration_mode
     city_count eval max_time max_playout
 
 

@@ -8,3 +8,4 @@ commands
 /logs/archives
 /*/_*/
 /external_tools/
+logs/*-experiment*/*/

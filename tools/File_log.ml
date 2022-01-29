@@ -36,12 +36,12 @@ let log_single_data ?(close=true) file data =
   Printf.fprintf oc "%s\n" data;
   if close then close_out oc; oc
 
-let log_datas ?(close=true) f file (datas: 'a list) = 
+let log_data ?(close=true) convert_data file (datas: 'a list) = 
   let oc = get_oc file in 
-    List.iter (fun x -> Printf.fprintf oc "%s" @@ f x) datas;
+    List.iter (fun x -> Printf.fprintf oc "%s" @@ convert_data x) datas;
     if close then close_out oc; oc
 
-let log_datas_oc ?(close=true) f oc datas = 
+let log_data_oc ?(close=true) f oc datas = 
   List.iter (fun x -> Printf.fprintf oc "%s" @@ f x) datas;
   if close then close_out oc
 

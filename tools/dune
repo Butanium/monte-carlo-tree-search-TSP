@@ -1,10 +1,4 @@
 (library
  (wrapped false)
  (name tools)
- (modules
-  Random_Queue
-  Prim_Alg
-  File_log
-  Util
-  )
- )
+ (modules Random_Queue Prim_Alg File_log Util))

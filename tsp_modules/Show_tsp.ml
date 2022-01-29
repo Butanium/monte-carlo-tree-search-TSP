@@ -61,7 +61,7 @@ let show_solution ?(title = "Path") cities sol =
 let show_solution_and_wait ?(title = "Path") cities sol = 
     show_solution ~title cities sol;
     print_endline "enter anything to close the graphic window";
-    let _ = read_line() in ()
+    let _ = input_line stdin in ()
 let show_solution_list cities sol =
     let maxX, maxY = Array.fold_left (fun (maxX, maxY) (x,y) -> (max maxX x), (max maxY y)) (0.,0.) cities
     in

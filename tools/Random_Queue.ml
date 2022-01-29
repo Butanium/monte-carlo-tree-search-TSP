@@ -3,7 +3,7 @@
 
 exception Empty
 
-type 'a t = {mutable size: int; content : ('a * float) array; mutable tot : float}
+type 'a t = {mutable size: int; content : ('a * float) array; mutable tot : float; mutable is_simple : bool}
 (* [size], la taille actuelle de la file, [content] une array dont les [size] premiers éléments
 représentent les éléments restant dans la file avec leur probabilité, [tot] est la somme des probabilités *)
 let replace_element queue index element =
@@ -12,12 +12,12 @@ let replace_element queue index element =
 (* Remplace l'élément à l'index [index] de la queue par [element]*)
 
 let simple_create size arr =
-    {size; content = Array.map (fun x -> x, 1.) arr; tot = float_of_int size}
+    {size; content = Array.map (fun x -> x, 1.) arr; tot = float_of_int size; is_simple=true}
 (* Créer une file aléatoire contenant les [size] premiers éléments de [arr], oé tous les éléments
 ont les mêmes chances de sortir *)
 
 let create size arr weights = let tot = Array.fold_left (+.) 0. weights in
-    {size; content = Array.mapi (fun i x -> x, weights.(i)) arr; tot}
+    {size; content = Array.mapi (fun i x -> x, weights.(i)) arr; tot; is_simple=false}
 (* Créer une file aléatoire contenant les [size] premiers éléments de [arr] oé les chances de sortir
 d'un élément de arr est pondéré par l'élément de même index de [weights] *)
 
@@ -47,8 +47,9 @@ let take q =
                 if acc < 1e-10 then k else aux (k+1) acc
             )
     in
-    let i = aux 0 @@ Random.float 1. *. q.tot  in
-    (* [i] l'index sélectionné aléatoirement *)
+    let i =  if q.is_simple then Random.int q.size else aux 0 @@ Random.float 1. *. q.tot  in
+    (* [i] l'index sélectionné aléatoirement, si la queue est simple c'est en O(1) sinon en O(n).
+     On pourrait peut être réduire le temps moyen d'exécution en triant par ordre décroissant de poids les éléments *)
         let res, p as r = q.content.(i) in
             q.content.(i) <- q.content.(q.size - 1);
             (* l'élément i sélectionné est remplacé par le dernier élément de la file *)
@@ -66,13 +67,18 @@ let tot_empty q =
 (* Créer une array contenant les éléments restant dans la file, dans un ordre aléatoire. *)
 
 let change_weights f q =
-    let tot = ref 0. in
-    for i = 0 to q.size - 1 do
+    let x0, w0 = q.content.(0) in 
+    let new_w0 = f w0 x0 in
+    q.content.(0) <- (x0, new_w0);
+    q.is_simple <- true;
+    let tot = ref w0 in
+    for i = 1 to q.size - 1 do
         let x, w = q.content.(i)
         in
         let new_w = f w x in
             q.content.(i) <- (x, new_w);
-            tot := !tot +. new_w
+            tot := !tot +. new_w;
+            q.is_simple <- q.is_simple && new_w = new_w0
     done;
     q.tot <- !tot
 (* change les poids des différents éléments selon f *)

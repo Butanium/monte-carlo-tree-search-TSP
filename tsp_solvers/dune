@@ -1,10 +1,5 @@
 (library
  (wrapped false)
  (name tsp_solvers)
- (modules
-  Two_Opt
-  MCTS
-  Simulated_Annealing
-  Greedy_Random
-  )
+ (modules Two_Opt MCTS Simulated_Annealing Greedy_Random)
  (libraries graphics tools tsp_modules))

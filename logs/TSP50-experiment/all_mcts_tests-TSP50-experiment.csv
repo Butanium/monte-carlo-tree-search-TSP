@@ -1,0 +1,15 @@
+solver-name,average-deviation,average-length,average-opted-deviation,average-opted-length
+MCTS-SemiLengthOpt-Random,1.31912,2634.81,0.0660515,1212.53
+MCTS-QuartLengthOpt-Random,1.54342,2889.55,0.0533161,1198.25
+MCTS-SemiLengthOpt-Random-hidden_opt,0.134938,1290.5,0.0422054,1185.34
+MCTS-FullOpt-Random,0.133574,1289.09,0.0449361,1188.34
+MCTS-SemiLengthOpt-Roulette,0.831048,2081.47,0.05643,1201.48
+MCTS-QuartLengthOpt-Roulette,1.09084,2376.98,0.0553783,1200.16
+MCTS-SemiLengthOpt-Roulette-hidden_opt,0.116832,1269.9,0.0466402,1190.42
+MCTS-FullOpt-Roulette,0.113557,1266.41,0.0399024,1182.88
+MCTS-Vanilla-Roulette-hidden_2opt-50len_1s,0.139237,1295.41,0.0472709,1191.12
+MCTS-Vanilla-Roulette,1.49464,2833.57,0.0581715,1203.32
+MCTS-Vanilla-Roulette-hidden_2opt-25len_1s,1.3161,2631.75,0.059064,1204.42
+MCTS-Vanilla-Random-hidden_2opt-50len_1s,0.138325,1294.31,0.0413495,1184.41
+MCTS-Vanilla-Random,1.46556,2800.43,0.0582495,1203.31
+MCTS-Vanilla-Random-hidden_2opt-25len_1s,1.3127,2627.99,0.0595663,1205.08
