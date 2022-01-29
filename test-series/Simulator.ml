@@ -18,8 +18,8 @@ type solver = MCTS of mcts_solver | Iter of iterated2opt_solver
 
 let solver_name = function MCTS { name; _ } | Iter { name; _ } -> name
 
-let solver_simulation city_config city_count eval sim_name =
-  let log_files_path = Printf.sprintf "logs/%s/%s" sim_name city_config in
+let solver_simulation city_config city_count eval log_path =
+  let log_files_path = Printf.sprintf "%s/%s" log_path city_config in
   function
   | MCTS solver ->
       let max_time = solver.max_time in
@@ -41,13 +41,11 @@ let solver_simulation city_config city_count eval sim_name =
           city_count eval max_time
           max_playout
       in
-      Printf.printf "%!";
       (length, opt_length)
   | Iter solver ->
       let path =
         Two_Opt.iter_two_opt eval city_count solver.random_mode solver.max_time
-          solver.max_iter ~name:solver.name ~city_config
+          solver.max_iter ~name:solver.name ~city_config ~logs_path:log_files_path
       in
       let score = Base_tsp.path_length eval path in
-      Printf.printf "%!";
       (score, score)

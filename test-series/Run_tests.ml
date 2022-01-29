@@ -130,8 +130,10 @@ let create_models ?(exploration_mode = MCTS.Standard_deviation)
     @ List.map create_vanilla_mcts mcts_vanilla_list 
     @ List.map create_iterated_opt iter2opt_list)
 
-let run_models ?(sim_name = "") configs models =
-  Printf.printf "\nRunning sim %s...\n" sim_name;
+let run_models ?(sim_name = "sim") ?(mk_new_log_dir=true) configs models =
+  Printf.printf "\nRunning sim %s...\n%!" sim_name;
+  let path = Printf.sprintf "logs/%s" sim_name in 
+  let log_files_path = if mk_new_log_dir then File_log.create_log_dir path else path in
   List.iter
     (fun (file_path, config) ->
       let city_count, cities = Reader_tsp.open_tsp ~file_path config in
@@ -142,7 +144,7 @@ let run_models ?(sim_name = "") configs models =
       List.iter
         (fun model ->
           let length, opt_length =
-            solver_simulation config city_count eval sim_name model.solver
+            solver_simulation config city_count eval log_files_path model.solver
           in
           model.experiment_count <- model.experiment_count + 1;
           model.total_deviation <-
@@ -155,9 +157,8 @@ let run_models ?(sim_name = "") configs models =
           model.total_opted_length <- model.total_opted_length + opt_length)
         models)
     configs;
-  let file_path = "logs/" ^ sim_name in
   let file_name = "all_mcts_tests-" ^ sim_name in
-  let logs = File_log.create_file ~file_path ~file_name () in
+  let logs = File_log.create_file ~file_path:log_files_path ~file_name () in
   let oc =
     File_log.log_single_data ~close:false logs
       "solver-name,average-deviation,average-length,average-opted-deviation,average-opted-length"

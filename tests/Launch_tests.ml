@@ -3,15 +3,14 @@ open Run_tests
 
 let file_path = "tsp_instances"
 
-let experiment_id = 1
 
 let test_set = 50
 
-let amount = 128
+let amount = 2
 
-let max_time = 2.
+let max_time = 0.1
 
-let sim_name = Printf.sprintf "TSP%d-experiment%d" test_set experiment_id
+let sim_name = Printf.sprintf "TSP%d-experiment" test_set 
 
 let configs =
   let rec aux i =
