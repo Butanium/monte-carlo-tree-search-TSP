@@ -564,7 +564,7 @@ let proceed_mcts ?(generate_log_file = false) ?(log_files_path = "logs")
   let next_debug_print = ref 60. in
   let minutes = ref 0 in
   let get_time () = Sys.time () -. start_time in
-  if verbose = 1 then
+  if verbose > 0 then
     Printf.printf @@ "\n\nStarting MCTS, I'll keep informed every minutes :)\n"
     ^^ "You can stop the program at anytime by pressing Ctrl+C and it'll \
         return you its current progress \n\n"
@@ -586,7 +586,7 @@ let proceed_mcts ?(generate_log_file = false) ?(log_files_path = "logs")
        && ((not stop_on_leaf) || deb.max_depth < city_count)
        && not !user_interrupt
   do
-    if get_time () > !next_debug_print && verbose = 1 then (
+    if get_time () > !next_debug_print && verbose > 0 then (
       next_debug_print := 60. +. !next_debug_print;
       incr minutes;
       Printf.eprintf

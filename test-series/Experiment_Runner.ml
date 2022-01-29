@@ -6,6 +6,7 @@ let to_triple (a, (b, c)) = (a, b, c)
 let ( $$ ) = Base.List.cartesian_product
 
 let ( *$ ) a b = Base.List.cartesian_product [ a ] b
+
 let ( *$- ) a b = List.map to_triple (a *$ b)
 
 type model_experiment = {
@@ -74,6 +75,7 @@ let opt_of_tuple (opt, (total_factor, length_factor)) =
   create_mcts_opt total_factor length_factor opt
 
 let def_opt = create_mcts_opt 1 1
+
 let create_models ?(exploration_mode = MCTS.Standard_deviation)
     ?(mcts_vanilla_list = []) ?(mcts_opt_list = []) ?(iter2opt_list = [])
     max_time =
@@ -120,22 +122,34 @@ let create_models ?(exploration_mode = MCTS.Standard_deviation)
         random_mode;
         name =
           Printf.sprintf "Iterated2Opt-%s%s"
-            (Two_Opt.string_of_random_mode random_mode) (
-              if max_iter = max_iter then "" else Printf.sprintf "-%diters" max_iter
-            );
+            (Two_Opt.string_of_random_mode random_mode)
+            (if max_iter = max_iter then ""
+            else Printf.sprintf "-%diters" max_iter);
       }
   in
   List.map init_model
     (List.map create_opt_mcts mcts_opt_list
-    @ List.map create_vanilla_mcts mcts_vanilla_list 
+    @ List.map create_vanilla_mcts mcts_vanilla_list
     @ List.map create_iterated_opt iter2opt_list)
 
-let run_models ?(sim_name = "sim") ?(mk_new_log_dir=true) configs models =
+let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = -1)
+    configs models =
+  let start_time = Sys.time () in
+  let last_debug = ref start_time in
+  let debug_count = ref 0 in
   Printf.printf "\nRunning sim %s...\n%!" sim_name;
-  let path = Printf.sprintf "logs/%s" sim_name in 
-  let log_files_path = if mk_new_log_dir then File_log.create_log_dir path else path in
+  let path = Printf.sprintf "logs/%s" sim_name in
+  let log_files_path =
+    if mk_new_log_dir then File_log.create_log_dir path else path
+  in
   List.iter
     (fun (file_path, config) ->
+      if verbose > 0 && Sys.time () -. !last_debug > 60. then (
+        incr debug_count;
+        Printf.printf
+          "currently testing %s, has been running for %d minutes\n%!" config
+          !debug_count;
+        last_debug := Sys.time ());
       let city_count, cities = Reader_tsp.open_tsp ~file_path config in
       let eval = Base_tsp.dists cities in
       let objective_length =
@@ -145,6 +159,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir=true) configs models =
         (fun model ->
           let length, opt_length =
             solver_simulation config city_count eval log_files_path model.solver
+              ~verbose:(verbose - 1)
           in
           model.experiment_count <- model.experiment_count + 1;
           model.total_deviation <-
@@ -174,4 +189,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir=true) configs models =
         (mean_s @@ float model.total_opted_length))
     oc
   @@ List.sort (fun a b -> compare a.total_deviation b.total_deviation) models;
-  Printf.printf "\n\nResult file available at : %s/%s" logs.file_path logs.file_name
+  Printf.printf
+    "\n\nExperiment ended in %g seconds\nResult file available at : %s/%s"
+    (Sys.time () -. start_time)
+    logs.file_path logs.file_name

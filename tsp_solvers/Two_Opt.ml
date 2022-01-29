@@ -137,8 +137,8 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path eval city_count
       | None -> ""
       | Some s -> Printf.sprintf "city config : %s" s)
       !best_len (!acc_scores / !i);
-    Printf.printf "best path : ";
-    Base_tsp.print_path best_path
+    Printf.fprintf oc "best path : ";
+    Base_tsp.print_path ~oc best_path
   in
   if verbose then debug stdout;
   (match logs_path with
