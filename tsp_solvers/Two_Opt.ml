@@ -94,7 +94,8 @@ let randomize_path q eval mode path_arr =
 
 (* type debug = {mutable } *)
 
-let iter_two_opt eval city_count rnd_mode max_time max_try =
+let iter_two_opt ?city_config ?name ?(verbose = true) eval city_count rnd_mode
+    max_time max_try =
   Random.self_init ();
   let create_arr () = Array.init city_count Fun.id in
   let queue = RndQ.simple_create city_count @@ create_arr () in
@@ -119,10 +120,19 @@ let iter_two_opt eval city_count rnd_mode max_time max_try =
     acc_scores := !acc_scores + len;
     RndQ.reset queue
   done;
-  Printf.printf
-    "iterated two opt achieved in %.1f s, %d iterations.\n\
-     Best score : %d | Average score : %d\n"
-    (get_time ()) !i !best_len (!acc_scores / !i);
-  Printf.printf "best path : ";
-  Base_tsp.print_path best_path;
+  if verbose then (
+    Printf.printf
+      "iterated two opt achieved in %.1f s, %d iterations.\n\
+       %s%s\n\
+       Best score : %d | Average score : %d\n"
+      (get_time ()) !i
+      (match name with
+      | None -> ""
+      | Some s -> Printf.sprintf "Simulation %s " s)
+      (match city_config with
+      | None -> ""
+      | Some s -> Printf.sprintf "city config : %s" s)
+      !best_len (!acc_scores / !i);
+    Printf.printf "best path : ";
+    Base_tsp.print_path best_path);
   best_path
