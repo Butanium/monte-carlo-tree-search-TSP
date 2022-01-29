@@ -6,7 +6,7 @@ let file_path = "tsp_instances"
 
 let test_set = 50
 
-let amount = 2
+let amount = 128
 
 let max_time = 0.1
 
