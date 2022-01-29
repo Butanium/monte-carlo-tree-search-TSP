@@ -76,6 +76,10 @@ let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
 
 type random_creation = Roulette | Random
 
+let string_of_random_mode = function
+  | Random -> "Random"
+  | Roulette -> "Roulette"
+
 let weight_update eval last q = function
   | Random -> ()
   | Roulette ->

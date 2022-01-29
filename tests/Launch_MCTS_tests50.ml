@@ -1,4 +1,4 @@
-open Simulations
+(* open Simulations
 open All_tests_MCTS
 
 
@@ -36,4 +36,4 @@ let models =
       ([ MCTS.Roulette; Random ]
       $$ [ base_opt; No_opt; divide_opt 1 2 base_opt ])
 
-let () = All_tests_MCTS.run_models ~sim_name:"TSP50-experiment" configs models
+let () = All_tests_MCTS.run_models ~sim_name:"TSP50-experiment" configs models *)

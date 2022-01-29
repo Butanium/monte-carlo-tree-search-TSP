@@ -5,7 +5,8 @@ let to_triple (a, (b, c)) = (a, b, c)
 
 let ( $$ ) = Base.List.cartesian_product
 
-let ( *$ ) a b = List.map to_triple @@ Base.List.cartesian_product [ a ] b
+let ( *$ ) a b = Base.List.cartesian_product [ a ] b
+let ( *$- ) a b = List.map to_triple (a *$ b)
 
 type model_experiment = {
   solver : solver;
@@ -64,19 +65,18 @@ let name_opt total_factor length_factor = function
   | No_opt -> "NoOpt"
   | _ -> assert false
 
-let create_opt total_factor length_factor opt =
+let create_mcts_opt total_factor length_factor opt =
   let opt = divide_opt total_factor length_factor opt in
   let name = name_opt total_factor length_factor opt in
   { opt; name }
 
 let opt_of_tuple (opt, (total_factor, length_factor)) =
-  create_opt total_factor length_factor opt
+  create_mcts_opt total_factor length_factor opt
 
-let def_opt = create_opt 1 1
-
+let def_opt = create_mcts_opt 1 1
 let create_models ?(exploration_mode = MCTS.Standard_deviation)
-    ?(mcts_vanilla_list = []) ?(mcts_opt_list = []) (*?(iter2opt_list=[]) todo *) 
-    max_time_search =
+    ?(mcts_vanilla_list = []) ?(mcts_opt_list = []) ?(iter2opt_list = [])
+    max_time =
   let create_opt_mcts (selection_mode, (opt, t, hidden_opt)) =
     let { opt; name } = opt_of_tuple (opt, t) in
     MCTS
@@ -88,14 +88,14 @@ let create_models ?(exploration_mode = MCTS.Standard_deviation)
             else
               Printf.sprintf "-hidden_%s"
               @@ MCTS.str_of_optimization_mode_short hidden_opt);
-        max_time = max_time_search;
+        max_time;
         exploration_mode;
         optimization_mode = opt;
         selection_mode;
         hidden_opt;
       }
   in
-  let create_vanilla (selection_mode, hidden_opt) =
+  let create_vanilla_mcts (selection_mode, hidden_opt) =
     MCTS
       {
         name =
@@ -105,15 +105,30 @@ let create_models ?(exploration_mode = MCTS.Standard_deviation)
             else
               Printf.sprintf "-hidden_%s"
               @@ MCTS.str_of_optimization_mode_short hidden_opt);
-        max_time = max_time_search;
+        max_time;
         exploration_mode;
         optimization_mode = No_opt;
         selection_mode = Random;
         hidden_opt;
       }
   in
+  let create_iterated_opt (max_iter, random_mode) =
+    Iter
+      {
+        max_iter;
+        max_time;
+        random_mode;
+        name =
+          Printf.sprintf "Iterated2Opt-%s%s"
+            (Two_Opt.string_of_random_mode random_mode) (
+              if max_iter = max_iter then "" else Printf.sprintf "-%diters" max_iter
+            );
+      }
+  in
   List.map init_model
-    (List.map create_opt_mcts mcts_opt_list @ List.map create_vanilla mcts_vanilla_list)
+    (List.map create_opt_mcts mcts_opt_list
+    @ List.map create_vanilla_mcts mcts_vanilla_list 
+    @ List.map create_iterated_opt iter2opt_list)
 
 let run_models ?(sim_name = "") configs models =
   Printf.printf "\nRunning sim %s...\n" sim_name;
@@ -158,4 +173,4 @@ let run_models ?(sim_name = "") configs models =
         (mean_s @@ float model.total_opted_length))
     oc
   @@ List.sort (fun a b -> compare a.total_deviation b.total_deviation) models;
-  Printf.printf "\n\nResult file available at : %s/%s.csv" file_path file_name
+  Printf.printf "\n\nResult file available at : %s/%s" logs.file_path logs.file_name
