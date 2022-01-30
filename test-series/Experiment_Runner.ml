@@ -132,7 +132,7 @@ let create_models ?(exploration_mode = MCTS.Standard_deviation)
     @ List.map create_vanilla_mcts mcts_vanilla_list
     @ List.map create_iterated_opt iter2opt_list)
 
-let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = -1)
+let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1)
     configs models =
   let start_time = Sys.time () in
   let last_debug = ref start_time in
@@ -190,6 +190,6 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = -1)
     oc
   @@ List.sort (fun a b -> compare a.total_deviation b.total_deviation) models;
   Printf.printf
-    "\n\nExperiment ended in %g seconds\nResult file available at : %s%s"
+    "\n\nExperiment ended in %g seconds\nResult file available at : %s%s\n"
     (Sys.time () -. start_time)
     logs.file_path logs.file_name

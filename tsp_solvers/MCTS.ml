@@ -98,7 +98,7 @@ type debug = {
   mutable score_hist : (float * int) list;
   mutable best_score_hist : (float * int * int) list;
   mutable opt_time : float;
-  mutable generate_log_file : bool;
+  mutable generate_log_file : int;
   mutable hidden_opt : optimization_mode;
   mutable hidden_best_path : int array;
   mutable hidden_best_score : int; (* mutable extra_time : float; *)
@@ -114,7 +114,7 @@ let deb =
     score_hist = [];
     best_score_hist = [];
     opt_time = 0.;
-    generate_log_file = true;
+    generate_log_file = -1;
     hidden_opt = No_opt;
     hidden_best_path = [||];
     hidden_best_score = max_int (* extra_time = 0.; *);
@@ -343,7 +343,7 @@ let playout last_city =
   if score < !arg.best_score then (
     !arg.best_score <- score;
     Util.copy_in_place !arg.best_path final_path;
-    if deb.generate_log_file then
+    if deb.generate_log_file > 0 then
       deb.best_score_hist <-
         (Sys.time () -. !arg.start_time, !arg.playout_count, score)
         :: deb.best_score_hist);
@@ -355,7 +355,7 @@ let playout last_city =
      Util.copy_in_place deb.hidden_best_path opt_path;
      deb.hidden_best_score <- score));
   deb.playout_time <- deb.playout_time +. Sys.time () -. st;
-  if deb.generate_log_file then
+  if deb.generate_log_file > 0 then
     deb.score_hist <- (Sys.time () -. !arg.start_time, score) :: deb.score_hist;
 
   score
@@ -513,7 +513,7 @@ let rec debug_mcts oc root =
       in
       debug_mcts oc n
 
-let proceed_mcts ?(generate_log_file = false) ?(log_files_path = "logs")
+let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     ?(debug_tree = false) ?(expected_length_mode = Average) ?(city_config = "")
     ?(config_path = "tsp_instances") ?(playout_selection_mode = Roulette)
     ?(exploration_mode = Standard_deviation) ?(optimization_mode = No_opt)
@@ -674,43 +674,43 @@ let proceed_mcts ?(generate_log_file = false) ?(log_files_path = "logs")
     print_endline "\n\n_________________END DEBUG TREE_______________\n";
     debug_info stdout);
 
-  if generate_log_file then (
+  if generate_log_file >= 0 then (
     let suffix = if name <> "" then name else sim_name in
 
     let file_path =
       File_log.create_log_dir @@ Printf.sprintf "%s/%s" log_files_path suffix
     in
-    let file = File_log.create_file ~file_path ~file_name:"all_scores" () in
-    let oc = File_log.log_single_data ~close:false file "timestamp,length" in
-    Util.iter_rev
-      (fun (t, s) ->
-        (if t = 0. then Printf.fprintf oc "0,%d\n"
-        else Printf.fprintf oc "%g,%d\n" t)
-          s)
-      deb.score_hist;
-    close_out oc;
-    let file = File_log.create_file ~file_path ~file_name:"best_scores" () in
-    let oc =
-      File_log.log_single_data ~close:false file "playout,timestamp,length"
-    in
-    Util.iter_rev (fun (t, p, len) ->
-        if t = 0. then Printf.fprintf oc "%d,0,%d\n" p len
-        else Printf.fprintf oc "%d,%g,%d\n" p t len)
-    @@ (Sys.time () -. start_time, !arg.playout_count, best_score)
-       :: deb.best_score_hist;
-    close_out oc;
-
+    if generate_log_file > 0 then (
+      let file = File_log.create_file ~file_path ~file_name:"all_scores" () in
+      let oc = File_log.log_single_data ~close:false file "timestamp,length" in
+      Util.iter_rev
+        (fun (t, s) ->
+          (if t = 0. then Printf.fprintf oc "0,%d\n"
+          else Printf.fprintf oc "%g,%d\n" t)
+            s)
+        deb.score_hist;
+      close_out oc;
+      let file = File_log.create_file ~file_path ~file_name:"best_scores" () in
+      let oc =
+        File_log.log_single_data ~close:false file "playout,timestamp,length"
+      in
+      Util.iter_rev (fun (t, p, len) ->
+          if t = 0. then Printf.fprintf oc "%d,0,%d\n" p len
+          else Printf.fprintf oc "%d,%g,%d\n" p t len)
+      @@ (Sys.time () -. start_time, !arg.playout_count, best_score)
+         :: deb.best_score_hist;
+      close_out oc);
     let file =
       File_log.create_file ~file_path ~file_name:"debug" ~extension:"txt" ()
     in
     let oc = File_log.get_oc file in
-    Printf.fprintf oc "\n\n_______________START DEBUG INFO_______________\n\n";
     debug_info oc;
     Base_tsp.print_error_ratio ~oc ~file_path:config_path best_path eval
       city_config;
     Printf.fprintf oc "\n\n________________START DEBUG TREE_______________\n";
     debug_mcts oc root;
     close_out oc;
+
     if verbose >= 0 then
       let start = String.length "logs/" in
       Printf.printf "simulation directory for log files : %s\n"

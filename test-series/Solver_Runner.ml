@@ -28,24 +28,20 @@ let solver_simulation ?(verbose = 0) city_config city_count eval log_path =
       let exploration_mode = solver.exploration_mode in
       let expected_length_mode = MCTS.Average in
       let optimization_mode = solver.optimization_mode in
-      let generate_log_file = true in
-      let debug_tree = false in
-      let optimize_end_path = true in
-      let stop_on_leaf = false in
       let hidden_opt = solver.hidden_opt in
       let (_, length), (_, opt_length), _ =
-        MCTS.proceed_mcts ~debug_tree ~city_config ~expected_length_mode
+        MCTS.proceed_mcts ~debug_tree:false ~city_config ~expected_length_mode
           ~playout_selection_mode ~exploration_mode ~optimization_mode
-          ~generate_log_file ~stop_on_leaf ~optimize_end_path ~name:solver.name
-          ~log_files_path ~verbose:(verbose-1) ~hidden_opt ~catch_SIGINT:false
-          city_count eval max_time max_playout
+          ~generate_log_file:0 ~stop_on_leaf:false ~optimize_end_path:true
+          ~name:solver.name ~log_files_path ~verbose:(verbose - 1) ~hidden_opt
+          ~catch_SIGINT:false city_count eval max_time max_playout
       in
       (length, opt_length)
   | Iter solver ->
       let path =
         Two_Opt.iter_two_opt eval city_count solver.random_mode solver.max_time
           solver.max_iter ~name:solver.name ~city_config
-          ~logs_path:log_files_path ~verbose:(verbose>0)
+          ~logs_path:log_files_path ~verbose:(verbose > 0)
       in
       let score = Base_tsp.path_length eval path in
       (score, score)
