@@ -1,4 +1,4 @@
-let rec iter_rev f l = 
+let iter_rev f l = 
   List.iter f @@ List.rev l
 
 let map_in_place f a =
