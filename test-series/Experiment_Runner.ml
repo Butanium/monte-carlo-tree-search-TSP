@@ -144,12 +144,6 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = -1)
   in
   List.iter
     (fun (file_path, config) ->
-      if verbose > 0 && Sys.time () -. !last_debug > 60. then (
-        incr debug_count;
-        Printf.printf
-          "currently testing %s, has been running for %d minutes\n%!" config
-          !debug_count;
-        last_debug := Sys.time ());
       let city_count, cities = Reader_tsp.open_tsp ~file_path config in
       let eval = Base_tsp.dists cities in
       let objective_length =
@@ -157,6 +151,12 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = -1)
       in
       List.iter
         (fun model ->
+          if verbose > 0 && Sys.time () -. !last_debug > 60. then (
+            incr debug_count;
+            Printf.printf
+              "currently testing %s, has been running for %d minutes\n%!" config
+              !debug_count;
+            last_debug := Sys.time ());
           let length, opt_length =
             solver_simulation config city_count eval log_files_path model.solver
               ~verbose:(verbose - 1)
@@ -190,6 +190,6 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = -1)
     oc
   @@ List.sort (fun a b -> compare a.total_deviation b.total_deviation) models;
   Printf.printf
-    "\n\nExperiment ended in %g seconds\nResult file available at : %s/%s"
+    "\n\nExperiment ended in %g seconds\nResult file available at : %s%s"
     (Sys.time () -. start_time)
     logs.file_path logs.file_name
