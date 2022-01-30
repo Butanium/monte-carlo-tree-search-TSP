@@ -1,8 +1,5 @@
-let rec iter_rev f = function
-  | [] -> ()
-  | x :: xs ->
-      iter_rev f xs;
-      f x
+let rec iter_rev f l = 
+  List.iter f @@ List.rev l
 
 let map_in_place f a =
   for i = 0 to Array.length a - 1 do
