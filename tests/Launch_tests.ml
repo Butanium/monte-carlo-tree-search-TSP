@@ -3,9 +3,9 @@ open Experiment_Runner
 
 let file_path = "tsp_instances"
 
-let test_set = 50
+let test_set = 100
 
-let amount = 128
+let amount = 1
 
 let max_time = 2.
 
@@ -19,7 +19,7 @@ let configs =
   aux 1
 
 let opt_of_time max_time =
-  MCTS.Two_opt { max_time; max_length = 20; max_iter = max_int }
+  MCTS.Two_opt { max_time; max_length = 100; max_iter = max_int }
 
 let base_opt = opt_of_time 1.
 
