@@ -39,28 +39,31 @@ exception Timed_Out
 
 let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
     ?(max_time = infinity) ?(lower_bound = 0) ?(upper_bound = -1) eval path =
-  (* If `partial_path` is set to true the algorithm won't try to optimize the edge between the end of the path and the beginning.
+  (* If [partial_path] is set to true the algorithm won't try to optimize the edge between the end of the path and the beginning.
      It's useful if you want to optimize the part of a path *)
   let bound =
     if upper_bound < 0 then Array.length path
     else min upper_bound @@ Array.length path
   in
+  let bounded i = if i >= bound then i - bound else i in
   let partial = if partial_path then 1 else 0 in
-  let start_time = Sys.time () in
+
+  let start_time = if max_time = infinity then 0. else Sys.time () in
+  (* SI max_time = infinity ne pas appeler Sys.time() *)
   let rec rec_while i =
     (i < max_iter || max_iter < 0)
     && (not (loop1 lower_bound))
-    && Sys.time () -. start_time < max_time
     && rec_while (i + 1)
   and loop1 i = i >= bound - 3 - partial || (loop2 i (i + 2) && loop1 (i + 1))
   and loop2 i j =
-    if Sys.time () -. start_time > max_time then raise Timed_Out;
+    if max_time <> infinity && Sys.time () -. start_time > max_time then
+      raise Timed_Out;
     j >= bound - max (2 * partial) (1 - i)
     || (let diff =
           eval path.(i) path.(j)
-          + eval path.(i + 1) path.((j + 1) mod bound)
+          + eval path.(i + 1) path.(bounded (j + 1))
           - eval path.(i) path.(i + 1)
-          - eval path.(j) path.((j + 1) mod bound)
+          - eval path.(j) path.(bounded (j + 1))
         in
         if diff < 0 then (
           invertPath i j path;
@@ -96,6 +99,7 @@ let randomize_path q eval mode path_arr =
 
 let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path eval city_count
     rnd_mode max_time max_try =
+  
   Random.self_init ();
   let create_arr () = Array.init city_count Fun.id in
   let queue = RndQ.simple_create city_count @@ create_arr () in
@@ -107,11 +111,9 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path eval city_count
   let start_time = Sys.time () in
   let get_time () = Sys.time () -. start_time in
   let total_randomize_time = ref 0. in
-  while !i < max_try && get_time () < max_time do
-    let st = Sys.time () in
+  while !i < max_try && (max_time = infinity || get_time () < max_time) do
     randomize_path queue eval rnd_mode path_arr;
-    total_randomize_time := !total_randomize_time +. Sys.time () -. st;
-    let max_time = max_time -. get_time () in
+    let max_time = if max_time = infinity then infinity else max_time -. get_time () in
     opt_fast ~max_time eval path_arr;
     let len = Base_tsp.path_length eval path_arr in
     if len < !best_len then (
@@ -154,7 +156,7 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path eval city_count
              | Some name -> name)
       in
       let file =
-        File_log.create_file ~file_path ~file_name:"output" ~extension:".txt" ()
+        File_log.create_file ~file_path ~file_name:"output" ~extension:"txt" ()
       in
       let oc = File_log.get_oc file in
       debug oc;

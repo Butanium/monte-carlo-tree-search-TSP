@@ -275,7 +275,6 @@ let create_city_generator visited =
 let available queue =
   (* [FR] Renvoie une file aléatoire contenant toutes les villes non visitées *)
   (* [EN] Returns a random queue containing all non visited cities *)
-  let st = Sys.time () in
   let aux = create_city_generator !arg.visited in
   let size = !arg.city_count - !arg.path_size in
   RndQ.reset queue;
@@ -286,7 +285,6 @@ let available queue =
 
   (* try ()) with Invalid_argument _ -> raise @@
      Invalid_argument (Printf.sprintf "%d size, %d city_count, %d path_size" size !arg.city_count !arg.path_size) *)
-  deb.available_time <- deb.available_time +. Sys.time () -. st;
   queue
 
 let fill_path store size =
@@ -318,23 +316,18 @@ let optimize_path size = function
 let playout last_city =
   (* [FR] Termine aléatoirement le trajet commencé lors de l'exploration *)
   (* [EN] Finish randomly the path started during the exploration *)
-  let st = Sys.time () in
   let queue = available !creation_queue in
   let size = !arg.city_count - !arg.path_size in
   let final_path =
     if size > 0 then (
       update_weights queue last_city;
-      let cr_st = Sys.time () in
       !playout_path.(0) <- last_city;
       for k = 1 to size do
         let c = RndQ.take queue in
         update_weights queue c;
         !playout_path.(k) <- c
       done;
-      deb.pl_creation <- deb.pl_creation +. Sys.time () -. cr_st;
-      let opt_st = Sys.time () in
       let end_path = optimize_path size !arg.optimization_mode in
-      deb.opt_time <- deb.opt_time +. Sys.time () -. opt_st;
       end_path)
     else !arg.current_path
   in
@@ -354,9 +347,8 @@ let playout last_city =
    if score < deb.hidden_best_score then (
      Util.copy_in_place deb.hidden_best_path opt_path;
      deb.hidden_best_score <- score));
-  deb.playout_time <- deb.playout_time +. Sys.time () -. st;
   if deb.generate_log_file > 0 then
-    deb.score_hist <- (Sys.time () -. !arg.start_time, score) :: deb.score_hist;
+    deb.score_hist <- (float !arg.playout_count, score) :: deb.score_hist;
 
   score
 
@@ -561,8 +553,6 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     }
   in
   let root = { info; heritage = Root } in
-  let next_debug_print = ref 60. in
-  let minutes = ref 0 in
   let get_time () = Sys.time () -. start_time in
   if verbose > 0 then
     Printf.printf @@ "\n\nStarting MCTS, I'll keep informed every minutes :)\n"
@@ -582,19 +572,10 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
   while
     !arg.playout_count = 0
     || !arg.playout_count < max_playout
-       && get_time () < max_time (* +. deb.extra_time *)
+       && (max_time = infinity || get_time () < max_time)
        && ((not stop_on_leaf) || deb.max_depth < city_count)
        && not !user_interrupt
   do
-    if get_time () > !next_debug_print && verbose > 0 then (
-      next_debug_print := 60. +. !next_debug_print;
-      incr minutes;
-      Printf.eprintf
-        "\n\
-        \ Running for %d minutes, %d playout done | Best score : %d | Max \
-         depth : %d/%d\n\
-         %!"
-        !minutes !arg.playout_count !arg.best_score deb.max_depth city_count);
     reset_arg ();
     !arg.playout_count <- !arg.playout_count + 1;
     selection root;
@@ -652,16 +633,6 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
        constant : %.1f, closed_nodes : %d\n\
        random seed : %d" !arg.playout_count spent_time deb.max_depth best_score
       !exploration_constant deb.closed_nodes seed;
-    Printf.fprintf oc
-      ("\n\
-        %.1f playout time, %.1f available time, %.3f playout time ratio\n\
-        %.3f creation time ratio in playout,"
-     ^^ " %.3f playout optimization ratio, %.3f opt ratio in playout\n")
-      deb.playout_time deb.available_time
-      (deb.playout_time /. spent_time)
-      (deb.pl_creation /. deb.playout_time)
-      (deb.opt_time /. spent_time)
-      (deb.opt_time /. deb.playout_time);
     Printf.fprintf oc "\nbest path :\n";
     Base_tsp.print_path ~oc best_path;
 
