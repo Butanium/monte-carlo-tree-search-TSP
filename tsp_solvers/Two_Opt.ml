@@ -49,8 +49,8 @@ let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
   let bounded i = if i >= bound then i - bound else i in
   let partial = if partial_path then 1 else 0 in
   let last_time_check = ref 0 in
-  let start_time = if max_time = infinity then 0. else Sys.time () in
-  (* SI max_time = infinity ne pas appeler Sys.time() *)
+  let start_time = if max_time = infinity then 0. else Unix.gettimeofday () in
+  (* SI max_time = infinity ne pas appeler Unix.gettimeofday () *)
   let rec rec_while i =
     (i < max_iter || max_iter < 0)
     && (not (loop1 lower_bound))
@@ -65,7 +65,7 @@ let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
         incr last_time_check;
         false))
       && max_time <> infinity
-      && Sys.time () -. start_time > max_time
+      && Unix.gettimeofday () -. start_time > max_time
     then raise Timed_Out;
     j >= bound - max (2 * partial) (1 - i)
     || (let diff =
@@ -116,8 +116,8 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path
   let best_path = create_arr () in
   let i = ref 0 in
   let acc_scores = ref 0 in
-  let start_time = Sys.time () in
-  let get_time () = Sys.time () -. start_time in
+  let start_time = Unix.gettimeofday () in
+  let get_time () = Unix.gettimeofday () -. start_time in
   let total_randomize_time = ref 0. in
   let last_time_check = ref 0 in
   while

@@ -3,11 +3,11 @@ open Experiment_Runner
 
 let file_path = "tsp_instances"
 
-let max_time = 2.
+let max_time = 12.
 
-let test_set = 50
+let test_set = 100
 
-let amount = 128
+let amount = 2
 
 let sim_name = Printf.sprintf "TSP%d-experiment--3" test_set
 
@@ -19,7 +19,7 @@ let configs =
   aux 1
 
 let base_opt =
-  MCTS.Two_opt { max_time = 1.; max_length = 50; max_iter = max_int }
+  MCTS.Two_opt { max_time = 1.; max_length = test_set; max_iter = max_int }
 
 let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int }
 
@@ -31,9 +31,11 @@ let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int }
      ~mcts_opt_list:([ MCTS.Roulette; Random ] $$ [ (base_opt, (1, 1), full_opt);
      (full_opt, (1,1), No_opt) ]) *)
 (* let models = create_models max_time ~iter2opt_list: (max_int *$ [Two_Opt.Random; Roulette])  *)
-let models =
+(* let models =
   create_models max_time
     ~mcts_opt_list:
-      ([ MCTS.Random; Roulette ] $$ [ (base_opt, (1, 1), full_opt) ])
+      ([ MCTS.Random; Roulette ] $$ [ (base_opt, (1, 1), full_opt) ]) *)
 
-let () = run_models ~sim_name configs models ~mk_new_log_dir:false
+let models = create_models max_time ~mcts_opt_list:[MCTS.Roulette, (base_opt,(1,1),full_opt)]
+
+let () = run_models ~sim_name configs models

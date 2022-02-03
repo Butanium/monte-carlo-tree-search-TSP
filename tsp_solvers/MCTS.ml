@@ -338,7 +338,7 @@ let playout last_city =
     Util.copy_in_place !arg.best_path final_path;
     if deb.generate_log_file > 0 then
       deb.best_score_hist <-
-        (Sys.time () -. !arg.start_time, !arg.playout_count, score)
+        (Unix.gettimeofday () -. !arg.start_time, !arg.playout_count, score)
         :: deb.best_score_hist);
 
   (if deb.hidden_opt <> No_opt && size > 0 then
@@ -519,7 +519,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     Sys.set_signal Sys.sigint
       (Sys.Signal_handle (fun _ -> user_interrupt := true));
   (* allow user exit with Ctrl+C sigint*)
-  let start_time = Sys.time () in
+  let start_time = Unix.gettimeofday () in
 
   arg :=
     {
@@ -553,7 +553,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     }
   in
   let root = { info; heritage = Root } in
-  let get_time () = Sys.time () -. start_time in
+  let get_time () = Unix.gettimeofday () -. start_time in
   if verbose > 0 then
     Printf.printf @@ "\n\nStarting MCTS, I'll keep informed every minutes :)\n"
     ^^ "You can stop the program at anytime by pressing Ctrl+C and it'll \
@@ -585,7 +585,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
   done;
   let debug_string = ref "" in
   let add_debug s = debug_string := !debug_string ^ s in
-  let spent_time = Sys.time () -. start_time in
+  let spent_time = Unix.gettimeofday () -. start_time in
   let best_score =
     if hidden_opt = No_opt then !arg.best_score else deb.hidden_best_score
   in
@@ -599,10 +599,10 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
   in
   let opt_path, opt_score =
     if optimize_end_path then (
-      let start_time = Sys.time () in
+      let start_time = Unix.gettimeofday () in
       let opt_path = Array.copy best_path in
       Two_Opt.opt_fast eval ~max_time:optimize_end_path_time opt_path;
-      let opt_time = Sys.time () -. start_time in
+      let opt_time = Unix.gettimeofday () -. start_time in
       let opt_score = Base_tsp.path_length eval opt_path in
       let opt_delta = best_score - opt_score in
       add_debug
@@ -668,7 +668,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       Util.iter_rev (fun (t, p, len) ->
           if t = 0. then Printf.fprintf oc "%d,0,%d\n" p len
           else Printf.fprintf oc "%d,%g,%d\n" p t len)
-      @@ (Sys.time () -. start_time, !arg.playout_count, best_score)
+      @@ (Unix.gettimeofday () -. start_time, !arg.playout_count, best_score)
          :: deb.best_score_hist;
       close_out oc);
     let file =
