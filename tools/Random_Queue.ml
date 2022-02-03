@@ -71,7 +71,7 @@ let change_weights f q =
     let new_w0 = f w0 x0 in
     q.content.(0) <- (x0, new_w0);
     q.is_simple <- true;
-    let tot = ref w0 in
+    let tot = ref new_w0 in
     for i = 1 to q.size - 1 do
         let x, w = q.content.(i)
         in
