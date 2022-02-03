@@ -126,7 +126,7 @@ type arguments = {
   visited : bool array;
   city_count : int;
   mutable path_size : int;
-  eval : int -> int -> int;
+  adj_matrix : int array array;
   mutable get_node_score : node -> float;
   current_path : int array;
   best_path : int array;
@@ -151,7 +151,7 @@ let arg =
       visited = [||];
       city_count = -1;
       path_size = -1;
-      eval = (fun _ _ -> -1);
+      adj_matrix = [||];
       get_node_score = (fun _ -> -1.);
       current_path = [||];
       best_path = [||];
@@ -193,8 +193,7 @@ let update_weights queue last =
   (* [EN] Update the weights in the random queue according to the last city added to the playout path *)
   | Random -> ()
   | Roulette ->
-      RndQ.change_weights
-        (fun _ city -> 1. /. float_of_int (!arg.eval city last))
+      RndQ.roulette_weights !arg.adj_matrix last
         queue
 
 let creation_queue = ref @@ RndQ.simple_create 0 [||]
@@ -230,7 +229,7 @@ let get_node_score_fun root exploration_mode expected_length_mode =
   let c =
     match exploration_mode with
     | Min_spanning_tree ->
-        float_of_int @@ Prim_Alg.prim_alg !arg.eval !arg.city_count
+        float_of_int @@ Prim_Alg.prim_alg (fun i j -> !arg.adj_matrix.(i).(j)) !arg.city_count
     | Standard_deviation ->
         let tot = float_of_int (!arg.city_count - 1) in
         let average =
@@ -301,12 +300,12 @@ let optimize_path size = function
       !opt_path
   | Two_opt { max_length; max_iter; max_time } ->
       Two_Opt.opt_fast ~partial_path:true ~upper_bound:(min size max_length)
-        ~max_iter ~max_time !arg.eval !playout_path;
+        ~max_iter ~max_time !arg.adj_matrix !playout_path;
       fill_path !opt_path size;
       !opt_path
   | Full_Two_opt { max_iter; max_time } ->
       fill_path !opt_path size;
-      Two_Opt.opt_fast ~max_iter ~max_time !arg.eval !opt_path;
+      Two_Opt.opt_fast ~max_iter ~max_time !arg.adj_matrix !opt_path;
       !opt_path
   | e ->
       failwith
@@ -331,7 +330,7 @@ let playout last_city =
       end_path)
     else !arg.current_path
   in
-  let score = Base_tsp.path_length !arg.eval final_path in
+  let score = Base_tsp.path_length !arg.adj_matrix final_path in
 
   if score < !arg.best_score then (
     !arg.best_score <- score;
@@ -343,7 +342,7 @@ let playout last_city =
 
   (if deb.hidden_opt <> No_opt && size > 0 then
    let opt_path = optimize_path size deb.hidden_opt in
-   let score = Base_tsp.path_length !arg.eval opt_path in
+   let score = Base_tsp.path_length !arg.adj_matrix opt_path in
    if score < deb.hidden_best_score then (
      Util.copy_in_place deb.hidden_best_path opt_path;
      deb.hidden_best_score <- score));
@@ -391,7 +390,7 @@ let expand node =
   !arg.path_size <- !arg.path_size + 1;
   !arg.visited.(city) <- true;
   let depth = node.info.depth + 1 in
-  let tot_dist = node.info.tot_dist + !arg.eval node.info.city city in
+  let tot_dist = node.info.tot_dist + !arg.adj_matrix.(node.info.city).(city) in
   let info =
     {
       visit = 0.;
@@ -451,7 +450,7 @@ let rec selection node =
     match node.info.children with
     | [] ->
         let dist =
-          node.info.tot_dist + !arg.eval node.info.city !arg.current_path.(0)
+          node.info.tot_dist + !arg.adj_matrix.(node.info.city).(!arg.current_path.(0))
         in
         if dist < !arg.best_score then (
           !arg.best_score <- dist;
@@ -511,7 +510,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     ?(exploration_mode = Standard_deviation) ?(optimization_mode = No_opt)
     ?(stop_on_leaf = true) ?(optimize_end_path = true) ?(verbose = 1)
     ?(hidden_opt = No_opt) ?(optimize_end_path_time = infinity) ?(name = "")
-    ?(catch_SIGINT = true) ?seed city_count eval max_time max_playout =
+    ?(catch_SIGINT = true) ?seed city_count adj_matrix max_time max_playout =
   (* [FR] Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout *)
   (* [EN] Create and develop the tree, keeping in memory the best path done during the playouts *)
   let user_interrupt = ref false in
@@ -528,7 +527,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       visited = Array.make city_count false;
       city_count;
       path_size = 0;
-      eval;
+      adj_matrix;
       get_node_score = (fun _ -> -1.);
       current_path = Array.make city_count (-1);
       best_path = Array.make city_count (-1);
@@ -601,9 +600,9 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     if optimize_end_path then (
       let start_time = Unix.gettimeofday () in
       let opt_path = Array.copy best_path in
-      Two_Opt.opt_fast eval ~max_time:optimize_end_path_time opt_path;
+      Two_Opt.opt_fast adj_matrix ~max_time:optimize_end_path_time opt_path;
       let opt_time = Unix.gettimeofday () -. start_time in
-      let opt_score = Base_tsp.path_length eval opt_path in
+      let opt_score = Base_tsp.path_length adj_matrix opt_path in
       let opt_delta = best_score - opt_score in
       add_debug
       @@ Printf.sprintf
@@ -676,7 +675,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     in
     let oc = File_log.get_oc file in
     debug_info oc;
-    Base_tsp.print_error_ratio ~oc ~file_path:config_path best_path eval
+    Base_tsp.print_error_ratio ~oc ~file_path:config_path best_path adj_matrix
       city_config;
     Printf.fprintf oc "\n\n________________START DEBUG TREE_______________\n";
     debug_mcts oc root;

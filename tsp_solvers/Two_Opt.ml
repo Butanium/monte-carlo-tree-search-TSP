@@ -39,7 +39,7 @@ exception Timed_Out
 
 let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
     ?(max_time = infinity) ?(lower_bound = 0) ?(upper_bound = -1)
-    ?(check_time = 1000) eval path =
+    ?(check_time = 1000) adj_matrix path =
   (* If [partial_path] is set to true the algorithm won't try to optimize the edge between the end of the path and the beginning.
      It's useful if you want to optimize the part of a path *)
   let bound =
@@ -69,10 +69,10 @@ let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
     then raise Timed_Out;
     j >= bound - max (2 * partial) (1 - i)
     || (let diff =
-          eval path.(i) path.(j)
-          + eval path.(i + 1) path.(bounded (j + 1))
-          - eval path.(i) path.(i + 1)
-          - eval path.(j) path.(bounded (j + 1))
+          adj_matrix.(path.(i)).(path.(j))
+          + adj_matrix.(path.(i) + 1).(path.(bounded (j + 1)))
+          - adj_matrix.(path.(i)).(path.(i) + 1)
+          - adj_matrix.(path.(j)).(path.(bounded (j + 1)))
         in
         if diff < 0 then (
           invertPath i j path;
@@ -92,22 +92,21 @@ let string_of_random_mode = function
   | Random -> "Random"
   | Roulette -> "Roulette"
 
-let weight_update eval last q = function
+let weight_update adj last q = function
   | Random -> ()
-  | Roulette ->
-      RndQ.change_weights (fun _ x -> 1. /. float_of_int (eval x last)) q
+  | Roulette -> RndQ.roulette_weights adj last q
 
-let randomize_path q eval mode path_arr =
+let randomize_path q adj mode path_arr =
   for i = 0 to Array.length path_arr - 1 do
     let v = RndQ.take q in
-    weight_update eval v q mode;
+    weight_update adj v q mode;
     path_arr.(i) <- v
   done
 
 (* type debug = {mutable } *)
 
 let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path
-    ?(check_time = 1000) eval city_count rnd_mode max_time max_try =
+    ?(check_time = 1000) adj_matrix city_count rnd_mode max_time max_try =
   Random.self_init ();
   let create_arr () = Array.init city_count Fun.id in
   let queue = RndQ.simple_create city_count @@ create_arr () in
@@ -130,12 +129,12 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path
            else true)
        || get_time () < max_time)
   do
-    randomize_path queue eval rnd_mode path_arr;
+    randomize_path queue adj_matrix rnd_mode path_arr;
     let max_time =
       if max_time = infinity then infinity else max_time -. get_time ()
     in
-    opt_fast ~max_time eval path_arr;
-    let len = Base_tsp.path_length eval path_arr in
+    opt_fast ~max_time adj_matrix path_arr;
+    let len = Base_tsp.path_length adj_matrix path_arr in
     if len < !best_len then (
       best_len := len;
       for i = 0 to city_count - 1 do
