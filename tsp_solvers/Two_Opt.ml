@@ -97,9 +97,8 @@ let randomize_path q eval mode path_arr =
 
 (* type debug = {mutable } *)
 
-let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path eval city_count
-    rnd_mode max_time max_try =
-  
+let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path
+    ?(check_time = 1000) eval city_count rnd_mode max_time max_try =
   Random.self_init ();
   let create_arr () = Array.init city_count Fun.id in
   let queue = RndQ.simple_create city_count @@ create_arr () in
@@ -111,9 +110,21 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path eval city_count
   let start_time = Sys.time () in
   let get_time () = Sys.time () -. start_time in
   let total_randomize_time = ref 0. in
-  while !i < max_try && (max_time = infinity || get_time () < max_time) do
+  let last_time_check = ref 0 in
+  while
+    !i < max_try
+    && (max_time = infinity
+       || (incr last_time_check;
+           if !last_time_check > check_time then (
+             last_time_check := 0;
+             false)
+           else true)
+       || get_time () < max_time)
+  do
     randomize_path queue eval rnd_mode path_arr;
-    let max_time = if max_time = infinity then infinity else max_time -. get_time () in
+    let max_time =
+      if max_time = infinity then infinity else max_time -. get_time ()
+    in
     opt_fast ~max_time eval path_arr;
     let len = Base_tsp.path_length eval path_arr in
     if len < !best_len then (
@@ -161,4 +172,4 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path eval city_count
       let oc = File_log.get_oc file in
       debug oc;
       close_out oc);
-  best_path
+  best_path best_path
