@@ -38,7 +38,8 @@ let opt_best ?(debug = false) ?(partial_path = false) ?(max_iter = -1) eval path
 exception Timed_Out
 
 let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
-    ?(max_time = infinity) ?(lower_bound = 0) ?(upper_bound = -1) eval path =
+    ?(max_time = infinity) ?(lower_bound = 0) ?(upper_bound = -1)
+    ?(check_time = 1000) eval path =
   (* If [partial_path] is set to true the algorithm won't try to optimize the edge between the end of the path and the beginning.
      It's useful if you want to optimize the part of a path *)
   let bound =
@@ -47,7 +48,7 @@ let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
   in
   let bounded i = if i >= bound then i - bound else i in
   let partial = if partial_path then 1 else 0 in
-
+  let last_time_check = ref 0 in
   let start_time = if max_time = infinity then 0. else Sys.time () in
   (* SI max_time = infinity ne pas appeler Sys.time() *)
   let rec rec_while i =
@@ -56,8 +57,16 @@ let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
     && rec_while (i + 1)
   and loop1 i = i >= bound - 3 - partial || (loop2 i (i + 2) && loop1 (i + 1))
   and loop2 i j =
-    if max_time <> infinity && Sys.time () -. start_time > max_time then
-      raise Timed_Out;
+    if
+      (if !last_time_check > check_time then (
+       last_time_check := 0;
+       true)
+      else (
+        incr last_time_check;
+        false))
+      && max_time <> infinity
+      && Sys.time () -. start_time > max_time
+    then raise Timed_Out;
     j >= bound - max (2 * partial) (1 - i)
     || (let diff =
           eval path.(i) path.(j)
@@ -172,4 +181,4 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path
       let oc = File_log.get_oc file in
       debug oc;
       close_out oc);
-  best_path best_path
+  best_path
