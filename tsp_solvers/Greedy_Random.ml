@@ -7,25 +7,25 @@ let string_of_rnd_mode = function | Random -> "Random" | Roulette -> "Roulette"
 
 let weight_update eval last q = function
     | Random -> ()
-    | Roulette -> RndQ.change_weights (fun _ x -> 1. /. float_of_int(eval x last)) q
+    | Roulette -> RndQ.roulette_weights eval last q
 
-let greedy ?(generate_log_file = true) eval city_count rnd_mode max_time max_try =
+let greedy ?(generate_log_file = true) adj_matrix city_count rnd_mode max_time max_try =
   let best_scores_hist = ref [] in
   let scores_hist = ref [] in 
   
   let best_path = Array.init city_count Fun.id in 
-  let get_path_length = Base_tsp.path_length eval in 
+  let get_path_length = Base_tsp.path_length adj_matrix in
   let best_score = ref @@ get_path_length best_path in
   let path = Array.copy best_path in 
   let queue = RndQ.simple_create city_count @@ Array.sub path 1 (city_count-1)  in
   let try_count = ref 0 in 
-  let start_time = Sys.time() in
-  let get_time () = Sys.time() -. start_time in 
+  let start_time = Unix.gettimeofday () in
+  let get_time () = Unix.gettimeofday () -. start_time in
   while get_time () < max_time && !try_count < max_try do 
     RndQ.reset queue;
     incr try_count;
     for i = 1 to city_count - 1 do
-      weight_update eval (path.(i-1)) queue rnd_mode;
+      weight_update adj_matrix (path.(i-1)) queue rnd_mode;
       path.(i) <- RndQ.take queue;
     done;
     let length = get_path_length path in 

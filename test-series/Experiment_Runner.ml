@@ -145,9 +145,9 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1)
   List.iter
     (fun (file_path, config) ->
       let city_count, cities = Reader_tsp.open_tsp ~file_path config in
-      let eval = Base_tsp.dists cities in
+      let adj = Base_tsp.get_adj_matrix cities in
       let objective_length =
-        float @@ Base_tsp.best_path_length ~file_path config eval
+        float @@ Base_tsp.best_path_length ~file_path config adj
       in
       List.iter
         (fun model ->
@@ -158,7 +158,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1)
               !debug_count;
             last_debug := Sys.time ());
           let length, opt_length =
-            solver_simulation config city_count eval log_files_path model.solver
+            solver_simulation config city_count adj log_files_path model.solver
               ~verbose:(verbose - 1)
           in
           model.experiment_count <- model.experiment_count + 1;
