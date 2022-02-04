@@ -70,8 +70,8 @@ let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
     j >= bound - max (2 * partial) (1 - i)
     || (let diff =
           adj_matrix.(path.(i)).(path.(j))
-          + adj_matrix.(path.(i) + 1).(path.(bounded (j + 1)))
-          - adj_matrix.(path.(i)).(path.(i) + 1)
+          + adj_matrix.(path.(i + 1)).(path.(bounded (j + 1)))
+          - adj_matrix.(path.(i)).(path.(i + 1))
           - adj_matrix.(path.(j)).(path.(bounded (j + 1)))
         in
         if diff < 0 then (
