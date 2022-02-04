@@ -106,7 +106,7 @@ let randomize_path q adj mode path_arr =
 (* type debug = {mutable } *)
 
 let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path
-    ?(check_time = 1000) adj_matrix city_count rnd_mode max_time max_try =
+    ?(check_time = 10) adj_matrix city_count rnd_mode max_time max_try =
   Random.self_init ();
   let create_arr () = Array.init city_count Fun.id in
   let queue = RndQ.simple_create city_count @@ create_arr () in
