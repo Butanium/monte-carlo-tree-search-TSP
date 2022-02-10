@@ -108,6 +108,8 @@ let randomize_path q adj mode path_arr =
 let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path
     ?(check_time = 10) adj_matrix city_count rnd_mode max_time max_try =
   Random.self_init ();
+  let seed =  Random.int 1073741823 in 
+  Random.init seed;
   let create_arr () = Array.init city_count Fun.id in
   let queue = RndQ.simple_create city_count @@ create_arr () in
   let path_arr = create_arr () in
@@ -117,7 +119,6 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path
   let acc_scores = ref 0 in
   let start_time = Unix.gettimeofday () in
   let get_time () = Unix.gettimeofday () -. start_time in
-  let total_randomize_time = ref 0. in
   let last_time_check = ref 0 in
   while
     !i < max_try
@@ -146,17 +147,17 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path
   done;
   let debug oc =
     Printf.fprintf oc
-      "iterated two opt achieved in %.1f s (%f s of randomization), %d \
+      "iterated two opt achieved in %.1f s, %d \
        iterations.\n\
        %s%s\n\
        Best score : %d | Average score : %d\n"
-      (get_time ()) !total_randomize_time !i
+      (get_time ())  !i
       (match name with
       | None -> ""
       | Some s -> Printf.sprintf "Simulation %s " s)
       (match city_config with
-      | None -> ""
-      | Some s -> Printf.sprintf "city config : %s" s)
+      | None -> Printf.sprintf "seed : %d" seed
+      | Some s -> Printf.sprintf "city config : %s, seed : %d" s seed)
       !best_len (!acc_scores / !i);
     Printf.fprintf oc "best path : ";
     Base_tsp.print_path ~oc best_path
