@@ -1,9 +1,6 @@
 (data_only_dirs logs archive external_tools venv)
 
 (env
-;  (dev
-;   (flags
-;    (:standard -w +42)))
  (release
   (flags
    (:standard -unsafe)
