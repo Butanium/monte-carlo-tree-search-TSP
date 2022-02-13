@@ -3,7 +3,7 @@
 (env
  (release
   (flags
-   (:standard -unsafe)
+   (:standard );-unsafe)
    ;  (:standard -rounds 100)
    ;  (:standard inline 500)
    ;  (:standard inline-max-unroll 50)
