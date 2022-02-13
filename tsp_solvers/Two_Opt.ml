@@ -105,11 +105,17 @@ let randomize_path q adj mode path_arr =
 
 (* type debug = {mutable } *)
 
-let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path
+let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
     ?(check_time = 10) adj_matrix city_count rnd_mode max_time max_try =
-  Random.self_init ();
-  let seed =  Random.int 1073741823 in 
-  Printf.printf "seed : %d\n%!" seed; (* todo : delete *)
+  let seed =
+    match seed with
+    | None ->
+        Random.self_init ();
+        Random.int 1073741823
+    | Some s -> s
+  in
+  Printf.printf "seed : %d\n%!" seed;
+  (* todo : delete *)
   Random.init seed;
   let create_arr () = Array.init city_count Fun.id in
   let queue = RndQ.simple_create city_count @@ create_arr () in
@@ -148,11 +154,10 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path
   done;
   let debug oc =
     Printf.fprintf oc
-      "iterated two opt achieved in %.1f s, %d \
-       iterations.\n\
+      "iterated two opt achieved in %.1f s, %d iterations.\n\
        %s%s\n\
        Best score : %d | Average score : %d\n"
-      (get_time ())  !i
+      (get_time ()) !i
       (match name with
       | None -> ""
       | Some s -> Printf.sprintf "Simulation %s " s)
