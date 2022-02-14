@@ -1,10 +1,6 @@
-(data_only_dirs logs archive external_tools venv)
+(data_only_dirs logs archive external_tools venv tsp_instances)
 
 (env
  (release
   (flags
-   (:standard );-unsafe)
-   ;  (:standard -rounds 100)
-   ;  (:standard inline 500)
-   ;  (:standard inline-max-unroll 50)
-   )))
+   (:standard -unsafe))))
