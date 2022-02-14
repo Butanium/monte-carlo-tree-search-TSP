@@ -11,12 +11,12 @@ let eval = Base_tsp.create_eval cities
 let adj_matrix = Base_tsp.get_adj_matrix cities
 
 let () =
-  let start_time = Sys.time () in
+  let start_time = Unix.gettimeofday () in
   let sa_path =
     Simulated_Annealing.start_sa city_count eval 10000. 0.1 1000 0.9
       Simulated_Annealing.Swap
   in
-  let max_time = Sys.time () -. start_time in
+  let max_time = Unix.gettimeofday () -. start_time in
   Printf.printf "\nmax time for mcts : %.4f seconds" max_time;
   let (mcts_path, _), _, _ =
     MCTS.proceed_mcts ~debug_tree:false ~generate_log_file:0 city_count

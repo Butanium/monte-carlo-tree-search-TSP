@@ -134,14 +134,15 @@ let create_models ?(exploration_mode = MCTS.Standard_deviation)
 
 let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1)
     configs models =
-  let start_time = Sys.time () in
+  let start_time = Unix.gettimeofday () in
   let last_debug = ref start_time in
   let debug_count = ref 0 in
-  Printf.printf "\nRunning sim %s...\n%!" sim_name;
   let path = Printf.sprintf "logs/%s" sim_name in
   let log_files_path =
     if mk_new_log_dir then File_log.create_log_dir path else path
   in
+  Printf.printf "\nRunning sim %s...\n%!"
+    (Scanf.sscanf log_files_path "logs/%s" Fun.id);
   List.iter
     (fun (file_path, config) ->
       let city_count, cities = Reader_tsp.open_tsp ~file_path config in
@@ -151,12 +152,13 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1)
       in
       List.iter
         (fun model ->
-          if verbose > 0 && Sys.time () -. !last_debug > 60. then (
-            incr debug_count;
+          let diff = Unix.gettimeofday () -. !last_debug in
+          if verbose > 0 && diff > 60. then (
+            debug_count := !debug_count + (int_of_float diff / 60);
             Printf.printf
               "currently testing %s, has been running for %d minutes\n%!" config
               !debug_count;
-            last_debug := Sys.time ());
+            last_debug := Unix.gettimeofday ());
           let length, opt_length =
             solver_simulation config city_count adj log_files_path model.solver
               ~verbose:(verbose - 1)
@@ -191,5 +193,5 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1)
   @@ List.sort (fun a b -> compare a.total_deviation b.total_deviation) models;
   Printf.printf
     "\n\nExperiment ended in %g seconds\nResult file available at : %s%s\n"
-    (Sys.time () -. start_time)
+    (Unix.gettimeofday () -. start_time)
     logs.file_path logs.file_name
