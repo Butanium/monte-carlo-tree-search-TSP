@@ -39,4 +39,4 @@ let models =
 
 (* let models = create_models max_time ~mcts_opt_list:[MCTS.Roulette, (base_opt,(1,1),full_opt)] *)
 
-let () = run_models ~sim_name configs models
+let () = run_models ~sim_name configs models ~seed:288626486

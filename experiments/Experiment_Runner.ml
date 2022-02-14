@@ -132,7 +132,7 @@ let create_models ?(exploration_mode = MCTS.Standard_deviation)
     @ List.map create_vanilla_mcts mcts_vanilla_list
     @ List.map create_iterated_opt iter2opt_list)
 
-let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1)
+let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
     configs models =
   let start_time = Unix.gettimeofday () in
   let last_debug = ref start_time in
@@ -161,7 +161,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1)
             last_debug := Unix.gettimeofday ());
           let length, opt_length =
             solver_simulation config city_count adj log_files_path model.solver
-              ~verbose:(verbose - 1)
+              ~verbose:(verbose - 1) ?seed
           in
           model.experiment_count <- model.experiment_count + 1;
           model.total_deviation <-
