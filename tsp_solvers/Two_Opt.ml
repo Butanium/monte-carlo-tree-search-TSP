@@ -114,8 +114,6 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
         Random.int 1073741823
     | Some s -> s
   in
-  Printf.printf "seed : %d\n%!" seed;
-  (* todo : delete *)
   Random.init seed;
   let create_arr () = Array.init city_count Fun.id in
   let queue = RndQ.simple_create city_count @@ create_arr () in
