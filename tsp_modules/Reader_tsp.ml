@@ -4,8 +4,9 @@ let open_tsp ?(file_path = "tsp_instances") tsp_name =
   let fill =
     let i = ref 0 in
     fun x ->
-      cities.(!i) <- x;
-      incr i
+      if !i < city_count then (
+        cities.(!i) <- x;
+        incr i)
   in
   let ic = open_in @@ Printf.sprintf "%s/%s.tsp" file_path tsp_name in
   let rec loop started =
@@ -38,9 +39,10 @@ let open_path ?(file_path = "tsp_instances") tsp_name =
   let path = Array.make city_count 0 in
   let fill =
     let i = ref 0 in
-    fun x -> if !i < city_count then (
-      path.(!i) <- x - 1;
-      incr i) 
+    fun x ->
+      if !i < city_count then (
+        path.(!i) <- x - 1;
+        incr i)
   in
   let ic = open_in @@ Printf.sprintf "%s/%s.opt.tour" file_path tsp_name in
   let rec loop started =
