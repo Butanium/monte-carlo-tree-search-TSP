@@ -27,7 +27,7 @@ let open_tsp ?(file_path = "tsp_instances") tsp_name =
                not found with the euclidian distance /!\\\n\
                %!");
           b)
-    with _ -> ()
+    with End_of_file -> ()
   in
   loop false;
   close_in ic;
@@ -38,9 +38,9 @@ let open_path ?(file_path = "tsp_instances") tsp_name =
   let path = Array.make city_count 0 in
   let fill =
     let i = ref 0 in
-    fun x ->
+    fun x -> if !i < city_count then (
       path.(!i) <- x - 1;
-      incr i
+      incr i) 
   in
   let ic = open_in @@ Printf.sprintf "%s/%s.opt.tour" file_path tsp_name in
   let rec loop started =
@@ -50,7 +50,7 @@ let open_path ?(file_path = "tsp_instances") tsp_name =
         List.iter fill @@ List.map int_of_string @@ String.split_on_char ' ' s;
         loop true)
       else loop ("TOUR_SECTION" = s)
-    with _ -> ()
+    with End_of_file -> ()
   in
   loop false;
   close_in ic;
