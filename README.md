@@ -16,11 +16,11 @@ In this repo, I made different heuristic solutions for the TSP written in OCaml.
 
 My point with MCTS is to use the approach described
 in [this paper](http://sasimi.jp/new/sasimi2016/files/archive/pdf/p352_R4-14.pdf) and try to see if adding some 2-opt in
-playouts and reduce their size, can end up in a better result.
+playouts and doing some other modifications, can end up in a better result.
 
 ## How can I test it ?
 
-If you don't want to use dune you can still run an old version of the project online - see toplevel release.
+If you don't want to use dune you can still run an old version of the project online - see toplevel release. Note that it's a very old release and that a lot of things changed
 
 If you have dune, be sure that the Graphics library is installed in your opam switch
 
