@@ -1,5 +1,9 @@
-(executables 
- (names MCTS_vs_SA MCTS_example iterated_2opt_example Simulated_Annealing_example Greedy_example
- MCTS_vs_2opt)
- (libraries tsp_modules tsp_solvers)
-)
+(executables
+ (names
+  MCTS_vs_SA
+  MCTS_example
+  iterated_2opt_example
+  Simulated_Annealing_example
+  Greedy_example
+  MCTS_vs_2opt)
+ (libraries tsp_modules tsp_solvers))

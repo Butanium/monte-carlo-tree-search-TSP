@@ -1,4 +1,9 @@
 (executables
- (names Single_test MCTS_main two_opt_tests Launch_tests Launch_MCTS_tests50 MCTS_test)
- (libraries tsp_modules tsp_solvers simulations tools)
-)
+ (names
+  Single_test
+  MCTS_main
+  two_opt_tests
+  Launch_tests
+  Launch_MCTS_tests50
+  MCTS_test)
+ (libraries tsp_modules tsp_solvers simulations tools))

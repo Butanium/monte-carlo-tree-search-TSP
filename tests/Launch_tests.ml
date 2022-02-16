@@ -31,11 +31,12 @@ let models =
     ~mcts_opt_list:
       ([ MCTS.Random; Roulette ]
       $$ base_opt
-         *$- (((1, 1), MCTS.No_opt) :: ((1,1), full_opt)
+         *$- (((1, 1), MCTS.No_opt)
+             :: ((1, 1), full_opt)
              :: ([ (1, 2); (1, 4) ] $$ [ MCTS.No_opt; base_opt; full_opt ]))
          @ [ (full_opt, (1, 1), No_opt) ])
     ~mcts_vanilla_list:
       ([ MCTS.Roulette; Random ]
       $$ [ full_opt; base_opt; No_opt; divide_opt 1 2 base_opt ])
 
-let () = run_models ~sim_name configs models 
+let () = run_models ~sim_name configs models
