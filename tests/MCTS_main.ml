@@ -1,5 +1,5 @@
 (* run command :
-  dune exec ./tests/MCTS_main.exe
+   dune exec ./tests/MCTS_main.exe
 *)
 let city_config = "TSPLIB/att48"
 
@@ -17,8 +17,7 @@ let exploration_mode = MCTS.Min_spanning_tree
 
 let expected_length_mode = MCTS.Average
 
-let optimization_mode =
-  MCTS.Full_Two_opt { max_iter = 100; max_time = 1. }
+let optimization_mode = MCTS.Full_Two_opt { max_iter = 100; max_time = 1. }
 
 (* let optimization_mode = MCTS.No_opt *)
 let generate_log_file = 2
@@ -29,13 +28,13 @@ let optimize_end_path = true
 
 let stop_on_leaf = true
 
-let _, (path,length), tree  =
+let _, (path, length), tree =
   Printf.printf "%d city_count\n" city_count;
 
   MCTS.proceed_mcts ~debug_tree ~city_config ~expected_length_mode
     ~playout_selection_mode ~exploration_mode ~optimization_mode
-    ~generate_log_file ~stop_on_leaf ~optimize_end_path city_count adj_matrix max_time
-    max_playout
+    ~generate_log_file ~stop_on_leaf ~optimize_end_path city_count adj_matrix
+    max_time max_playout
 
 let () =
   Graphics.sound 100 1000;

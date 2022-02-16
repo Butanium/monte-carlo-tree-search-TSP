@@ -192,9 +192,7 @@ let update_weights queue last =
      pour le chemin aléatoire du playout *)
   (* [EN] Update the weights in the random queue according to the last city added to the playout path *)
   | Random -> ()
-  | Roulette ->
-      RndQ.roulette_weights !arg.adj_matrix last
-        queue
+  | Roulette -> RndQ.roulette_weights !arg.adj_matrix last queue
 
 let creation_queue = ref @@ RndQ.simple_create 0 [||]
 
@@ -229,7 +227,10 @@ let get_node_score_fun root exploration_mode expected_length_mode =
   let c =
     match exploration_mode with
     | Min_spanning_tree ->
-        float_of_int @@ Prim_Alg.prim_alg (fun i j -> !arg.adj_matrix.(i).(j)) !arg.city_count
+        float_of_int
+        @@ Prim_Alg.prim_alg
+             (fun i j -> !arg.adj_matrix.(i).(j))
+             !arg.city_count
     | Standard_deviation ->
         let tot = float_of_int (!arg.city_count - 1) in
         let average =
@@ -450,7 +451,8 @@ let rec selection node =
     match node.info.children with
     | [] ->
         let dist =
-          node.info.tot_dist + !arg.adj_matrix.(node.info.city).(!arg.current_path.(0))
+          node.info.tot_dist
+          + !arg.adj_matrix.(node.info.city).(!arg.current_path.(0))
         in
         if dist < !arg.best_score then (
           !arg.best_score <- dist;

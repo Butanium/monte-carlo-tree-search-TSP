@@ -116,13 +116,14 @@ let roulette_weights adj_matrix last q =
   let tot = ref new_w0 in
   for i = 1 to q.size - 1 do
     let x, _ = q.content.(i) in
-    let new_w =  1. /. (float @@ adj_matrix.(last).(x0)) in
+    let new_w = 1. /. (float @@ adj_matrix.(last).(x0)) in
     q.content.(i) <- (x, new_w);
-    tot := !tot +. new_w;
+    tot := !tot +. new_w
   done;
   q.tot <- !tot
+
 (* spécifique a notre application, change les weights inversement décroissant par rapport à la distance
-de la ville à `last`*)
+   de la ville à `last`*)
 let reset q =
   (* Remet tous les éléments déjà tirés dans la file *)
   q.size <- Array.length q.content;
