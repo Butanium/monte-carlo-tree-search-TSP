@@ -132,8 +132,15 @@ let create_models ?(exploration_mode = MCTS.Standard_deviation)
     @ List.map create_vanilla_mcts mcts_vanilla_list
     @ List.map create_iterated_opt iter2opt_list)
 
+exception Break
+
 let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
     configs models =
+  let update_csv = ref false in
+  Sys.set_signal Sys.sigusr1 (Sys.Signal_handle (fun _ -> update_csv := true));
+  let stop_experiment = ref false in
+  Sys.set_signal Sys.sigusr2
+    (Sys.Signal_handle (fun _ -> stop_experiment := true));
   let start_time = Unix.gettimeofday () in
   let last_debug = ref start_time in
   let debug_count = ref 0 in
@@ -141,56 +148,66 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
   let log_files_path =
     if mk_new_log_dir then File_log.create_log_dir path else path
   in
-  Printf.printf "\nRunning sim %s...\n%!"
-    (Scanf.sscanf log_files_path "logs/%s" Fun.id);
-  List.iter
-    (fun (file_path, config) ->
-      let city_count, cities = Reader_tsp.open_tsp ~file_path config in
-      let adj = Base_tsp.get_adj_matrix cities in
-      let objective_length =
-        float @@ Base_tsp.best_path_length ~file_path config adj
-      in
-      List.iter
-        (fun model ->
-          let diff = Unix.gettimeofday () -. !last_debug in
-          if verbose > 0 && diff > 60. then (
-            debug_count := !debug_count + (int_of_float diff / 60);
-            Printf.printf
-              "currently testing %s, has been running for %d minutes\n%!" config
-              !debug_count;
-            last_debug := Unix.gettimeofday ());
-          let length, opt_length =
-            solver_simulation config city_count adj log_files_path model.solver
-              ~verbose:(verbose - 1) ?seed
-          in
-          model.experiment_count <- model.experiment_count + 1;
-          model.total_deviation <-
-            model.total_deviation
-            +. ((float length -. objective_length) /. objective_length);
-          model.total_length <- model.total_length + length;
-          model.total_opted_deviation <-
-            model.total_opted_deviation
-            +. ((float opt_length -. objective_length) /. objective_length);
-          model.total_opted_length <- model.total_opted_length + opt_length)
-        models)
-    configs;
   let file_name = "all_mcts_tests-" ^ sim_name in
   let logs = File_log.create_file ~file_path:log_files_path ~file_name () in
-  let oc =
-    File_log.log_single_data ~close:false logs
-      "solver-name,average-deviation,average-length,average-opted-deviation,average-opted-length"
+
+  let update_log_file () =
+    let oc =
+      File_log.log_single_data ~close:false logs
+        "solver-name,average-deviation,average-length,average-opted-deviation,average-opted-length"
+    in
+    File_log.log_data_oc
+      (fun model ->
+        let n = float model.experiment_count in
+        let mean_s x = strg (x /. n) in
+        Printf.sprintf "%s,%s,%s,%s,%s\n" (solver_name model.solver)
+          (mean_s model.total_deviation)
+          (mean_s @@ float model.total_length)
+          (mean_s model.total_opted_deviation)
+          (mean_s @@ float model.total_opted_length))
+      oc
+    @@ List.sort (fun a b -> compare a.total_deviation b.total_deviation) models
   in
-  File_log.log_data_oc
-    (fun model ->
-      let n = float model.experiment_count in
-      let mean_s x = strg (x /. n) in
-      Printf.sprintf "%s,%s,%s,%s,%s\n" (solver_name model.solver)
-        (mean_s model.total_deviation)
-        (mean_s @@ float model.total_length)
-        (mean_s model.total_opted_deviation)
-        (mean_s @@ float model.total_opted_length))
-    oc
-  @@ List.sort (fun a b -> compare a.total_deviation b.total_deviation) models;
+  Printf.printf "\nRunning sim %s...\n%!"
+    (Scanf.sscanf log_files_path "logs/%s" Fun.id);
+  (try
+     List.iter
+       (fun (file_path, config) ->
+         let city_count, cities = Reader_tsp.open_tsp ~file_path config in
+         let adj = Base_tsp.get_adj_matrix cities in
+         let objective_length =
+           float @@ Base_tsp.best_path_length ~file_path config adj
+         in
+         List.iter
+           (fun model ->
+             let diff = Unix.gettimeofday () -. !last_debug in
+             if verbose > 0 && diff > 60. then (
+               debug_count := !debug_count + (int_of_float diff / 60);
+               Printf.printf
+                 "currently testing %s, has been running for %d minutes\n%!"
+                 config !debug_count;
+               last_debug := Unix.gettimeofday ());
+             let length, opt_length =
+               solver_simulation config city_count adj log_files_path
+                 model.solver ~verbose:(verbose - 1) ?seed
+             in
+             model.experiment_count <- model.experiment_count + 1;
+             model.total_deviation <-
+               model.total_deviation
+               +. ((float length -. objective_length) /. objective_length);
+             model.total_length <- model.total_length + length;
+             model.total_opted_deviation <-
+               model.total_opted_deviation
+               +. ((float opt_length -. objective_length) /. objective_length);
+             model.total_opted_length <- model.total_opted_length + opt_length;
+             if !update_csv then (
+               update_csv := false;
+               update_log_file ());
+             if !stop_experiment then raise Break)
+           models)
+       configs
+   with Break -> ());
+  update_log_file ();
   Printf.printf
     "\n\nExperiment ended in %g seconds\nResult file available at : %s%s\n"
     (Unix.gettimeofday () -. start_time)
