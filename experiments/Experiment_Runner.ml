@@ -156,18 +156,21 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
       File_log.log_single_data ~close:false logs
         "solver-name,average-deviation,average-length,average-opted-deviation,average-opted-length"
     in
-    File_log.log_data_oc
-      (fun model ->
-        let n = float model.experiment_count in
-        let mean_s x = strg (x /. n) in
-        Printf.sprintf "%s,%s,%s,%s,%s\n" (solver_name model.solver)
-          (mean_s model.total_deviation)
-          (mean_s @@ float model.total_length)
-          (mean_s model.total_opted_deviation)
-          (mean_s @@ float model.total_opted_length))
-      oc
-    @@ List.sort (fun a b -> compare a.total_deviation b.total_deviation) models
+    List.sort (fun a b -> compare a.total_deviation b.total_deviation) models
+    |> File_log.log_data_oc
+         (fun model ->
+           let n = float model.experiment_count in
+           if n = 0. then ""
+           else
+             let mean_s x = strg (x /. n) in
+             Printf.sprintf "%s,%s,%s,%s,%s\n" (solver_name model.solver)
+               (mean_s model.total_deviation)
+               (mean_s @@ float model.total_length)
+               (mean_s model.total_opted_deviation)
+               (mean_s @@ float model.total_opted_length))
+         oc
   in
+
   Printf.printf "\nRunning sim %s...\n%!"
     (Scanf.sscanf log_files_path "logs/%s" Fun.id);
   (try
