@@ -76,6 +76,7 @@ let opt_of_tuple (opt, (total_factor, length_factor)) =
 
 let def_opt = create_mcts_opt 1 1
 
+(** Create model record which will be run by the Solver_Runner module *)
 let create_models ?(exploration_mode = MCTS.Standard_deviation)
     ?(mcts_vanilla_list = []) ?(mcts_opt_list = []) ?(iter2opt_list = [])
     max_time =
@@ -137,10 +138,20 @@ exception Break
 let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
     configs models =
   let update_csv = ref false in
-  Sys.set_signal Sys.sigusr1 (Sys.Signal_handle (fun _ -> update_csv := true));
+  Sys.set_signal Sys.sigusr1
+    (Sys.Signal_handle
+       (fun _ ->
+         Printf.printf
+           "Update csv signal received ! Waiting for last model result...\n%!";
+         update_csv := true));
   let stop_experiment = ref false in
   Sys.set_signal Sys.sigusr2
-    (Sys.Signal_handle (fun _ -> stop_experiment := true));
+    (Sys.Signal_handle
+       (fun _ ->
+         Printf.printf
+           "Stop experiment signal received ! Waiting for last model result...\n\
+            %!";
+         stop_experiment := true));
   let start_time = Unix.gettimeofday () in
   let last_debug = ref start_time in
   let debug_count = ref 0 in
@@ -152,10 +163,11 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
   let logs = File_log.create_file ~file_path:log_files_path ~file_name () in
 
   let update_log_file () =
-    let oc =
-      File_log.log_single_data ~close:false logs
-        "solver-name,average-deviation,average-length,average-opted-deviation,average-opted-length"
+    let first_row =
+      "solver-name,average-deviation,average-length,average-opted-deviation,average-opted-length"
     in
+    Printf.printf "%s\n%!" first_row;
+    let oc = File_log.log_single_data ~close:false logs first_row in
     List.sort (fun a b -> compare a.total_deviation b.total_deviation) models
     |> File_log.log_data_oc
          (fun model ->
@@ -163,11 +175,15 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
            if n = 0. then ""
            else
              let mean_s x = strg (x /. n) in
-             Printf.sprintf "%s,%s,%s,%s,%s\n" (solver_name model.solver)
-               (mean_s model.total_deviation)
-               (mean_s @@ float model.total_length)
-               (mean_s model.total_opted_deviation)
-               (mean_s @@ float model.total_opted_length))
+             let row =
+               Printf.sprintf "%s,%s,%s,%s,%s\n" (solver_name model.solver)
+                 (mean_s model.total_deviation)
+                 (mean_s @@ float model.total_length)
+                 (mean_s model.total_opted_deviation)
+                 (mean_s @@ float model.total_opted_length)
+             in
+             Printf.printf "%s\n%!" row;
+             row)
          oc
   in
 
@@ -205,7 +221,9 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
              model.total_opted_length <- model.total_opted_length + opt_length;
              if !update_csv then (
                update_csv := false;
-               update_log_file ());
+               update_log_file ();
+               Printf.printf "csv updated, check it at %s%s\n%!" logs.file_path
+                 logs.file_name);
              if !stop_experiment then raise Break)
            models)
        configs
