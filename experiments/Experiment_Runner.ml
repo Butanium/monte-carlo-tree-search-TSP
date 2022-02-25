@@ -12,23 +12,69 @@ let ( *$- ) a b = List.map to_triple (a *$ b)
 type model_experiment = {
   solver : solver;
   mutable experiment_count : int;
-  mutable total_deviation : float;
-  mutable total_length : int;
-  mutable total_opted_length : int;
-  mutable total_opted_deviation : float;
+  mutable lengths : int list;
+  mutable opted_lengths : int list;
 }
+
+type model_result = {
+  model : model_experiment;
+  deviation : float;
+  length : float;
+  opt_deviation : float;
+  opt_length : float;
+  deviation_standart_dev : float;
+  opt_deviation_standart_dev : float;
+  min_dev : float;
+  max_dev : float;
+  opt_min_dev : float;
+  opt_max_dev : float;
+}
+
+let get_model_results (best_lengths : int list) model =
+  let n = float model.experiment_count in
+  let exp_count = List.length best_lengths in
+  let mean_list list = List.fold_left ( +. ) 0. list /. n in
+  let get_deviations lengths =
+    List.map2
+      (fun len opt_len -> float (len - opt_len) /. float opt_len)
+      lengths
+      (if exp_count = model.experiment_count then best_lengths
+      else List.tl best_lengths)
+  in
+  let deviations = get_deviations model.lengths in
+  let opt_deviations = get_deviations model.opted_lengths in
+  let deviation = mean_list deviations in
+  let length = model.lengths |> List.map float |> mean_list in
+  let opt_deviation = mean_list opt_deviations in
+  let opt_length = model.opted_lengths |> List.map float |> mean_list in
+  let dev_of_dev l =
+    List.fold_left (fun acc dev -> acc +. ((deviation -. dev) ** 2.)) 0. l /. n
+    |> sqrt
+  in
+  let deviation_standart_dev = dev_of_dev deviations in
+  let opt_deviation_standart_dev = dev_of_dev opt_deviations in
+  let min_dev = Base.List.min_elt deviations ~compare |> Option.get in
+  let max_dev = Base.List.max_elt deviations ~compare |> Option.get in
+  let opt_min_dev = Base.List.min_elt opt_deviations ~compare |> Option.get in
+  let opt_max_dev = Base.List.max_elt opt_deviations ~compare |> Option.get in
+  {
+    model;
+    deviation;
+    length;
+    opt_deviation;
+    opt_length;
+    deviation_standart_dev;
+    opt_deviation_standart_dev;
+    min_dev;
+    max_dev;
+    opt_max_dev;
+    opt_min_dev;
+  }
 
 type named_opt = { opt : MCTS.optimization_mode; name : string }
 
 let init_model solver =
-  {
-    solver;
-    experiment_count = 0;
-    total_deviation = 0.;
-    total_length = 0;
-    total_opted_length = 0;
-    total_opted_deviation = 0.;
-  }
+  { solver; experiment_count = 0; lengths = []; opted_lengths = [] }
 
 let string_of_ratio = function
   | 2 -> "Semi"
@@ -133,10 +179,9 @@ let create_models ?(exploration_mode = MCTS.Standard_deviation)
     @ List.map create_vanilla_mcts mcts_vanilla_list
     @ List.map create_iterated_opt iter2opt_list)
 
-exception Break
-
 let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
     configs models =
+  let exception Break of int list in
   let update_csv = ref false in
   Sys.set_signal Sys.sigusr1
     (Sys.Signal_handle
@@ -162,26 +207,27 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
   let file_name = "all_mcts_tests-" ^ sim_name in
   let logs = File_log.create_file ~file_path:log_files_path ~file_name () in
 
-  let update_log_file () =
+  let update_log_file best_lengths =
     let first_row =
-      "solver-name,average-deviation,average-length,average-opted-deviation,average-opted-length"
+      "solver-name,average-deviation,standard-deviation-deviation,average-length,average-opted-deviation,standard-deviation-deviation,average-opted-length,max-deviation,min-deviation,opt-max-deviation,opt-min-deviation"
     in
     Printf.printf "%s\n%!" first_row;
     let oc = File_log.log_single_data ~close:false logs first_row in
-    List.sort (fun a b -> compare a.total_deviation b.total_deviation) models
+    List.map (get_model_results best_lengths) models
+    |> List.sort (fun a b -> compare a.opt_deviation b.opt_deviation)
     |> File_log.log_data_oc
-         (fun model ->
-           let n = float model.experiment_count in
-           if n = 0. then ""
+         (fun result ->
+           if result.model.experiment_count = 0 then ""
            else
-             let mean_s x = strg (x /. n) in
              let row =
-               Printf.sprintf "%s,%s,%s,%s,%s\n" (solver_name model.solver)
-                 (mean_s model.total_deviation)
-                 (mean_s @@ float model.total_length)
-                 (mean_s model.total_opted_deviation)
-                 (mean_s @@ float model.total_opted_length)
+               Printf.sprintf "%s,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n"
+                 (solver_name result.model.solver)
+                 result.deviation result.deviation_standart_dev result.length
+                 result.opt_deviation result.opt_deviation_standart_dev
+                 result.opt_length result.max_dev result.min_dev
+                 result.opt_max_dev result.opt_min_dev
              in
+
              Printf.printf "%s\n%!" row;
              row)
          oc
@@ -189,46 +235,40 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
 
   Printf.printf "\nRunning sim %s...\n%!"
     (Scanf.sscanf log_files_path "logs/%s" Fun.id);
-  (try
-     List.iter
-       (fun (file_path, config) ->
-         let city_count, cities = Reader_tsp.open_tsp ~file_path config in
-         let adj = Base_tsp.get_adj_matrix cities in
-         let objective_length =
-           float @@ Base_tsp.best_path_length ~file_path config adj
-         in
-         List.iter
-           (fun model ->
-             let diff = Unix.gettimeofday () -. !last_debug in
-             if verbose > 0 && diff > 60. then (
-               debug_count := !debug_count + (int_of_float diff / 60);
-               Printf.printf
-                 "currently testing %s, has been running for %d minutes\n%!"
-                 config !debug_count;
-               last_debug := Unix.gettimeofday ());
-             let length, opt_length =
-               solver_simulation config city_count adj log_files_path
-                 model.solver ~verbose:(verbose - 1) ?seed
-             in
-             model.experiment_count <- model.experiment_count + 1;
-             model.total_deviation <-
-               model.total_deviation
-               +. ((float length -. objective_length) /. objective_length);
-             model.total_length <- model.total_length + length;
-             model.total_opted_deviation <-
-               model.total_opted_deviation
-               +. ((float opt_length -. objective_length) /. objective_length);
-             model.total_opted_length <- model.total_opted_length + opt_length;
-             if !update_csv then (
-               update_csv := false;
-               update_log_file ();
-               Printf.printf "csv updated, check it at %s%s\n%!" logs.file_path
-                 logs.file_name);
-             if !stop_experiment then raise Break)
-           models)
-       configs
-   with Break -> ());
-  update_log_file ();
+  let best_lengths =
+    try
+      List.fold_left
+        (fun best_lengths (file_path, config) ->
+          let city_count, cities = Reader_tsp.open_tsp ~file_path config in
+          let adj = Base_tsp.get_adj_matrix cities in
+          List.iter
+            (fun model ->
+              let diff = Unix.gettimeofday () -. !last_debug in
+              if verbose > 0 && diff > 60. then (
+                debug_count := !debug_count + (int_of_float diff / 60);
+                Printf.printf
+                  "currently testing %s, has been running for %d minutes\n%!"
+                  config !debug_count;
+                last_debug := Unix.gettimeofday ());
+              let length, opt_length =
+                solver_simulation config city_count adj log_files_path
+                  model.solver ~verbose:(verbose - 1) ?seed
+              in
+              model.experiment_count <- model.experiment_count + 1;
+              model.lengths <- length :: model.lengths;
+              model.opted_lengths <- opt_length :: model.lengths;
+              if !update_csv then (
+                update_csv := false;
+                update_log_file best_lengths;
+                Printf.printf "csv updated, check it at %s%s\n%!" logs.file_path
+                  logs.file_name);
+              if !stop_experiment then raise @@ Break best_lengths)
+            models;
+          Base_tsp.best_path_length ~file_path config adj :: best_lengths)
+        [] configs
+    with Break best_lengths -> best_lengths
+  in
+  update_log_file best_lengths;
   Printf.printf
     "\n\nExperiment ended in %g seconds\nResult file available at : %s%s\n"
     (Unix.gettimeofday () -. start_time)
