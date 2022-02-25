@@ -11,5 +11,3 @@ let mapi_in_place f a =
   done
 
 let copy_in_place arr model = mapi_in_place (fun i _ -> model.(i)) arr
-
-let strg x = if x = 0. then "0" else Printf.sprintf "%g" x
