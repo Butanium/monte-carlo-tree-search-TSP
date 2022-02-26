@@ -1,9 +1,12 @@
 module RndQ = Random_Queue
+module Optimizer_2opt = Two_Opt
 
 type node_info = {
   mutable visit : float;
   mutable score : float;
   mutable best_score : float;
+  mutable best_hidden_score : float;
+  mutable max_child_depth : int;
   city : int;
   depth : int;
   tot_dist : int;
@@ -95,7 +98,7 @@ type debug = {
   mutable available_time : float;
   mutable pl_creation : float;
   mutable max_depth : int;
-  mutable score_hist : (float * int) list;
+  mutable score_hist : (float * int * int) list;
   mutable best_score_hist : (float * int * int) list;
   mutable opt_time : float;
   mutable generate_log_file : int;
@@ -177,11 +180,13 @@ let reset_deb log_file hidden_opt =
 
 let get_node_info node =
   Printf.sprintf
-    "visits : %.0f, best score : %.0f, average score : %.0f, city : %d, depth \
-     : %d, not developed : %d\n"
-    node.info.visit node.info.best_score
+    "city : [%d], active : %b, visits : %.0f, best hidden score : %.0f, best \
+     score : %.0f, average score : %.0f, depth : %d, max child depth : %d not \
+     developed : %d\n"
+    node.info.city node.info.active node.info.visit node.info.best_hidden_score
+    node.info.best_score
     (node.info.score /. node.info.visit)
-    node.info.city node.info.depth
+    node.info.depth node.info.max_child_depth
     (!arg.city_count - node.info.depth - node.info.developed)
 
 let debug_node oc node = Printf.fprintf oc "%s" @@ get_node_info node
@@ -227,12 +232,12 @@ let get_node_score_fun root exploration_mode expected_length_mode =
   let c =
     match exploration_mode with
     | Min_spanning_tree ->
-        float_of_int
+        float
         @@ Prim_Alg.prim_alg
              (fun i j -> !arg.adj_matrix.(i).(j))
              !arg.city_count
     | Standard_deviation ->
-        let tot = float_of_int (!arg.city_count - 1) in
+        let tot = float (!arg.city_count - 1) in
         let average =
           List.fold_left
             (fun acc node -> acc +. node.info.score)
@@ -300,13 +305,18 @@ let optimize_path size = function
       fill_path !opt_path size;
       !opt_path
   | Two_opt { max_length; max_iter; max_time } ->
-      Two_Opt.opt_fast ~partial_path:true ~upper_bound:(min size max_length)
-        ~max_iter ~max_time !arg.adj_matrix !playout_path;
+      let _ =
+        Optimizer_2opt.opt_fast ~partial_path:true
+          ~upper_bound:(min size max_length) ~max_iter ~max_time !arg.adj_matrix
+          !playout_path
+      in
       fill_path !opt_path size;
       !opt_path
   | Full_Two_opt { max_iter; max_time } ->
       fill_path !opt_path size;
-      Two_Opt.opt_fast ~max_iter ~max_time !arg.adj_matrix !opt_path;
+      let _ =
+        Optimizer_2opt.opt_fast ~max_iter ~max_time !arg.adj_matrix !opt_path
+      in
       !opt_path
   | e ->
       failwith
@@ -341,26 +351,34 @@ let playout last_city =
         (Unix.gettimeofday () -. !arg.start_time, !arg.playout_count, score)
         :: deb.best_score_hist);
 
-  (if deb.hidden_opt <> No_opt && size > 0 then
-   let opt_path = optimize_path size deb.hidden_opt in
-   let score = Base_tsp.path_length !arg.adj_matrix opt_path in
-   if score < deb.hidden_best_score then (
-     Util.copy_in_place deb.hidden_best_path opt_path;
-     deb.hidden_best_score <- score));
+  let hidden_score =
+    if deb.hidden_opt <> No_opt && size > 0 then (
+      let opt_path = optimize_path size deb.hidden_opt in
+      let opt_score = Base_tsp.path_length !arg.adj_matrix opt_path in
+      if opt_score < deb.hidden_best_score then (
+        Util.copy_in_place deb.hidden_best_path opt_path;
+        deb.hidden_best_score <- opt_score);
+      opt_score)
+    else score
+  in
   if deb.generate_log_file > 0 then
-    deb.score_hist <- (float !arg.playout_count, score) :: deb.score_hist;
+    deb.score_hist <-
+      (float !arg.playout_count, score, hidden_score) :: deb.score_hist;
 
-  score
+  (score, hidden_score)
 
-let rec retropropagation node value =
+let rec retropropagation node score hidden_score max_depth =
   (* [FR] Actualise le nombre de visite et le score total sur les noeuds *)
   (* [EN] Update the node visited during the exploration according to the playout score *)
   node.info.visit <- node.info.visit +. 1.;
-  node.info.score <- node.info.score +. value;
-  if value < node.info.best_score then node.info.best_score <- value;
+  node.info.score <- node.info.score +. score;
+  if hidden_score < node.info.best_hidden_score then
+    node.info.best_hidden_score <- hidden_score;
+  if score < node.info.best_score then node.info.best_score <- score;
+  node.info.max_child_depth <- max_depth;
   match node.heritage with
   | Root -> ()
-  | Parent parent -> retropropagation parent value
+  | Parent parent -> retropropagation parent score hidden_score max_depth
 
 (** [EN] get the next city to expand *)
 let get_next_city node =
@@ -397,6 +415,8 @@ let expand node =
       visit = 0.;
       score = 0.;
       best_score = infinity;
+      best_hidden_score = infinity;
+      max_child_depth = depth;
       city;
       depth;
       tot_dist;
@@ -408,15 +428,8 @@ let expand node =
   let new_node = { info; heritage = Parent node } in
   node.info.children <- new_node :: node.info.children;
   node.info.developed <- node.info.developed + 1;
-  let result =
-    try float_of_int @@ playout city
-    with Invalid_argument e ->
-      raise
-      @@ Invalid_argument
-           (Printf.sprintf "playout failed with path_size %d : " !arg.path_size
-           ^ e)
-  in
-  retropropagation new_node result
+  let score, hidden_score = playout city in
+  retropropagation new_node (float score) (float hidden_score) depth
 
 let get_best_child node =
   (* [FR] Renvoie le fils de `node` ayant le score le plus bas *)
@@ -459,14 +472,15 @@ let rec selection node =
           for i = 0 to !arg.city_count - 1 do
             !arg.best_path.(i) <- !arg.current_path.(i)
           done);
-        retropropagation node @@ float_of_int dist
+        retropropagation node (float dist) (float dist) node.info.depth
     | _ -> (
         match get_best_child node with
         | Some child -> selection child
         | None ->
             node.info.active <- false;
             deb.closed_nodes <- deb.closed_nodes + 1;
-            retropropagation node node.info.best_score)
+            retropropagation node node.info.best_score
+              node.info.best_hidden_score node.info.max_child_depth)
   else
     try expand node
     with Invalid_argument e ->
@@ -545,6 +559,8 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       visit = 0.;
       score = 0.;
       best_score = infinity;
+      best_hidden_score = infinity;
+      max_child_depth = 1;
       depth = 1;
       city = 0;
       tot_dist = 0;
@@ -602,14 +618,19 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     if optimize_end_path then (
       let start_time = Unix.gettimeofday () in
       let opt_path = Array.copy best_path in
-      Two_Opt.opt_fast adj_matrix ~max_time:optimize_end_path_time opt_path;
+      let opted =
+        Optimizer_2opt.opt_fast adj_matrix ~max_time:optimize_end_path_time
+          opt_path
+      in
       let opt_time = Unix.gettimeofday () -. start_time in
       let opt_score = Base_tsp.path_length adj_matrix opt_path in
       let opt_delta = best_score - opt_score in
       add_debug
-      @@ Printf.sprintf
-           "Optimized returned path in %g/%.0f seconds with %d delta \n"
-           opt_time optimize_end_path_time opt_delta;
+        (if opted then Printf.sprintf "Returned path already optimized\n"
+        else
+          Printf.sprintf
+            "Optimized returned path in %g/%.0f seconds with %d delta \n"
+            opt_time optimize_end_path_time opt_delta);
       (opt_path, opt_score))
     else (best_path, best_score)
   in
@@ -656,10 +677,9 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       let file = File_log.create_file ~file_path ~file_name:"all_scores" () in
       let oc = File_log.log_single_data ~close:false file "timestamp,length" in
       Util.iter_rev
-        (fun (t, s) ->
-          (if t = 0. then Printf.fprintf oc "0,%d\n"
-          else Printf.fprintf oc "%g,%d\n" t)
-            s)
+        (fun (t, s, hs) ->
+          if hidden_opt = No_opt then Printf.fprintf oc "%g,%d\n" t s
+          else Printf.fprintf oc "%g,%d,%d\n" t s hs)
         deb.score_hist;
       close_out oc;
       let file = File_log.create_file ~file_path ~file_name:"best_scores" () in
