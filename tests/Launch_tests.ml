@@ -3,13 +3,13 @@ open Experiment_Runner
 
 let file_path = "tsp_instances"
 
-let test_set = 100
+let test_set = 200
 
 let amount = 128
 
-let max_time = 24.
+let max_time = 60.
 
-let sim_name = Printf.sprintf "TSP%d-experiment" test_set
+let sim_name = Printf.sprintf "Full-TSP%d-experiment" test_set
 
 let configs =
   let rec aux i =
