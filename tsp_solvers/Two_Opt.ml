@@ -1,5 +1,7 @@
 module RndQ = Random_Queue
 
+let max (x : int) (y : int) = if x < y then y else x
+
 let invertPath i j path =
   for k = 0 to ((j - i) / 2) - 1 do
     let t = path.(i + 1 + k) in
