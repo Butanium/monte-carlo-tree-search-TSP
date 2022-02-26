@@ -58,13 +58,13 @@ let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
   and loop1 i = i >= bound - 3 - partial || (loop2 i (i + 2) && loop1 (i + 1))
   and loop2 i j =
     if
-      (if !last_time_check > check_time then (
-       last_time_check := 0;
-       true)
-      else (
-        incr last_time_check;
-        false))
-      && max_time <> infinity
+      max_time <> infinity
+      && (if !last_time_check > check_time then (
+          last_time_check := 0;
+          true)
+         else (
+           incr last_time_check;
+           false))
       && Unix.gettimeofday () -. start_time > max_time
     then raise Timed_Out;
     j >= bound - max (2 * partial) (1 - i)
