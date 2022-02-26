@@ -1,5 +1,4 @@
 open Solver_Runner
-open Util
 
 let to_triple (a, (b, c)) = (a, b, c)
 
