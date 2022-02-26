@@ -168,7 +168,7 @@ let create_models ?(exploration_mode = MCTS.Standard_deviation)
         random_mode;
         name =
           Printf.sprintf "Iterated2Opt-%s%s"
-            (Two_Opt.string_of_random_mode random_mode)
+            (Iterated_2Opt.string_of_random_mode random_mode)
             (if max_iter = max_iter then ""
             else Printf.sprintf "-%diters" max_iter);
       }

@@ -11,7 +11,7 @@ type iterated2opt_solver = {
   name : string;
   max_time : float;
   max_iter : int;
-  random_mode : Two_Opt.random_creation;
+  random_mode : Iterated_2Opt.random_creation
 }
 
 type solver = MCTS of mcts_solver | Iter of iterated2opt_solver
@@ -40,7 +40,7 @@ let solver_simulation ?(verbose = 0) ?seed city_config city_count eval log_path
       (length, opt_length)
   | Iter solver ->
       let path =
-        Two_Opt.iter_two_opt eval city_count solver.random_mode solver.max_time
+        Iterated_2Opt.iter_two_opt eval city_count solver.random_mode solver.max_time
           solver.max_iter ~name:solver.name ~city_config
           ~logs_path:log_files_path ~verbose:(verbose > 0) ?seed
       in

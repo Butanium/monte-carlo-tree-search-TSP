@@ -27,7 +27,7 @@ let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int }
 
 let models =
   create_models max_time
-    ~iter2opt_list:(max_int *$ [ Two_Opt.Random; Roulette ])
+    ~iter2opt_list:(max_int *$ [ Iterated_2Opt.Random; Roulette ])
     ~mcts_opt_list:
       MCTS.(
         [ Random; Roulette ]

@@ -15,7 +15,7 @@ let path =
 let max_time = 10.
 
 let max_try = max_int
-(* let path = Two_Opt.iter_two_opt adj_matrix city_count Two_Opt.Roulette max_time max_try *)
+(* let path = Iterated_2Opt.iter_two_opt adj_matrix city_count Iterated_2Opt.Roulette max_time max_try *)
 
 (* let show () =
      let len = Base_tsp.path_length adj_matrix path in
@@ -32,6 +32,6 @@ let max_try = max_int
      show () *)
 
 let crash_test =
-  Two_Opt.(
+  Iterated_2Opt.(
     iter_two_opt adj_matrix city_count ~seed:386772978 Random 5000. max_int
       ~logs_path:"logs/crash_test_2opt")

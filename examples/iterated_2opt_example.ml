@@ -12,13 +12,14 @@ let max_try = 100
 
 let two_path, (mcts_path, _, _) =
   let t = Unix.gettimeofday () in
-  ( Two_Opt.iter_two_opt adj_matrix city_count Two_Opt.Random max_time max_try,
-    MCTS.proceed_mcts
-      ~optimization_mode:
-        (MCTS.Two_opt { max_length = 400; max_iter = 400; max_time = 1. })
-      city_count adj_matrix
-      (Unix.gettimeofday () -. t)
-      max_int )
+  Iterated_2Opt.
+    ( iter_two_opt adj_matrix city_count Random max_time max_try,
+      MCTS.proceed_mcts
+        ~optimization_mode:
+          (MCTS.Two_opt { max_length = 400; max_iter = 400; max_time = 1. })
+        city_count adj_matrix
+        (Unix.gettimeofday () -. t)
+        max_int )
 
 let () =
   Show_tsp.show_solution_and_wait ~title:"two-opt path" cities two_path;
