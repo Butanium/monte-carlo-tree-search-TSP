@@ -34,11 +34,17 @@ let get_model_results (best_lengths : int list) model =
   let exp_count = List.length best_lengths in
   let mean_list list = List.fold_left ( +. ) 0. list /. n in
   let get_deviations lengths =
-    List.map2
-      (fun len opt_len -> float (len - opt_len) /. float opt_len)
-      lengths
-      (if exp_count = model.experiment_count then best_lengths
-      else List.tl best_lengths)
+    try
+      List.map2
+        (fun len opt_len -> float (len - opt_len) /. float opt_len)
+        lengths
+        (if exp_count = model.experiment_count then best_lengths
+        else List.tl best_lengths)
+    with Invalid_argument e ->
+      raise
+      @@ Invalid_argument
+           (Printf.sprintf "size of lenghts : %d, size of best_lengths : %d"
+              (List.length lengths) exp_count)
   in
   let deviations = get_deviations model.lengths in
   let opt_deviations = get_deviations model.opted_lengths in
