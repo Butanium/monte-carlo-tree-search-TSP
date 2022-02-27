@@ -7,7 +7,7 @@ let test_set = 200
 
 let amount = 128
 
-let max_time = 5.
+let max_time = 1.
 
 let sim_name = Printf.sprintf "Full-TSP%d-experiment" test_set
 
