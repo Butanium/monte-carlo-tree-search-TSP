@@ -252,6 +252,9 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
         (fun best_lengths (file_path, config) ->
           let city_count, cities = Reader_tsp.open_tsp ~file_path config in
           let adj = Base_tsp.get_adj_matrix cities in
+          let best_lengths =
+            Base_tsp.best_path_length ~file_path config adj :: best_lengths
+          in
           List.iter
             (fun model ->
               let diff = Unix.gettimeofday () -. !last_debug in
@@ -275,7 +278,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                   logs.file_name);
               if !stop_experiment then raise @@ Break best_lengths)
             models;
-          Base_tsp.best_path_length ~file_path config adj :: best_lengths)
+          best_lengths)
         [] configs
     with Break best_lengths -> best_lengths
   in
