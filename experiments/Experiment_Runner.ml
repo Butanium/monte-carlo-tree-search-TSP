@@ -260,11 +260,13 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
           List.iter
             (fun model ->
               let diff = Unix.gettimeofday () -. !last_debug in
-              if verbose > 0 && diff > 60. then (
-                debug_count := !debug_count + (int_of_float diff / 60);
-                Printf.printf
-                  "currently testing %s, has been running for %d minutes\n%!"
-                  config !debug_count;
+              if diff > 3600. then (
+                debug_count := !debug_count + (int_of_float diff / 3600);
+                update_log_file best_lengths;
+                if verbose > 0 then
+                  Printf.printf
+                    "currently testing %s, has been running for %d hours\n%!"
+                    config !debug_count;
                 last_debug := Unix.gettimeofday ());
               let length, opt_length =
                 solver_simulation config city_count adj log_files_path
