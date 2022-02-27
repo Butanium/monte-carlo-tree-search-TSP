@@ -190,20 +190,22 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
     configs models =
   let exception Break of int list in
   let update_csv = ref false in
-  Sys.set_signal Sys.sigusr1
-    (Sys.Signal_handle
-       (fun _ ->
-         Printf.printf
-           "Update csv signal received ! Waiting for last model result...\n%!";
-         update_csv := true));
+  if Sys.os_type <> "Win32" then
+    Sys.set_signal Sys.sigusr1
+      (Sys.Signal_handle
+         (fun _ ->
+           Printf.printf
+             "Update csv signal received ! Waiting for last model result...\n%!";
+           update_csv := true));
   let stop_experiment = ref false in
-  Sys.set_signal Sys.sigusr2
-    (Sys.Signal_handle
-       (fun _ ->
-         Printf.printf
-           "Stop experiment signal received ! Waiting for last model result...\n\
-            %!";
-         stop_experiment := true));
+  if Sys.os_type <> "Win32" then
+    Sys.set_signal Sys.sigusr2
+      (Sys.Signal_handle
+         (fun _ ->
+           Printf.printf
+             "Stop experiment signal received ! Waiting for last model result...\n\
+              %!";
+           stop_experiment := true));
   let start_time = Unix.gettimeofday () in
   let last_debug = ref start_time in
   let debug_count = ref 0 in
@@ -270,7 +272,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
               in
               model.experiment_count <- model.experiment_count + 1;
               model.lengths <- length :: model.lengths;
-              model.opted_lengths <- opt_length :: model.lengths;
+              model.opted_lengths <- opt_length :: model.opted_lengths;
               if !update_csv then (
                 update_csv := false;
                 update_log_file best_lengths;
