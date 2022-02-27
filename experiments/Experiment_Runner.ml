@@ -43,7 +43,8 @@ let get_model_results (best_lengths : int list) model =
     with Invalid_argument e ->
       raise
       @@ Invalid_argument
-           (Printf.sprintf "size of lenghts : %d, size of best_lengths : %d"
+           (Printf.sprintf
+              "error : %s, size of lenghts : %d, size of best_lengths : %d" e
               (List.length lengths) exp_count)
   in
   let deviations = get_deviations model.lengths in
@@ -218,7 +219,11 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
     in
     Printf.printf "%s\n%!" first_row;
     let oc = File_log.log_single_data ~close:false logs first_row in
-    List.map (get_model_results best_lengths) models
+    List.filter_map
+      (fun model ->
+        if model.experiment_count = 0 then None
+        else Some (get_model_results best_lengths model))
+      models
     |> List.sort (fun a b -> compare a.opt_deviation b.opt_deviation)
     |> File_log.log_data_oc
          (fun result ->
