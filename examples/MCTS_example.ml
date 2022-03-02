@@ -2,7 +2,7 @@
 let city_config = "att48"
 
 let file_path = "tsp_instances"
-(* the path to the tsp_instance directory, use the path from root if it doesn't work *)
+(* the tour to the tsp_instance directory, use the tour from root if it doesn't work *)
 
 let city_count, cities = Reader_tsp.open_tsp ~file_path city_config
 
@@ -21,7 +21,7 @@ let playout_selection_mode = MCTS.Roulette
 
 let exploration_mode = MCTS.Min_spanning_tree
 
-let (path, length), (opt_path, opt_length), root =
+let (tour, length), (opt_path, opt_length), root =
   MCTS.proceed_mcts ~debug_tree ~generate_log_file ~city_config
     ~playout_selection_mode ~exploration_mode city_count adj_matrix max_time
     max_playout
@@ -30,9 +30,9 @@ let () =
   Graphics.sound 100 2000;
   Graphics.sound 200 1000;
   (*make some sound when monte carlo is complete *)
-  print_endline "mcts path : ";
-  Base_tsp.print_path path;
-  Show_tsp.show_solution_and_wait cities path
+  print_endline "mcts tour : ";
+  Base_tsp.print_path tour;
+  Show_tsp.show_solution_and_wait cities tour
 (* Show the computed solution *)
 
-let () = Base_tsp.print_error_ratio path adj_matrix city_config
+let () = Base_tsp.print_error_ratio tour adj_matrix city_config

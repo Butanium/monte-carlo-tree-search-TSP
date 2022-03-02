@@ -7,10 +7,10 @@ let adj_matrix = Base_tsp.get_adj_matrix cities
 
 let eval = Base_tsp.create_eval cities
 
-let path =
+let tour =
   Simulated_Annealing.start_sa city_count eval 10000. 0.1 1000 0.9
     Simulated_Annealing.Swap
 
 let () =
-  Show_tsp.show_solution_and_wait cities path;
-  Base_tsp.print_error_ratio path adj_matrix city_config
+  Show_tsp.show_solution_and_wait cities tour;
+  Base_tsp.print_error_ratio tour adj_matrix city_config

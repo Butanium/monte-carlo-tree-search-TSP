@@ -12,9 +12,9 @@ let max_try = max_int
 
 let random_mode = Greedy_Random.Roulette
 
-let path =
+let tour =
   Greedy_Random.greedy adj_matrix city_count random_mode max_time max_try
 
 let () =
-  Show_tsp.show_solution_and_wait cities path;
-  Base_tsp.print_error_ratio path adj_matrix city_config
+  Show_tsp.show_solution_and_wait cities tour;
+  Base_tsp.print_error_ratio tour adj_matrix city_config

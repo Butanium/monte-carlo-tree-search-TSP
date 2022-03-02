@@ -5,7 +5,7 @@ In this repo, I made different heuristic solutions for the TSP written in OCaml.
 ## Available heuristics
 
 - [**2-opt**](https://en.wikipedia.org/wiki/2-opt) : classic 2-opt algorithm, which makes a locally optimized solution
-  from any path.
+  from any tour.
 - [**Monte-Carlo tree search**](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search) or *MCTS*
 - [**Simulated annealing**](http://rbanchs.com/documents/THFEL_PR15.pdf) or *SA*
 - [**Genetic algorithm**](https://en.wikipedia.org/wiki/Genetic_algorithm) : maybe one day... For now, I only did it in

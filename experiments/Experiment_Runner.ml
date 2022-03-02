@@ -209,9 +209,9 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
   let start_time = Unix.gettimeofday () in
   let last_debug = ref start_time in
   let debug_count = ref 0 in
-  let path = Printf.sprintf "logs/%s" sim_name in
+  let tour = Printf.sprintf "logs/%s" sim_name in
   let log_files_path =
-    if mk_new_log_dir then File_log.create_log_dir path else path
+    if mk_new_log_dir then File_log.create_log_dir tour else tour
   in
   let file_name = "all_mcts_tests-" ^ sim_name in
   let logs = File_log.create_file ~file_path:log_files_path ~file_name () in
@@ -221,29 +221,30 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
       "solver-name,average-deviation,standard-deviation-deviation,average-length,average-opted-deviation,standard-deviation-deviation,average-opted-length,max-deviation,min-deviation,opt-max-deviation,opt-min-deviation"
     in
     Printf.printf "%s\n%!" first_row;
-    let oc = File_log.log_single_data ~close:false logs first_row in
-    List.filter_map
-      (fun model ->
-        if model.experiment_count = 0 then None
-        else Some (get_model_results best_lengths model))
-      models
-    |> List.sort (fun a b -> compare a.opt_deviation b.opt_deviation)
-    |> File_log.log_data_oc
-         (fun result ->
-           if result.model.experiment_count = 0 then ""
-           else
-             let row =
-               Printf.sprintf "%s,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n"
-                 (solver_name result.model.solver)
-                 result.deviation result.deviation_standart_dev result.length
-                 result.opt_deviation result.opt_deviation_standart_dev
-                 result.opt_length result.max_dev result.min_dev
-                 result.opt_max_dev result.opt_min_dev
-             in
+    let oc = File_log.log_string_endline ~close:false logs first_row in
+    ignore
+      (List.filter_map
+         (fun model ->
+           if model.experiment_count = 0 then None
+           else Some (get_model_results best_lengths model))
+         models
+      |> List.sort (fun a b -> compare a.opt_deviation b.opt_deviation)
+      |> File_log.log_data
+           (fun result ->
+             if result.model.experiment_count = 0 then ""
+             else
+               let row =
+                 Printf.sprintf "%s,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n"
+                   (solver_name result.model.solver)
+                   result.deviation result.deviation_standart_dev result.length
+                   result.opt_deviation result.opt_deviation_standart_dev
+                   result.opt_length result.max_dev result.min_dev
+                   result.opt_max_dev result.opt_min_dev
+               in
 
-             Printf.printf "%s\n%!" row;
-             row)
-         oc
+               Printf.printf "%s\n%!" row;
+               row)
+           ~oc)
   in
 
   Printf.printf "\nRunning sim %s...\n%!"

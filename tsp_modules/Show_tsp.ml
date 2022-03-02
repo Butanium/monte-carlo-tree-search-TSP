@@ -61,7 +61,7 @@ let show_cities_names cities =
       draw_string @@ string_of_int i)
   @@ Array.map (coordToScreen (maxX, maxY)) cities
 
-let show_solution ?(title = "Path") cities sol =
+let show_solution ?(title = "Tour") cities sol =
   let sorted_cities =
     Array.init (Array.length sol) (fun i -> cities.(sol.(i)))
   in
@@ -88,11 +88,10 @@ let show_solution ?(title = "Path") cities sol =
   lineto_city sol.(0);
   show_cities_names cities
 
-let show_solution_and_wait ?(title = "Path") cities sol =
+let show_solution_and_wait ?(title = "Tour") cities sol =
   show_solution ~title cities sol;
   print_endline "enter anything to close the graphic window";
-  let _ = input_line stdin in
-  ()
+  ignore @@ input_line stdin
 
 let show_solution_list cities sol =
   let maxX, maxY =
@@ -123,6 +122,6 @@ let show_best_path config =
 let show_best_path_and_wait config =
   let _, cities = Reader_tsp.open_tsp config in
   show_solution_and_wait
-    ~title:(Printf.sprintf "best path for %s" config)
+    ~title:(Printf.sprintf "best tour for %s" config)
     cities
   @@ Reader_tsp.open_path config

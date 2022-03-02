@@ -39,10 +39,10 @@ let solver_simulation ?(verbose = 0) ?seed city_config city_count eval log_path
       in
       (length, opt_length)
   | Iter solver ->
-      let path =
+      let tour =
         Iterated_2Opt.iter_two_opt eval city_count solver.random_mode solver.max_time
           solver.max_iter ~name:solver.name ~city_config
           ~logs_path:log_files_path ~verbose:(verbose > 0) ?seed
       in
-      let score = Base_tsp.path_length eval path in
+      let score = Base_tsp.path_length eval tour in
       (score, score)

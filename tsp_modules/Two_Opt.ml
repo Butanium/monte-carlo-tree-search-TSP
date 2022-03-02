@@ -2,18 +2,18 @@ module RndQ = Random_Queue
 
 let max (x : int) (y : int) = if x < y then y else x
 
-let invertPath i j path =
+let invertPath i j tour =
   for k = 0 to ((j - i) / 2) - 1 do
-    let t = path.(i + 1 + k) in
-    path.(i + 1 + k) <- path.(j - k);
-    path.(j - k) <- t
+    let t = tour.(i + 1 + k) in
+    tour.(i + 1 + k) <- tour.(j - k);
+    tour.(j - k) <- t
   done
 
-let is_opt ?(debug = false) adj_matrix path =
+let is_opt ?(debug = false) adj_matrix tour =
   let exception Not_opted in
-  (* If [partial_path] is set to true the algorithm won't try to optimize the edge between the end of the path and the beginning.
-     It's useful if you want to optimize the part of a path *)
-  let bound = Array.length path in
+  (* If [partial_path] is set to true the algorithm won't try to optimize the edge between the end of the tour and the beginning.
+     It's useful if you want to optimize the part of a tour *)
+  let bound = Array.length tour in
   let bounded i = if i >= bound then i - bound else i in
 
   let rec loop1 i =
@@ -25,14 +25,14 @@ let is_opt ?(debug = false) adj_matrix path =
     if j >= bound - max 0 (1 - i) then ()
     else
       let diff =
-        adj_matrix.(path.(i)).(path.(j))
-        + adj_matrix.(path.(i + 1)).(path.(bounded (j + 1)))
-        - adj_matrix.(path.(i)).(path.(i + 1))
-        - adj_matrix.(path.(j)).(path.(bounded (j + 1)))
+        adj_matrix.(tour.(i)).(tour.(j))
+        + adj_matrix.(tour.(i + 1)).(tour.(bounded (j + 1)))
+        - adj_matrix.(tour.(i)).(tour.(i + 1))
+        - adj_matrix.(tour.(j)).(tour.(bounded (j + 1)))
       in
       if diff < 0 then (
         if debug then
-          Printf.printf "path not opted : could invert %d and %d" i j;
+          Printf.printf "tour not opted : could invert %d and %d" i j;
         raise Not_opted);
       loop2 i (j + 1)
   in
@@ -45,12 +45,12 @@ exception Timed_Out
 
 let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
     ?(max_time = infinity) ?(lower_bound = 0) ?(upper_bound = -1)
-    ?(check_time = 1000) adj_matrix path =
-  (* If [partial_path] is set to true the algorithm won't try to optimize the edge between the end of the path and the beginning.
-     It's useful if you want to optimize the part of a path *)
+    ?(check_time = 1000) adj_matrix tour =
+  (* If [partial_path] is set to true the algorithm won't try to optimize the edge between the end of the tour and the beginning.
+     It's useful if you want to optimize the part of a tour *)
   let bound =
-    if upper_bound < 0 then Array.length path
-    else min upper_bound @@ Array.length path
+    if upper_bound < 0 then Array.length tour
+    else min upper_bound @@ Array.length tour
   in
   let bounded i = if i >= bound then i - bound else i in
   let partial = if partial_path then 1 else 0 in
@@ -79,28 +79,26 @@ let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
     if j >= bound - max (2 * partial) (1 - i) then is_opt
     else
       let diff =
-        adj_matrix.(path.(i)).(path.(j))
-        + adj_matrix.(path.(i + 1)).(path.(bounded (j + 1)))
-        - adj_matrix.(path.(i)).(path.(i + 1))
-        - adj_matrix.(path.(j)).(path.(bounded (j + 1)))
+        adj_matrix.(tour.(i)).(tour.(j))
+        + adj_matrix.(tour.(i + 1)).(tour.(bounded (j + 1)))
+        - adj_matrix.(tour.(i)).(tour.(i + 1))
+        - adj_matrix.(tour.(j)).(tour.(bounded (j + 1)))
       in
       if diff < 0 then (
-        invertPath i j path;
+        invertPath i j tour;
         if debug then Printf.printf "\ninverted %d and %d, diff : %d" i j diff);
       loop2 i (j + 1) (is_opt && diff >= 0)
   in
 
   try
     let is_opt = loop1 lower_bound true in
-    (if not is_opt then
-     let _ = rec_while 1 in
-     ());
+    if not is_opt then ignore (rec_while 1);
     is_opt
   with Timed_Out -> false
 
-let opt_best ?(debug = false) ?(partial_path = false) ?(max_iter = -1) eval path
+let opt_best ?(debug = false) ?(partial_path = false) ?(max_iter = -1) eval tour
     =
-  let bound = Array.length path in
+  let bound = Array.length tour in
   let partial = if partial_path then 1 else 0 in
   let rec loop k =
     let diff = ref 0 in
@@ -108,10 +106,10 @@ let opt_best ?(debug = false) ?(partial_path = false) ?(max_iter = -1) eval path
     for i = 0 to bound - 4 - partial do
       for j = i + 2 to bound - 1 - max (2 * partial) (1 - i) do
         let d =
-          eval path.(i) path.(j)
-          + eval path.(i + 1) path.((j + 1) mod bound)
-          - eval path.(i) path.(i + 1)
-          - eval path.(j) path.((j + 1) mod bound)
+          eval tour.(i) tour.(j)
+          + eval tour.(i + 1) tour.((j + 1) mod bound)
+          - eval tour.(i) tour.(i + 1)
+          - eval tour.(j) tour.((j + 1) mod bound)
         in
         if d < !diff then (
           diff := d;
@@ -120,7 +118,7 @@ let opt_best ?(debug = false) ?(partial_path = false) ?(max_iter = -1) eval path
       done
     done;
     if !diff < 0 then (
-      invertPath !minI !minJ path;
+      invertPath !minI !minJ tour;
       if debug then Printf.printf "\ninverted %d and %d" !minI !minJ;
       if k < max_iter || max_iter < 0 then loop (k + 1))
   in
@@ -128,12 +126,12 @@ let opt_best ?(debug = false) ?(partial_path = false) ?(max_iter = -1) eval path
 
 let opt_first ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
     ?(max_time = infinity) ?(lower_bound = 0) ?(upper_bound = -1)
-    ?(check_time = 1000) adj_matrix path =
-  (* If [partial_path] is set to true the algorithm won't try to optimize the edge between the end of the path and the beginning.
-     It's useful if you want to optimize the part of a path *)
+    ?(check_time = 1000) adj_matrix tour =
+  (* If [partial_path] is set to true the algorithm won't try to optimize the edge between the end of the tour and the beginning.
+     It's useful if you want to optimize the part of a tour *)
   let bound =
-    if upper_bound < 0 then Array.length path
-    else min upper_bound @@ Array.length path
+    if upper_bound < 0 then Array.length tour
+    else min upper_bound @@ Array.length tour
   in
   let bounded i = if i >= bound then i - bound else i in
   let partial = if partial_path then 1 else 0 in
@@ -158,19 +156,16 @@ let opt_first ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
     then raise Timed_Out;
     j >= bound - max (2 * partial) (1 - i)
     || (let diff =
-          adj_matrix.(path.(i)).(path.(j))
-          + adj_matrix.(path.(i + 1)).(path.(bounded (j + 1)))
-          - adj_matrix.(path.(i)).(path.(i + 1))
-          - adj_matrix.(path.(j)).(path.(bounded (j + 1)))
+          adj_matrix.(tour.(i)).(tour.(j))
+          + adj_matrix.(tour.(i + 1)).(tour.(bounded (j + 1)))
+          - adj_matrix.(tour.(i)).(tour.(i + 1))
+          - adj_matrix.(tour.(j)).(tour.(bounded (j + 1)))
         in
         if diff < 0 then (
-          invertPath i j path;
+          invertPath i j tour;
           if debug then Printf.printf "\ninverted %d and %d, diff : %d" i j diff;
           false)
         else true)
        && loop2 i (j + 1)
   in
-  try
-    let _ = rec_while 0 in
-    ()
-  with Timed_Out -> ()
+  try ignore (rec_while 0) with Timed_Out -> ()

@@ -16,9 +16,9 @@ let greedy ?(generate_log_file = true) adj_matrix city_count rnd_mode max_time
   let best_path = Array.init city_count Fun.id in
   let get_path_length = Base_tsp.path_length adj_matrix in
   let best_score = ref @@ get_path_length best_path in
-  let path = Array.copy best_path in
+  let tour = Array.copy best_path in
   let queue =
-    RndQ.simple_create city_count @@ Array.sub path 1 (city_count - 1)
+    RndQ.simple_create city_count @@ Array.sub tour 1 (city_count - 1)
   in
   let try_count = ref 0 in
   let start_time = Unix.gettimeofday () in
@@ -27,14 +27,14 @@ let greedy ?(generate_log_file = true) adj_matrix city_count rnd_mode max_time
     RndQ.reset queue;
     incr try_count;
     for i = 1 to city_count - 1 do
-      weight_update adj_matrix path.(i - 1) queue rnd_mode;
-      path.(i) <- RndQ.take queue
+      weight_update adj_matrix tour.(i - 1) queue rnd_mode;
+      tour.(i) <- RndQ.take queue
     done;
-    let length = get_path_length path in
+    let length = get_path_length tour in
     if length < !best_score then (
       best_score := length;
       for i = 1 to city_count - 1 do
-        best_path.(i) <- path.(i)
+        best_path.(i) <- tour.(i)
       done;
       best_scores_hist := (get_time (), !try_count, length) :: !best_scores_hist);
     scores_hist := (get_time (), length) :: !scores_hist
@@ -50,7 +50,7 @@ let greedy ?(generate_log_file = true) adj_matrix city_count rnd_mode max_time
    let file_path, file_name = ("logs/score_logs", "all_scores" ^ suffix) in
    let file = File_log.create_file ~file_path ~file_name () in
    let _ =
-     File_log.log_data (fun (t, s) -> Printf.sprintf "%g,%d;" t s) file
+     File_log.log_data (fun (t, s) -> Printf.sprintf "%g,%d;" t s) ~file
      @@ List.rev !scores_hist
    in
    let file_path, file_name =
@@ -58,7 +58,7 @@ let greedy ?(generate_log_file = true) adj_matrix city_count rnd_mode max_time
    in
    let file = File_log.create_file ~file_path ~file_name () in
    let _ =
-     File_log.log_data (fun (t, x, y) -> Printf.sprintf "%d,%g,%d;" x t y) file
+     File_log.log_data (fun (t, x, y) -> Printf.sprintf "%d,%g,%d;" x t y) ~file
      @@ List.rev
      @@ ((get_time (), !try_count, !best_score) :: !best_scores_hist)
    in

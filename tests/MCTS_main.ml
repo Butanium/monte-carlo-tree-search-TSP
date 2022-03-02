@@ -28,7 +28,7 @@ let optimize_end_path = true
 
 let stop_on_leaf = true
 
-let _, (path, length), tree =
+let _, (tour, length), tree =
   Printf.printf "%d city_count\n" city_count;
 
   MCTS.proceed_mcts ~debug_tree ~city_config ~expected_length_mode
@@ -40,10 +40,10 @@ let () =
   Graphics.sound 100 1000;
   Graphics.sound 200 1000;
   (*make some sound when monte carlo is complete *)
-  Base_tsp.print_error_ratio path adj_matrix city_config;
-  print_endline "mcts path : ";
-  Base_tsp.print_path path;
-  Show_tsp.show_solution_and_wait cities path
+  Base_tsp.print_error_ratio tour adj_matrix city_config;
+  print_endline "mcts tour : ";
+  Base_tsp.print_path tour;
+  Show_tsp.show_solution_and_wait cities tour
 
 (* Show the computed solution *)
 let () = Show_tsp.show_best_path_and_wait city_config

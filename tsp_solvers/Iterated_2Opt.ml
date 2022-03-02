@@ -1,7 +1,5 @@
 open Two_Opt
 
-
-
 type random_creation = Roulette | Random
 
 let string_of_random_mode = function
@@ -55,7 +53,7 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
     let max_time =
       if max_time = infinity then infinity else max_time -. get_time ()
     in
-    let _ = opt_fast ~max_time adj_matrix path_arr in
+    ignore (opt_fast ~max_time adj_matrix path_arr);
     let len = Base_tsp.path_length adj_matrix path_arr in
     if len < !best_len then (
       best_len := len;
@@ -79,7 +77,7 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
       | None -> Printf.sprintf "seed : %d" seed
       | Some s -> Printf.sprintf "city config : %s, seed : %d" s seed)
       !best_len (!acc_scores / !i);
-    Printf.fprintf oc "best path : ";
+    Printf.fprintf oc "best tour : ";
     Base_tsp.print_path ~oc best_path
   in
   if verbose then debug stdout;
