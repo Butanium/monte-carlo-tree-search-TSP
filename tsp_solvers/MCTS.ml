@@ -676,7 +676,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     if generate_log_file > 0 then (
       let file = File_log.create_file ~file_path ~file_name:"all_scores" () in
       let oc =
-        File_log.log_string_endline ~close:false file "timestamp,length"
+        File_log.log_string_endline ~close:false ~file "timestamp,length"
       in
       Util.iter_rev
         (fun (t, s, hs) ->
@@ -686,7 +686,8 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       close_out oc;
       let file = File_log.create_file ~file_path ~file_name:"best_scores" () in
       let oc =
-        File_log.log_string_endline ~close:false file "playout,timestamp,length"
+        File_log.log_string_endline ~close:false ~file
+          "playout,timestamp,length"
       in
       Util.iter_rev (fun (t, p, len) ->
           if t = 0. then Printf.fprintf oc "%d,0,%d\n" p len
@@ -704,7 +705,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     Printf.fprintf oc "\n\n________________START DEBUG TREE_______________\n";
     debug_mcts oc root;
     close_out oc;
-    Base_tsp.create_opt_file ~file_name:"best_tour" ~file_path opt_path;
+    Base_tsp.create_opt_file ~file_path opt_path;
     if verbose >= 0 then
       let start = String.length "logs/" in
       Printf.printf "simulation directory for log files : %s\n"

@@ -39,22 +39,24 @@ let create_log_dir dir_name =
 
 let get_oc file = open_out @@ file.file_path ^ file.file_name
 
-let log_string_endline ?(close = true) ?oc file data =
-  let oc = Option.value oc ~default:(get_oc file) in
-  Printf.fprintf oc "%s\n" data;
-  if close then close_out oc;
-  oc
-
-let log_string ?(close = true) ?oc file data =
-  let oc = Option.value oc ~default:(get_oc file) in
+let log_string ?(close = true) ?oc ?file data =
+  if file = None && oc = None then
+    raise
+      (Invalid_argument
+         "[log_string] you need to specify either a file or an out channel");
+  let oc = Option.value oc ~default:(get_oc @@ Option.get file) in
   Printf.fprintf oc "%s" data;
   if close then close_out oc;
   oc
 
+let log_string_endline ?(close = true) ?oc ?file data =
+  log_string ~close ?oc ?file (data ^ "\n")
+
 let log_data ?(close = true) ?oc convert_data ?file (datas : 'a list) =
   if file = None && oc = None then
     raise
-      (Invalid_argument "[log_data] you need to specify either a file or an out channel");
+      (Invalid_argument
+         "[log_data] you need to specify either a file or an out channel");
   let oc = Option.value oc ~default:(get_oc @@ Option.get file) in
   List.iter (fun x -> Printf.fprintf oc "%s" @@ convert_data x) datas;
   if close then close_out oc;

@@ -221,7 +221,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
       "solver-name,average-deviation,standard-deviation-deviation,average-length,average-opted-deviation,standard-deviation-deviation,average-opted-length,max-deviation,min-deviation,opt-max-deviation,opt-min-deviation"
     in
     Printf.printf "%s\n%!" first_row;
-    let oc = File_log.log_string_endline ~close:false logs first_row in
+    let oc = File_log.log_string_endline ~close:false ~file:logs first_row in
     ignore
       (List.filter_map
          (fun model ->
