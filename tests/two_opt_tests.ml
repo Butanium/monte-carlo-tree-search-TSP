@@ -10,7 +10,7 @@ let adj_matrix = Base_tsp.get_adj_matrix cities
 
 let tour =
   Random.self_init ();
-  Base_tsp.random_path city_count
+  Base_tsp.random_tour city_count
 
 let max_time = 10.
 
@@ -18,11 +18,11 @@ let max_try = max_int
 (* let tour = Iterated_2Opt.iter_two_opt adj_matrix city_count Iterated_2Opt.Roulette max_time max_try *)
 
 (* let show () =
-     let len = Base_tsp.path_length adj_matrix tour in
+     let len = Base_tsp.tour_length adj_matrix tour in
      let best_len = Base_tsp.best_path_length city_config adj_matrix in
      Printf.printf "\n%% of error : %.2f %%\n"
        (100. *. float_of_int (len - best_len) /. float_of_int best_len);
-     Base_tsp.print_path tour;
+     Base_tsp.print_tour tour;
      Show_tsp.show_solution_and_wait cities tour
 
    let () =

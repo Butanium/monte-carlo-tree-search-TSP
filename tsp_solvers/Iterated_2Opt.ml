@@ -10,11 +10,11 @@ let weight_update adj last q = function
   | Random -> ()
   | Roulette -> RndQ.roulette_weights adj last q
 
-let randomize_path q adj mode path_arr =
-  for i = 0 to Array.length path_arr - 1 do
+let randomize_tour q adj mode tour_arr =
+  for i = 0 to Array.length tour_arr - 1 do
     let v = RndQ.take q in
     weight_update adj v q mode;
-    path_arr.(i) <- v
+    tour_arr.(i) <- v
   done
 
 (* type debug = {mutable } *)
@@ -31,9 +31,9 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
   Random.init seed;
   let create_arr () = Array.init city_count Fun.id in
   let queue = RndQ.simple_create city_count @@ create_arr () in
-  let path_arr = create_arr () in
+  let tour_arr = create_arr () in
   let best_len = ref max_int in
-  let best_path = create_arr () in
+  let best_tour = create_arr () in
   let i = ref 0 in
   let acc_scores = ref 0 in
   let start_time = Unix.gettimeofday () in
@@ -49,16 +49,16 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
            else true)
        || get_time () < max_time)
   do
-    randomize_path queue adj_matrix rnd_mode path_arr;
+    randomize_tour queue adj_matrix rnd_mode tour_arr;
     let max_time =
       if max_time = infinity then infinity else max_time -. get_time ()
     in
-    ignore (opt_fast ~max_time adj_matrix path_arr);
-    let len = Base_tsp.path_length adj_matrix path_arr in
+    ignore (opt_fast ~max_time adj_matrix tour_arr);
+    let len = Base_tsp.tour_length adj_matrix tour_arr in
     if len < !best_len then (
       best_len := len;
       for i = 0 to city_count - 1 do
-        best_path.(i) <- path_arr.(i)
+        best_tour.(i) <- tour_arr.(i)
       done);
     incr i;
     acc_scores := !acc_scores + len;
@@ -78,7 +78,7 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
       | Some s -> Printf.sprintf "city config : %s, seed : %d" s seed)
       !best_len (!acc_scores / !i);
     Printf.fprintf oc "best tour : ";
-    Base_tsp.print_path ~oc best_path
+    Base_tsp.print_tour ~oc best_tour
   in
   if verbose then debug stdout;
   (match logs_path with
@@ -99,5 +99,5 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
       let oc = File_log.get_oc file in
       debug oc;
       close_out oc;
-      Base_tsp.create_opt_file ~file_path best_path);
-  best_path
+      Base_tsp.create_opt_file ~file_path best_tour);
+  best_tour

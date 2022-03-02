@@ -31,7 +31,7 @@ let () =
   Graphics.sound 200 1000;
   (*make some sound when monte carlo is complete *)
   print_endline "mcts tour : ";
-  Base_tsp.print_path tour;
+  Base_tsp.print_tour tour;
   Show_tsp.show_solution_and_wait cities tour
 (* Show the computed solution *)
 

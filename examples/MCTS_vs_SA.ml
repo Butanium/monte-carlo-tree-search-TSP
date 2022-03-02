@@ -24,12 +24,12 @@ let () =
   in
   let mst_length = foi @@ Prim_Alg.prim_alg eval city_count in
   Printf.printf "mst ratios : \n   - mcts : %.2f\n   - sa : %.2f\n\n"
-    ((foi @@ Base_tsp.path_length adj_matrix mcts_path) /. mst_length)
-    ((foi @@ Base_tsp.path_length adj_matrix sa_path) /. mst_length);
+    ((foi @@ Base_tsp.tour_length adj_matrix mcts_path) /. mst_length)
+    ((foi @@ Base_tsp.tour_length adj_matrix sa_path) /. mst_length);
   print_endline "simulated annealing tour : ";
-  Base_tsp.print_path sa_path;
+  Base_tsp.print_tour sa_path;
   print_endline "monte carlo tour : ";
-  Base_tsp.print_path mcts_path;
+  Base_tsp.print_tour mcts_path;
   let title = "simulated annealing tour" in
   Show_tsp.show_solution ~title cities sa_path;
   print_endline "\nsend anything to see the mcts tour";

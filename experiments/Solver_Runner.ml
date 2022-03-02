@@ -44,5 +44,5 @@ let solver_simulation ?(verbose = 0) ?seed city_config city_count eval log_path
           solver.max_iter ~name:solver.name ~city_config
           ~logs_path:log_files_path ~verbose:(verbose > 0) ?seed
       in
-      let score = Base_tsp.path_length eval tour in
+      let score = Base_tsp.tour_length eval tour in
       (score, score)

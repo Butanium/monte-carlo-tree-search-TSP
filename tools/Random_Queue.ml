@@ -1,5 +1,5 @@
 (* permettant de créer une file aléatoire : chaque élément
-   é un certain poids qui détermine la probabilité qu'il a d'être tiré *)
+   à un certain poids qui détermine la probabilité qu'il a d'être tiré *)
 
 exception Empty
 

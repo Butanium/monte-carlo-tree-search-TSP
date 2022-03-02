@@ -34,7 +34,7 @@ let open_tsp ?(file_path = "tsp_instances") tsp_name =
   close_in ic;
   (city_count, cities)
 
-let open_path ?(file_path = "tsp_instances") tsp_name =
+let open_tour ?(file_path = "tsp_instances") tsp_name =
   let city_count = Scanf.sscanf tsp_name "%[^0-9]%d" (fun _ c -> c) in
   let tour = Array.make city_count 0 in
   let fill =

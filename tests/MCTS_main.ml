@@ -42,8 +42,8 @@ let () =
   (*make some sound when monte carlo is complete *)
   Base_tsp.print_error_ratio tour adj_matrix city_config;
   print_endline "mcts tour : ";
-  Base_tsp.print_path tour;
+  Base_tsp.print_tour tour;
   Show_tsp.show_solution_and_wait cities tour
 
 (* Show the computed solution *)
-let () = Show_tsp.show_best_path_and_wait city_config
+let () = Show_tsp.show_best_tour_and_wait city_config

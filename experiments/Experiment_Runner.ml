@@ -256,7 +256,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
           let city_count, cities = Reader_tsp.open_tsp ~file_path config in
           let adj = Base_tsp.get_adj_matrix cities in
           let best_lengths =
-            Base_tsp.best_path_length ~file_path config adj :: best_lengths
+            Base_tsp.best_tour_length ~file_path config adj :: best_lengths
           in
           List.iter
             (fun model ->

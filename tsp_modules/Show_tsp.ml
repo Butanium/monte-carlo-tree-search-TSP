@@ -115,13 +115,13 @@ let show_solution_list cities sol =
       List.iter lineto_city xs;
       lineto_city x
 
-let show_best_path config =
+let show_best_tour config =
   let _, cities = Reader_tsp.open_tsp config in
-  show_solution cities (Reader_tsp.open_path config)
+  show_solution cities (Reader_tsp.open_tour config)
 
-let show_best_path_and_wait config =
+let show_best_tour_and_wait config =
   let _, cities = Reader_tsp.open_tsp config in
   show_solution_and_wait
     ~title:(Printf.sprintf "best tour for %s" config)
     cities
-  @@ Reader_tsp.open_path config
+  @@ Reader_tsp.open_tour config

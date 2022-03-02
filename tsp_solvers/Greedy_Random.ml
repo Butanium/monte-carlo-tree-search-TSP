@@ -13,10 +13,10 @@ let greedy ?(generate_log_file = true) adj_matrix city_count rnd_mode max_time
   let best_scores_hist = ref [] in
   let scores_hist = ref [] in
 
-  let best_path = Array.init city_count Fun.id in
-  let get_path_length = Base_tsp.path_length adj_matrix in
-  let best_score = ref @@ get_path_length best_path in
-  let tour = Array.copy best_path in
+  let best_tour = Array.init city_count Fun.id in
+  let get_tour_length = Base_tsp.tour_length adj_matrix in
+  let best_score = ref @@ get_tour_length best_tour in
+  let tour = Array.copy best_tour in
   let queue =
     RndQ.simple_create city_count @@ Array.sub tour 1 (city_count - 1)
   in
@@ -30,11 +30,11 @@ let greedy ?(generate_log_file = true) adj_matrix city_count rnd_mode max_time
       weight_update adj_matrix tour.(i - 1) queue rnd_mode;
       tour.(i) <- RndQ.take queue
     done;
-    let length = get_path_length tour in
+    let length = get_tour_length tour in
     if length < !best_score then (
       best_score := length;
       for i = 1 to city_count - 1 do
-        best_path.(i) <- tour.(i)
+        best_tour.(i) <- tour.(i)
       done;
       best_scores_hist := (get_time (), !try_count, length) :: !best_scores_hist);
     scores_hist := (get_time (), length) :: !scores_hist
@@ -66,4 +66,4 @@ let greedy ?(generate_log_file = true) adj_matrix city_count rnd_mode max_time
    Printf.printf "simulation ref for log files : %s\n"
    @@ String.sub file.file_name start
    @@ (String.length file.file_name - start));
-  best_path
+  best_tour
