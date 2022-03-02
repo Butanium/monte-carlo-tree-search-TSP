@@ -98,5 +98,6 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
       in
       let oc = File_log.get_oc file in
       debug oc;
-      close_out oc);
+      close_out oc;
+      Base_tsp.create_opt_file ~file_path best_path);
   best_path
