@@ -1,6 +1,8 @@
-(data_only_dirs logs archive external_tools venv tsp_instances)
+(data_only_dirs logs _archive external_tools venv tsp_instances)
 
 (env
  (release
   (flags
-   (:standard -unsafe))))
+   (:standard -unsafe))
+  (ocamlopt_flags
+   (:standard -O3))))

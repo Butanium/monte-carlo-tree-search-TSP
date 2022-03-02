@@ -195,7 +195,7 @@ let update_weights queue last =
   match !arg.playout_selection_mode with
   (* [FR] Actualise les poids des différentes villes par rapport é la dernière ville choisie
      pour le chemin aléatoire du playout *)
-  (* [EN] Update the weights in the random queue according to the last city added to the playout path *)
+  (* [EN] Update the weights in the random queue according to the last city added to the playout tour *)
   | Random -> ()
   | Roulette -> RndQ.roulette_weights !arg.adj_matrix last queue
 
@@ -325,7 +325,7 @@ let optimize_path size = function
 
 let playout last_city =
   (* [FR] Termine aléatoirement le trajet commencé lors de l'exploration *)
-  (* [EN] Finish randomly the path started during the exploration *)
+  (* [EN] Finish randomly the tour started during the exploration *)
   let queue = available !creation_queue in
   let size = !arg.city_count - !arg.path_size in
   let final_path =
@@ -491,7 +491,7 @@ let rec selection node =
 
 let reset_arg () =
   (* [FR] Réinitialise les villes visitées et la taille du chemin é chaque fois qu'on repart de la racine de l'arbre *)
-  (* [EN] Reset the visited cities and the path size every time we restart our exploration from the root *)
+  (* [EN] Reset the visited cities and the tour size every time we restart our exploration from the root *)
   !arg.path_size <- 0;
   Util.map_in_place (fun _ -> false) !arg.visited
 
@@ -528,7 +528,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     ?(hidden_opt = No_opt) ?(optimize_end_path_time = infinity) ?(name = "")
     ?(catch_SIGINT = true) ?seed city_count adj_matrix max_time max_playout =
   (* [FR] Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout *)
-  (* [EN] Create and develop the tree, keeping in memory the best path done during the playouts *)
+  (* [EN] Create and develop the tree, keeping in memory the best tour done during the playouts *)
   let user_interrupt = ref false in
   if catch_SIGINT then
     Sys.set_signal Sys.sigint
@@ -626,10 +626,10 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       let opt_score = Base_tsp.path_length adj_matrix opt_path in
       let opt_delta = best_score - opt_score in
       add_debug
-        (if opted then Printf.sprintf "Returned path already optimized\n"
+        (if opted then Printf.sprintf "Returned tour already optimized\n"
         else
           Printf.sprintf
-            "Optimized returned path in %g/%.0f seconds with %d delta \n"
+            "Optimized returned tour in %g/%.0f seconds with %d delta \n"
             opt_time optimize_end_path_time opt_delta);
       (opt_path, opt_score))
     else (best_path, best_score)
@@ -655,7 +655,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
        constant : %.1f, closed_nodes : %d\n\
        random seed : %d" !arg.playout_count spent_time deb.max_depth best_score
       !exploration_constant deb.closed_nodes seed;
-    Printf.fprintf oc "\nbest path :\n";
+    Printf.fprintf oc "\nbest tour :\n";
     Base_tsp.print_path ~oc best_path;
 
     Printf.fprintf oc "\n________________END DEBUG INFO________________\n\n"
@@ -675,7 +675,9 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     in
     if generate_log_file > 0 then (
       let file = File_log.create_file ~file_path ~file_name:"all_scores" () in
-      let oc = File_log.log_single_data ~close:false file "timestamp,length" in
+      let oc =
+        File_log.log_string_endline ~close:false file "timestamp,length"
+      in
       Util.iter_rev
         (fun (t, s, hs) ->
           if hidden_opt = No_opt then Printf.fprintf oc "%g,%d\n" t s
@@ -684,7 +686,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       close_out oc;
       let file = File_log.create_file ~file_path ~file_name:"best_scores" () in
       let oc =
-        File_log.log_single_data ~close:false file "playout,timestamp,length"
+        File_log.log_string_endline ~close:false file "playout,timestamp,length"
       in
       Util.iter_rev (fun (t, p, len) ->
           if t = 0. then Printf.fprintf oc "%d,0,%d\n" p len
@@ -702,7 +704,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     Printf.fprintf oc "\n\n________________START DEBUG TREE_______________\n";
     debug_mcts oc root;
     close_out oc;
-
+    Base_tsp.create_opt_file ~file_name:"best_tour" ~file_path opt_path;
     if verbose >= 0 then
       let start = String.length "logs/" in
       Printf.printf "simulation directory for log files : %s\n"
