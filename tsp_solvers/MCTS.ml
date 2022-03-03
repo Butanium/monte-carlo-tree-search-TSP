@@ -602,7 +602,6 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       (Sys.Signal_handle (fun _ -> user_interrupt := true));
   (* allow user exit with Ctrl+C sigint*)
   let start_time = Unix.gettimeofday () in
-  let seed = init seed in
   let info =
     {
       visit = 0.;
@@ -619,7 +618,8 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     }
   in
   let root = { info; heritage = Root } in
-  Printf.printf "\n coty : %d%!" city_count; (*todo delete*)
+  Printf.printf "\n coty : %d%!" city_count;
+  (*todo delete*)
   arg :=
     {
       start_time;
@@ -638,6 +638,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       develop_playout_mode;
       root = Some root;
     };
+  let seed = init seed in
   reset_deb generate_log_file hidden_opt;
 
   let get_time () = Unix.gettimeofday () -. start_time in
