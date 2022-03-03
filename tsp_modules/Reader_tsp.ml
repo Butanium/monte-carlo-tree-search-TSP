@@ -1,5 +1,6 @@
 let open_tsp ?(file_path = "tsp_instances") tsp_name =
   let city_count = Scanf.sscanf tsp_name "%[^0-9]%d" (fun _ c -> c) in
+  
   let cities = Array.make city_count (-1., -1.) in
   let fill =
     let i = ref 0 in

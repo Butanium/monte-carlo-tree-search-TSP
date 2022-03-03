@@ -46,6 +46,12 @@ type develop_playout_mode = Dev_all | Dev_hidden | Dev_playout | No_dev
    [EN] Define if playout tours are converted in nodes
 *)
 
+let str_of_develop_mode = function
+  | Dev_all -> "Dev_all"
+  | Dev_hidden -> "Dev_hidden"
+  | Dev_playout -> "Dev_playout"
+  | No_dev -> "No_dev"
+
 type exploration_mode = Min_spanning_tree | Standard_deviation
 (* [FR] Définie le paramètre d'exploration utilisée pour sélectionner le meilleur fils d'un noeud
       - Min_spanning_tree utilise la longueur de l'arbre couvrant minimal
@@ -146,6 +152,8 @@ type arguments = {
   mutable playout_count : int;
   expected_length_mode : expected_expected_length_mode;
   optimization_mode : optimization_mode;
+  develop_playout_mode : develop_playout_mode;
+  root : node option;
 }
 
 (* [FR] Type contenant tous les arguments qui n'auront donc pas besoin d'être passés
@@ -171,6 +179,8 @@ let arg =
       playout_count = 0;
       expected_length_mode = Average;
       optimization_mode = No_opt;
+      develop_playout_mode = No_dev;
+      root = None;
     }
 
 let reset_deb log_file hidden_opt =
@@ -234,6 +244,32 @@ let init seed =
   seed
 
 let exploration_constant = ref @@ -1.
+
+let create_node node city =
+  let depth = node.info.depth + 1 in
+  let tot_dist = node.info.tot_dist + !arg.adj_matrix.(node.info.city).(city) in
+
+  let info =
+    {
+      visit = 0.;
+      score = 0.;
+      best_score = infinity;
+      best_hidden_score = infinity;
+      max_child_depth = depth;
+      city;
+      depth;
+      tot_dist;
+      children = [];
+      developed = 0;
+      active = depth <> !arg.city_count;
+    }
+  in
+  { heritage = Parent node; info }
+
+let add_score node score =
+  node.info.visit <- node.info.visit +. 1.;
+  if score < node.info.best_score then node.info.best_score <- score;
+  node.info.score <- node.info.score +. score
 
 let get_node_score_fun root exploration_mode expected_length_mode =
   (* [FR] Renvoie la fonction d'évaluation qui sera utilisée pendant la sélection
@@ -377,18 +413,16 @@ let playout last_city =
 
   (score, hidden_score)
 
-let rec retropropagation node score hidden_score max_depth =
+let rec backpropagation node score hidden_score max_depth =
   (* [FR] Actualise le nombre de visite et le score total sur les noeuds
      [EN] Update the node visited during the exploration according to the playout score *)
-  node.info.visit <- node.info.visit +. 1.;
-  node.info.score <- node.info.score +. score;
+  add_score node score;
   if hidden_score < node.info.best_hidden_score then
     node.info.best_hidden_score <- hidden_score;
-  if score < node.info.best_score then node.info.best_score <- score;
   node.info.max_child_depth <- max_depth;
   match node.heritage with
   | Root -> ()
-  | Parent parent -> retropropagation parent score hidden_score max_depth
+  | Parent parent -> backpropagation parent score hidden_score max_depth
 
 (** 
 [EN] get the next city to expand *)
@@ -408,6 +442,41 @@ let get_next_city node =
   update_weights !creation_queue node.info.city;
   RndQ.take !creation_queue
 
+let rec forward_propagation node tour score =
+  (* [FR] créer les noeuds associé au tour ou les actualise
+     [EN] create the nodes of a tour or refresh them *)
+  if node.info.depth <> !arg.city_count then (
+    assert (node.info.city = tour.(node.info.depth - 1));
+    let next_city = tour.(node.info.depth) in
+    match
+      List.find_opt (fun x -> x.info.city = next_city) node.info.children
+    with
+    | None ->
+        let new_node = create_node node next_city in
+        node.info.children <- new_node :: node.info.children;
+        add_score node score;
+        forward_propagation new_node tour score
+    | Some next_node ->
+        add_score next_node score;
+        forward_propagation next_node tour score)
+
+let convert_tours (opt_tour, opt_score) (playout_tour, playout_score) node =
+  (*
+  *)
+  let dev_hidden () =
+    let root = Option.get !arg.root in
+    add_score root opt_score;
+    forward_propagation root opt_tour opt_score
+  in
+  let dev_playout () = forward_propagation node playout_tour playout_score in
+  match !arg.develop_playout_mode with
+  | No_dev -> ()
+  | Dev_all ->
+      dev_playout ();
+      dev_hidden ()
+  | Dev_hidden -> dev_hidden ()
+  | Dev_playout -> dev_playout ()
+
 let expand node =
   (* [FR] Développe l'arbre en créant un nouveau noeud relié à 'node'
      [EN] Expand the tree by adding a new node linked to 'node' *)
@@ -418,29 +487,14 @@ let expand node =
   in
   !arg.current_path.(!arg.path_size) <- city;
   !arg.path_size <- !arg.path_size + 1;
+  assert (node.info.depth <> !arg.path_size);
   !arg.visited.(city) <- true;
-  let depth = node.info.depth + 1 in
-  let tot_dist = node.info.tot_dist + !arg.adj_matrix.(node.info.city).(city) in
-  let info =
-    {
-      visit = 0.;
-      score = 0.;
-      best_score = infinity;
-      best_hidden_score = infinity;
-      max_child_depth = depth;
-      city;
-      depth;
-      tot_dist;
-      children = [];
-      developed = 0;
-      active = !arg.path_size <> !arg.city_count;
-    }
-  in
-  let new_node = { info; heritage = Parent node } in
+  let new_node = create_node node city in
   node.info.children <- new_node :: node.info.children;
   node.info.developed <- node.info.developed + 1;
   let score, hidden_score = playout city in
-  retropropagation new_node (float score) (float hidden_score) depth
+  backpropagation new_node (float score) (float hidden_score)
+    (node.info.depth + 1)
 
 let get_best_child node =
   (* [FR] Renvoie le fils de `node` ayant le score le plus bas
@@ -483,14 +537,14 @@ let rec selection node =
           for i = 0 to !arg.city_count - 1 do
             !arg.best_tour.(i) <- !arg.current_path.(i)
           done);
-        retropropagation node (float dist) (float dist) node.info.depth
+        backpropagation node (float dist) (float dist) node.info.depth
     | _ -> (
         match get_best_child node with
         | Some child -> selection child
         | None ->
             node.info.active <- false;
             deb.closed_nodes <- deb.closed_nodes + 1;
-            retropropagation node node.info.best_score
+            backpropagation node node.info.best_score
               node.info.best_hidden_score node.info.max_child_depth)
   else
     try expand node
@@ -538,7 +592,8 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     ?(exploration_mode = Standard_deviation) ?(optimization_mode = No_opt)
     ?(stop_on_leaf = true) ?(optimize_end_path = true) ?(verbose = 1)
     ?(hidden_opt = No_opt) ?(optimize_end_path_time = infinity) ?(name = "")
-    ?(catch_SIGINT = true) ?seed city_count adj_matrix max_time max_playout =
+    ?(develop_playout_mode = No_dev) ?(catch_SIGINT = true) ?seed city_count
+    adj_matrix max_time max_playout =
   (* [FR] Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout
      [EN] Create and develop the tree, keeping in memory the best tour done during the playouts *)
   let user_interrupt = ref false in
@@ -547,24 +602,6 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       (Sys.Signal_handle (fun _ -> user_interrupt := true));
   (* allow user exit with Ctrl+C sigint*)
   let start_time = Unix.gettimeofday () in
-
-  arg :=
-    {
-      start_time;
-      playout_selection_mode;
-      visited = Array.make city_count false;
-      city_count;
-      path_size = 0;
-      adj_matrix;
-      get_node_score = (fun _ -> -1.);
-      current_path = Array.make city_count (-1);
-      best_tour = Array.make city_count (-1);
-      best_score = max_int;
-      playout_count = 0;
-      expected_length_mode;
-      optimization_mode;
-    };
-  reset_deb generate_log_file hidden_opt;
   let seed = init seed in
   let info =
     {
@@ -582,6 +619,27 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     }
   in
   let root = { info; heritage = Root } in
+  Printf.printf "\n coty : %d%!" city_count; (*todo delete*)
+  arg :=
+    {
+      start_time;
+      playout_selection_mode;
+      visited = Array.make city_count false;
+      city_count;
+      path_size = 0;
+      adj_matrix;
+      get_node_score = (fun _ -> -1.);
+      current_path = Array.make city_count (-1);
+      best_tour = Array.make city_count (-1);
+      best_score = max_int;
+      playout_count = 0;
+      expected_length_mode;
+      optimization_mode;
+      develop_playout_mode;
+      root = Some root;
+    };
+  reset_deb generate_log_file hidden_opt;
+
   let get_time () = Unix.gettimeofday () -. start_time in
   if verbose > 0 then
     Printf.printf @@ "\n\nStarting MCTS, I'll keep informed every minutes :)\n"

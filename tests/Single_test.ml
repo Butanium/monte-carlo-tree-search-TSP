@@ -7,9 +7,9 @@ let max_time = 12.
 
 let test_set = 100
 
-let amount = 100
+let amount = 4
 
-let sim_name = Printf.sprintf "TSP%d-experiment--3-Opt" test_set
+let sim_name = Printf.sprintf "garbage%d" test_set
 
 let configs =
   let rec aux i =
@@ -23,13 +23,18 @@ let base_opt =
 
 let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int }
 
+let dev_modes = MCTS.[ No_dev; Dev_all; Dev_hidden; Dev_playout ]
+
 (* let models =
    All_tests_MCTS.create_models 2.
      ~vanilla_list:(Base.List.cartesian_product [MCTS.Roulette; Random] [MCTS.No_opt]) *)
-(* let models =
-   create_models 1.
-     ~mcts_opt_list:([ MCTS.Roulette; Random ] $$ [ (base_opt, (1, 1), full_opt);
-     (full_opt, (1,1), No_opt) ]) *)
+let models =
+  create_models 3.
+    ~mcts_opt_list:
+      (dev_modes
+      $$- ([ MCTS.Roulette; Random ]
+          $$ [ (base_opt, (1, 1), full_opt); (full_opt, (1, 1), No_opt) ]))
+
 (* let models =
    create_models max_time
      ~iter2opt_list:(max_int *$ [ Iterated_2Opt.Random; Roulette ]) *)
@@ -38,8 +43,8 @@ let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int }
      ~mcts_opt_list:
        ([ MCTS.Random; Roulette ] $$ [ (base_opt, (1, 1), full_opt) ]) *)
 
-let models =
-  create_models max_time
-    ~mcts_opt_list:[ (MCTS.Roulette, (base_opt, (1, 1), full_opt)) ]
+(* let models =
+   create_models max_time
+     ~mcts_opt_list:[ (MCTS.Roulette, (base_opt, (1, 1), full_opt)) ] *)
 
 let () = run_models ~sim_name configs models

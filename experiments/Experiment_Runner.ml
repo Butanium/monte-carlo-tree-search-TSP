@@ -8,6 +8,8 @@ let ( *$ ) a b = Base.List.cartesian_product [ a ] b
 
 let ( *$- ) a b = List.map to_triple (a *$ b)
 
+let ( $$- ) a b = List.map to_triple (a $$ b)
+
 type model_experiment = {
   solver : solver;
   mutable experiment_count : int;
@@ -133,39 +135,45 @@ let def_opt = create_mcts_opt 1 1
 let create_models ?(exploration_mode = MCTS.Standard_deviation)
     ?(mcts_vanilla_list = []) ?(mcts_opt_list = []) ?(iter2opt_list = [])
     max_time =
-  let create_opt_mcts (selection_mode, (opt, t, hidden_opt)) =
+  let suffix hidden_opt dev_mode =
+    (if hidden_opt = MCTS.No_opt then ""
+    else
+      Printf.sprintf "-hidden_%s"
+      @@ MCTS.str_of_optimization_mode_short hidden_opt)
+    ^
+    if dev_mode = MCTS.No_dev then ""
+    else "-" ^ MCTS.str_of_develop_mode dev_mode
+  in
+  let create_opt_mcts (dev_mode,selection_mode, (opt, t, hidden_opt)) =
     let { opt; name } = opt_of_tuple (opt, t) in
+
     MCTS
       {
         name =
           Printf.sprintf "MCTS-%s-%s%s" name
             (MCTS.str_of_selection_mode selection_mode)
-            (if hidden_opt = MCTS.No_opt then ""
-            else
-              Printf.sprintf "-hidden_%s"
-              @@ MCTS.str_of_optimization_mode_short hidden_opt);
+          @@ suffix hidden_opt dev_mode;
         max_time;
         exploration_mode;
         optimization_mode = opt;
         selection_mode;
         hidden_opt;
+        dev_mode;
       }
   in
-  let create_vanilla_mcts (selection_mode, hidden_opt) =
+  let create_vanilla_mcts (dev_mode, selection_mode, hidden_opt) =
     MCTS
       {
         name =
           Printf.sprintf "MCTS-Vanilla-%s%s"
             (MCTS.str_of_selection_mode selection_mode)
-            (if hidden_opt = MCTS.No_opt then ""
-            else
-              Printf.sprintf "-hidden_%s"
-              @@ MCTS.str_of_optimization_mode_short hidden_opt);
+          @@ suffix hidden_opt dev_mode;
         max_time;
         exploration_mode;
         optimization_mode = No_opt;
         selection_mode = Random;
         hidden_opt;
+        dev_mode;
       }
   in
   let create_iterated_opt (max_iter, random_mode) =

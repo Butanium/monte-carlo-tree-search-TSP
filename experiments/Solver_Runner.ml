@@ -5,6 +5,7 @@ type mcts_solver = {
   optimization_mode : MCTS.optimization_mode;
   selection_mode : MCTS.playout_selection_mode;
   hidden_opt : MCTS.optimization_mode;
+  dev_mode : MCTS.develop_playout_mode
 }
 
 type iterated2opt_solver = {
