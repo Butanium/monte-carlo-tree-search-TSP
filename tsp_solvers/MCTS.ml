@@ -618,8 +618,6 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     }
   in
   let root = { info; heritage = Root } in
-  Printf.printf "\n coty : %d%!" city_count;
-  (*todo delete*)
   arg :=
     {
       start_time;
