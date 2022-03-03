@@ -396,7 +396,9 @@ let playout last_city =
     Util.copy_in_place !arg.best_tour playout_tour;
     if deb.generate_log_file > 0 then
       deb.best_score_hist <-
-        (Unix.gettimeofday () -. !arg.start_time, !arg.playout_count, playout_score)
+        ( Unix.gettimeofday () -. !arg.start_time,
+          !arg.playout_count,
+          playout_score )
         :: deb.best_score_hist);
 
   let hidden_score =
@@ -445,6 +447,12 @@ let get_next_city node =
   update_weights !creation_queue node.info.city;
   RndQ.take !creation_queue
 
+let add_child parent child =
+  (* [FR] créer un nouveau fils au noeud parent
+     [EN] add `child` to the `parent`'s children *)
+  parent.info.children <- child :: parent.info.children;
+  parent.info.developed <- parent.info.developed + 1
+
 let rec forward_propagation node tour score =
   (* [FR] créer les noeuds associé au tour ou les actualise
      [EN] create the nodes of a tour or refresh them *)
@@ -456,7 +464,7 @@ let rec forward_propagation node tour score =
     with
     | None ->
         let new_node = create_node node next_city in
-        node.info.children <- new_node :: node.info.children;
+        add_child node new_node;
         add_score node score;
         forward_propagation new_node tour score
     | Some next_node ->
@@ -502,12 +510,10 @@ let expand node =
   assert (node.info.depth <> !arg.path_size);
   !arg.visited.(city) <- true;
   let new_node = create_node node city in
-  node.info.children <- new_node :: node.info.children;
-  node.info.developed <- node.info.developed + 1;
+  add_child node new_node;
   let playout_score, hidden_score = playout city in
   convert_tours ~playout_score ~hidden_score node;
-  backpropagation new_node (playout_score) (hidden_score)
-    (node.info.depth + 1)
+  backpropagation new_node playout_score hidden_score (node.info.depth + 1)
 
 let get_best_child node =
   (* [FR] Renvoie le fils de `node` ayant le score le plus bas
