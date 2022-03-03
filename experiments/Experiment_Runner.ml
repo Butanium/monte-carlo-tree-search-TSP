@@ -31,6 +31,13 @@ type model_result = {
   opt_max_dev : float;
 }
 
+let is_valid_dev hidden_mode dev_mode = 
+  let open MCTS in 
+  match hidden_mode, dev_mode with
+  | No_opt, Dev_all -> false
+  | No_opt, Dev_hidden -> false
+  | _ -> true
+
 let get_model_results (best_lengths : int list) model =
   let n = float model.experiment_count in
   let exp_count = List.length best_lengths in
@@ -146,7 +153,6 @@ let create_models ?(exploration_mode = MCTS.Standard_deviation)
   in
   let create_opt_mcts (dev_mode,selection_mode, (opt, t, hidden_opt)) =
     let { opt; name } = opt_of_tuple (opt, t) in
-
     MCTS
       {
         name =

@@ -220,9 +220,11 @@ let update_weights queue last =
 
 let creation_queue = ref @@ RndQ.simple_create 0 [||]
 
-let playout_tour = ref [||]
+let playout_path = ref [||]
 
-let opt_tour = ref [||]
+let r_playout_tour = ref [||]
+
+let r_hidden_tour = ref [||]
 
 let get_next_city_arr = ref [||]
 
@@ -236,8 +238,9 @@ let init seed =
         Random.int 1073741823
   in
   let arr () = Array.make !arg.city_count (-1) in
-  playout_tour := arr ();
-  opt_tour := arr ();
+  playout_path := arr ();
+  r_playout_tour := arr ();
+  r_hidden_tour := arr ();
   get_next_city_arr := Array.make !arg.city_count false;
   creation_queue := RndQ.simple_create !arg.city_count @@ arr ();
   Random.init seed;
@@ -343,27 +346,27 @@ let fill_tour store size =
     store.(i) <- !arg.current_path.(i)
   done;
   for i = 0 to size - 1 do
-    store.(!arg.path_size + i) <- !playout_tour.(i + 1)
+    store.(!arg.path_size + i) <- !playout_path.(i + 1)
   done
 
-let optimize_tour size = function
+let optimize_tour container size = function
   | No_opt ->
-      fill_tour !opt_tour size;
-      !opt_tour
+      fill_tour container size;
+      container
   | Two_opt { max_length; max_iter; max_time } ->
       let _ =
         Optimizer_2opt.opt_fast ~partial_path:true
           ~upper_bound:(min size max_length) ~max_iter ~max_time !arg.adj_matrix
-          !playout_tour
+          !playout_path
       in
-      fill_tour !opt_tour size;
-      !opt_tour
+      fill_tour container size;
+      container
   | Full_Two_opt { max_iter; max_time } ->
-      fill_tour !opt_tour size;
+      fill_tour container size;
       let _ =
-        Optimizer_2opt.opt_fast ~max_iter ~max_time !arg.adj_matrix !opt_tour
+        Optimizer_2opt.opt_fast ~max_iter ~max_time !arg.adj_matrix container
       in
-      !opt_tour
+      container
   | e ->
       failwith
       @@ Printf.sprintf "%s not implemented yet"
@@ -374,44 +377,44 @@ let playout last_city =
      [EN] Finish randomly the tour started during the exploration *)
   let queue = available !creation_queue in
   let size = !arg.city_count - !arg.path_size in
-  let final_tour =
+  let playout_tour =
     if size > 0 then (
       update_weights queue last_city;
-      !playout_tour.(0) <- last_city;
+      !playout_path.(0) <- last_city;
       for k = 1 to size do
         let c = RndQ.take queue in
         update_weights queue c;
-        !playout_tour.(k) <- c
+        !playout_path.(k) <- c
       done;
-      let end_path = optimize_tour size !arg.optimization_mode in
-      end_path)
+      optimize_tour !r_playout_tour size !arg.optimization_mode)
     else !arg.current_path
   in
-  let score = Base_tsp.tour_length !arg.adj_matrix final_tour in
+  let playout_score = Base_tsp.tour_length !arg.adj_matrix playout_tour in
 
-  if score < !arg.best_score then (
-    !arg.best_score <- score;
-    Util.copy_in_place !arg.best_tour final_tour;
+  if playout_score < !arg.best_score then (
+    !arg.best_score <- playout_score;
+    Util.copy_in_place !arg.best_tour playout_tour;
     if deb.generate_log_file > 0 then
       deb.best_score_hist <-
-        (Unix.gettimeofday () -. !arg.start_time, !arg.playout_count, score)
+        (Unix.gettimeofday () -. !arg.start_time, !arg.playout_count, playout_score)
         :: deb.best_score_hist);
 
   let hidden_score =
     if deb.hidden_opt <> No_opt && size > 0 then (
-      let opt_tour = optimize_tour size deb.hidden_opt in
-      let opt_score = Base_tsp.tour_length !arg.adj_matrix opt_tour in
+      let hidden_tour = optimize_tour !r_hidden_tour size deb.hidden_opt in
+      Base_tsp.set_tour_start 0 hidden_tour;
+      let opt_score = Base_tsp.tour_length !arg.adj_matrix hidden_tour in
       if opt_score < deb.hidden_best_score then (
-        Util.copy_in_place deb.hidden_best_tour opt_tour;
+        Util.copy_in_place deb.hidden_best_tour hidden_tour;
         deb.hidden_best_score <- opt_score);
       opt_score)
-    else score
+    else playout_score
   in
   if deb.generate_log_file > 0 then
     deb.score_hist <-
-      (float !arg.playout_count, score, hidden_score) :: deb.score_hist;
+      (float !arg.playout_count, playout_score, hidden_score) :: deb.score_hist;
 
-  (score, hidden_score)
+  (float playout_score, float hidden_score)
 
 let rec backpropagation node score hidden_score max_depth =
   (* [FR] Actualise le nombre de visite et le score total sur les noeuds
@@ -460,21 +463,30 @@ let rec forward_propagation node tour score =
         add_score next_node score;
         forward_propagation next_node tour score)
 
-let convert_tours (opt_tour, opt_score) (playout_tour, playout_score) node =
-  (*
+let convert_tours ~hidden_score ~playout_score node =
+  (* [FR] convertis le ou les tours en fonction de la valeur de `develop_playout_mode`
+     [EN] todo
   *)
   let dev_hidden () =
     let root = Option.get !arg.root in
-    add_score root opt_score;
-    forward_propagation root opt_tour opt_score
+    add_score root hidden_score;
+    forward_propagation root !r_hidden_tour hidden_score
   in
-  let dev_playout () = forward_propagation node playout_tour playout_score in
+  let dev_playout () = forward_propagation node !r_playout_tour playout_score in
+  let error () =
+    raise
+    @@ Invalid_argument
+         "MCTS Error : You can't convert hidden tour if there are no hidden opt"
+  in
   match !arg.develop_playout_mode with
   | No_dev -> ()
   | Dev_all ->
+      if deb.hidden_opt = No_opt then error ();
       dev_playout ();
       dev_hidden ()
-  | Dev_hidden -> dev_hidden ()
+  | Dev_hidden ->
+      if deb.hidden_opt = No_opt then error ();
+      dev_hidden ()
   | Dev_playout -> dev_playout ()
 
 let expand node =
@@ -492,8 +504,9 @@ let expand node =
   let new_node = create_node node city in
   node.info.children <- new_node :: node.info.children;
   node.info.developed <- node.info.developed + 1;
-  let score, hidden_score = playout city in
-  backpropagation new_node (float score) (float hidden_score)
+  let playout_score, hidden_score = playout city in
+  convert_tours ~playout_score ~hidden_score node;
+  backpropagation new_node (playout_score) (hidden_score)
     (node.info.depth + 1)
 
 let get_best_child node =
@@ -683,16 +696,16 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
            deb.hidden_best_score;
       deb.hidden_best_tour)
   in
-  let opt_tour, opt_score =
+  let r_playout_tour, opt_score =
     if optimize_end_path then (
       let start_time = Unix.gettimeofday () in
-      let opt_tour = Array.copy best_tour in
+      let r_playout_tour = Array.copy best_tour in
       let opted =
         Optimizer_2opt.opt_fast adj_matrix ~max_time:optimize_end_path_time
-          opt_tour
+          r_playout_tour
       in
       let opt_time = Unix.gettimeofday () -. start_time in
-      let opt_score = Base_tsp.tour_length adj_matrix opt_tour in
+      let opt_score = Base_tsp.tour_length adj_matrix r_playout_tour in
       let opt_delta = best_score - opt_score in
       add_debug
         (if opted then Printf.sprintf "Returned tour already optimized\n"
@@ -700,7 +713,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
           Printf.sprintf
             "Optimized returned tour in %g/%.0f seconds with %d delta \n"
             opt_time optimize_end_path_time opt_delta);
-      (opt_tour, opt_score))
+      (r_playout_tour, opt_score))
     else (best_tour, best_score)
   in
 
@@ -774,10 +787,10 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     Printf.fprintf oc "\n\n________________START DEBUG TREE_______________\n";
     debug_mcts oc root;
     close_out oc;
-    Base_tsp.create_opt_file ~file_path opt_tour;
+    Base_tsp.create_opt_file ~file_path r_playout_tour;
     if verbose >= 0 then
       let start = String.length "logs/" in
       Printf.printf "simulation directory for log files : %s\n"
       @@ String.sub file_path start
       @@ (String.length file_path - start));
-  ((best_tour, best_score), (opt_tour, opt_score), root)
+  ((best_tour, best_score), (r_playout_tour, opt_score), root)

@@ -27,22 +27,27 @@ let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int }
 
 let dev_modes = MCTS.[ No_dev; Dev_all; Dev_hidden; Dev_playout ]
 
+let mcts_opt_list =
+  MCTS.(
+    dev_modes
+    $$- ([ Random; Roulette ]
+        $$ base_opt
+           *$- (((1, 1), No_opt)
+               :: ((1, 1), full_opt)
+               :: ([ (1, 2); (1, 4) ] $$ [ No_opt; base_opt; full_opt ]))
+           @ [ (full_opt, (1, 1), No_opt) ]))
+  |> List.filter (fun (d, _, (_, _, h)) -> is_valid_dev h d)
+
+let mcts_vanilla_list =
+  MCTS.(
+    dev_modes
+    $$- ([ Roulette; Random ]
+        $$ [ full_opt; base_opt; No_opt; divide_opt 1 2 base_opt ]))
+  |> List.filter (fun (d, _, h) -> is_valid_dev h d)
+
 let models =
   create_models max_time
     ~iter2opt_list:(max_int *$ [ Iterated_2Opt.Random; Roulette ])
-    ~mcts_opt_list:
-      MCTS.(
-        dev_modes
-        $$- ([ Random; Roulette ]
-            $$ base_opt
-               *$- (((1, 1), No_opt)
-                   :: ((1, 1), full_opt)
-                   :: ([ (1, 2); (1, 4) ] $$ [ No_opt; base_opt; full_opt ]))
-               @ [ (full_opt, (1, 1), No_opt) ]))
-    ~mcts_vanilla_list:
-      MCTS.(
-        dev_modes
-        $$- ([ Roulette; Random ]
-            $$ [ full_opt; base_opt; No_opt; divide_opt 1 2 base_opt ]))
+    ~mcts_opt_list ~mcts_vanilla_list
 
 let () = run_models ~sim_name configs models

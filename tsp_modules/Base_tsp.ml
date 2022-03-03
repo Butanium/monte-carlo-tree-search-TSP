@@ -75,7 +75,7 @@ let print_error_ratio ?(oc = stdout) ?(file_path = "tsp_instances") tour eval
     (100. *. float_of_int (len - best_len) /. float_of_int best_len);
   print_best_tour ~oc city_config
 
-let create_opt_file ?(file_name="best_tour") ~file_path tour =
+let create_opt_file ?(file_name = "best_tour") ~file_path tour =
   let start =
     Printf.sprintf
       "NAME : %s.opt.tour\nTYPE : TOUR\nDIMENSION : %d\nTOUR_SECTION\n"
@@ -91,3 +91,11 @@ let create_opt_file ?(file_name="best_tour") ~file_path tour =
       ~oc (Array.to_list tour)
   in
   ignore @@ File_log.log_string ~file "-1\nEOF" ~oc
+
+let set_tour_start (start : int) tour =
+  let index = Util.find_index tour start in
+  let copy = Array.copy tour in
+  if index <> 0 then
+    for i = 0 to Array.length copy - 1 do
+      tour.(i) <- copy.((index + i) mod Array.length copy)
+    done

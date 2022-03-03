@@ -11,3 +11,11 @@ let mapi_in_place f a =
   done
 
 let copy_in_place arr model = mapi_in_place (fun i _ -> model.(i)) arr
+
+let find_index arr el =
+  let rec aux i =
+    if i >= Array.length arr then raise Not_found
+    else if arr.(i) = el then i
+    else aux (i + 1)
+  in
+  aux 0
