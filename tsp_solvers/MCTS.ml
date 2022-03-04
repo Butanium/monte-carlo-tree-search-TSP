@@ -465,7 +465,7 @@ let rec forward_propagation node tour score =
     | None ->
         let new_node = create_node node next_city in
         add_child node new_node;
-        add_score node score;
+        add_score new_node score;
         forward_propagation new_node tour score
     | Some next_node ->
         add_score next_node score;
@@ -579,31 +579,39 @@ let reset_arg () =
   !arg.path_size <- 0;
   Util.map_in_place (fun _ -> false) !arg.visited
 
-let rec debug_mcts oc root =
+let debug_mcts oc root =
   (*
      [EN] Debug the tree from the root the the most promising leaf *)
-  Printf.fprintf oc "\n\nchosen : \n\n";
+  Printf.fprintf oc "\n\nRoot : \n\n";
   debug_node oc root;
-  Printf.fprintf oc "\nchildren : \n\n";
-  match root.info.children with
-  | [] -> ()
-  | l ->
-      List.iter (fun n ->
-          match n.heritage with
-          | Root -> ()
-          | Parent f ->
-              Printf.fprintf oc "conv : %.1f%%  |  "
-              @@ (100. *. n.info.visit /. f.info.visit);
-              debug_node oc n)
-      @@ List.sort (fun n1 n2 -> -compare n1.info.visit n2.info.visit) l;
-      let n, _ =
-        List.fold_left
-          (fun ((_, acc_s) as acc) n ->
-            let s = n.info.score /. n.info.visit in
-            if s < acc_s then (n, s) else acc)
-          (root, infinity) l
-      in
-      debug_mcts oc n
+  let rec aux node =
+    Printf.fprintf oc "\nChildren : \n\n";
+    match node.info.children with
+    | [] -> ()
+    | l ->
+        List.iter (fun n ->
+            match n.heritage with
+            | Root -> ()
+            | Parent f ->
+                Printf.fprintf oc "conv : %.1f%%  |  "
+                @@ (100. *. n.info.visit /. f.info.visit);
+                debug_node oc n)
+        @@ List.sort (fun n1 n2 -> -compare n1.info.visit n2.info.visit) l;
+        let n, _ =
+          List.fold_left
+            (fun ((_, acc_s) as acc) n ->
+              let s = n.info.score /. n.info.visit in
+              if s < acc_s then (n, s) else acc)
+            (node, infinity) l
+        in
+        (match l with
+        | [ _ ] -> ()
+        | _ ->
+            Printf.fprintf oc "\n\nChosen : \n\n";
+            debug_node oc n);
+        aux n
+  in
+  aux root
 
 let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     ?(debug_tree = false) ?(expected_length_mode = Average) ?(city_config = "")
