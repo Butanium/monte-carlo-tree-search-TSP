@@ -34,8 +34,8 @@ type model_result = {
 let is_valid_dev hidden_mode dev_mode = 
   let open MCTS in 
   match hidden_mode, dev_mode with
-  | No_opt, Dev_all -> false
-  | No_opt, Dev_hidden -> false
+  | No_opt, Dev_all _ -> false
+  | No_opt, Dev_hidden _ -> false
   | _ -> true
 
 let get_model_results (best_lengths : int list) model =

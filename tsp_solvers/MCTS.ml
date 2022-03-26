@@ -37,7 +37,11 @@ let str_of_selection_mode = function
   | Roulette -> "Roulette"
   | Random -> "Random"
 
-type develop_playout_mode = Dev_all | Dev_hidden | Dev_playout | No_dev
+type develop_playout_mode =
+  | Dev_all of int
+  | Dev_hidden of int
+  | Dev_playout of int
+  | No_dev
 (* [FR] Définie si les tours renvoyés par playout sont convertis en noeuds ou non :
       - Dev_all pour tous
       - Dev_hidden pour ceux optimisés secrètement
@@ -47,9 +51,9 @@ type develop_playout_mode = Dev_all | Dev_hidden | Dev_playout | No_dev
 *)
 
 let str_of_develop_mode = function
-  | Dev_all -> "Dev_all"
-  | Dev_hidden -> "Dev_hidden"
-  | Dev_playout -> "Dev_playout"
+  | Dev_all length -> Printf.sprintf "Dev_all_%d" length
+  | Dev_hidden length -> Printf.sprintf "Dev_hidden%d" length
+  | Dev_playout length -> Printf.sprintf "Dev_playout%d" length
   | No_dev -> "No_dev"
 
 type exploration_mode = Min_spanning_tree | Standard_deviation
@@ -274,7 +278,8 @@ let add_score node score =
   if score < node.info.best_score then node.info.best_score <- score;
   node.info.score <- node.info.score +. score
 
-let get_node_score_fun root exploration_mode expected_length_mode =
+let get_node_score_fun root exploration_mode expected_length_mode
+    exploration_constant_factor =
   (* [FR] Renvoie la fonction d'évaluation qui sera utilisée pendant la sélection
      [EN] Return the function which will return the score of a node during selection *)
   let c =
@@ -311,11 +316,12 @@ let get_node_score_fun root exploration_mode expected_length_mode =
   in
   fun node ->
     get_expected_length node
-    -. (2. *. c *. sqrt (2. *. log (get_parent_visit node) /. node.info.visit))
+    -. 2. *. c *. exploration_constant_factor
+       *. sqrt (2. *. log (get_parent_visit node) /. node.info.visit)
 
 let create_city_generator visited =
   (*
-     [EN] Create a function that will return the next non visited city everytime it's called *)
+     [EN] Create a function that will return the next non visited city every time it's called *)
   let i = ref 0 in
   let rec aux set () =
     let x = !i in
@@ -418,19 +424,24 @@ let playout last_city =
 
   (float playout_score, float hidden_score)
 
+(** [FR] Actualise le nombre de visites et le score total sur les noeuds
+    [EN] Update the node visited during the exploration according to the playout score 
+    @param node the current node to be updated
+    @param score the score to add to the node
+    @param hidden_score the hidden score to add to the node
+    @param max_depth the depth of the children the propagation come from *)
 let rec backpropagation node score hidden_score max_depth =
-  (* [FR] Actualise le nombre de visite et le score total sur les noeuds
-     [EN] Update the node visited during the exploration according to the playout score *)
   add_score node score;
   if hidden_score < node.info.best_hidden_score then
     node.info.best_hidden_score <- hidden_score;
-  node.info.max_child_depth <- max_depth;
+  if node.info.max_child_depth < max_depth then
+    node.info.max_child_depth <- max_depth;
   match node.heritage with
   | Root -> ()
   | Parent parent -> backpropagation parent score hidden_score max_depth
 
-(** 
-[EN] get the next city to expand *)
+(** [FR] sélectionne le noeud à développer
+    [EN] get the next city to expand *)
 let get_next_city node =
   Util.copy_in_place !get_next_city_arr !arg.visited;
   List.iter
@@ -447,16 +458,16 @@ let get_next_city node =
   update_weights !creation_queue node.info.city;
   RndQ.take !creation_queue
 
+(** [FR] créer un nouveau fils au noeud parent
+    [EN] add `child` to the `parent`'s children *)
 let add_child parent child =
-  (* [FR] créer un nouveau fils au noeud parent
-     [EN] add `child` to the `parent`'s children *)
   parent.info.children <- child :: parent.info.children;
   parent.info.developed <- parent.info.developed + 1
 
-let rec forward_propagation node tour score =
-  (* [FR] créer les noeuds associé au tour ou les actualise
-     [EN] create the nodes of a tour or refresh them *)
-  if node.info.depth <> !arg.city_count then (
+(** [FR] créer les noeuds associé au tour ou les actualise
+    [EN] create the nodes of a tour or refresh them *)
+let rec forward_propagation node tour score length =
+  if node.info.depth <> !arg.city_count && length >= 0 then (
     assert (node.info.city = tour.(node.info.depth - 1));
     let next_city = tour.(node.info.depth) in
     match
@@ -466,21 +477,20 @@ let rec forward_propagation node tour score =
         let new_node = create_node node next_city in
         add_child node new_node;
         add_score new_node score;
-        forward_propagation new_node tour score
+        forward_propagation new_node tour score (length - 1)
     | Some next_node ->
         add_score next_node score;
-        forward_propagation next_node tour score)
+        forward_propagation next_node tour score (length - 1))
 
+(** [FR] convertis le ou les tours en noeuds en fonction de la valeur de `develop_playout_mode`
+    [EN] convert the tour into nodes depending on `develop_playout_mode` *)
 let convert_tours ~hidden_score ~playout_score node =
-  (* [FR] convertis le ou les tours en fonction de la valeur de `develop_playout_mode`
-     [EN] todo
-  *)
-  let dev_hidden () =
+  let dev_hidden =
     let root = Option.get !arg.root in
     add_score root hidden_score;
     forward_propagation root !r_hidden_tour hidden_score
   in
-  let dev_playout () = forward_propagation node !r_playout_tour playout_score in
+  let dev_playout = forward_propagation node !r_playout_tour playout_score in
   let error () =
     raise
     @@ Invalid_argument
@@ -488,14 +498,14 @@ let convert_tours ~hidden_score ~playout_score node =
   in
   match !arg.develop_playout_mode with
   | No_dev -> ()
-  | Dev_all ->
+  | Dev_all extra_length ->
       if deb.hidden_opt = No_opt then error ();
-      dev_playout ();
-      dev_hidden ()
-  | Dev_hidden ->
+      dev_playout extra_length;
+      dev_hidden (extra_length + node.info.depth)
+  | Dev_hidden extra_length ->
       if deb.hidden_opt = No_opt then error ();
-      dev_hidden ()
-  | Dev_playout -> dev_playout ()
+      dev_hidden (extra_length + node.info.depth)
+  | Dev_playout length -> dev_playout length
 
 let expand node =
   (* [FR] Développe l'arbre en créant un nouveau noeud relié à 'node'
@@ -570,7 +580,7 @@ let rec selection node =
     with Invalid_argument e ->
       raise
       @@ Invalid_argument
-           (e ^ " at expansion of " ^ get_node_info node ^ "develped : "
+           (e ^ " at expansion of " ^ get_node_info node ^ "developed : "
            ^ string_of_int node.info.developed)
 
 let reset_arg () =
@@ -619,8 +629,9 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     ?(exploration_mode = Standard_deviation) ?(optimization_mode = No_opt)
     ?(stop_on_leaf = true) ?(optimize_end_path = true) ?(verbose = 1)
     ?(hidden_opt = No_opt) ?(optimize_end_path_time = infinity) ?(name = "")
-    ?(develop_playout_mode = No_dev) ?(catch_SIGINT = true) ?seed city_count
-    adj_matrix max_time max_playout =
+    ?(develop_playout_mode = No_dev) ?(catch_SIGINT = true)
+    ?(exploration_constant_factor = 1.) ?seed city_count adj_matrix max_time
+    max_playout =
   (* [FR] Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout
      [EN] Create and develop the tree, keeping in memory the best tour done during the playouts *)
   let user_interrupt = ref false in
@@ -695,6 +706,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     if !arg.playout_count = city_count - 1 then
       !arg.get_node_score <-
         get_node_score_fun root exploration_mode expected_length_mode
+          exploration_constant_factor
   done;
   let debug_string = ref "" in
   let add_debug s = debug_string := !debug_string ^ s in

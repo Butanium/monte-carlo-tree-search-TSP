@@ -23,7 +23,7 @@ let base_opt =
 
 let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int }
 
-let dev_modes = MCTS.[ No_dev; Dev_all; Dev_hidden; Dev_playout ]
+let dev_modes = MCTS.[ No_dev; Dev_all 5; Dev_hidden 5; Dev_playout 5 ]
 
 (* let models =
    All_tests_MCTS.create_models 2.
@@ -37,7 +37,7 @@ let dev_modes = MCTS.[ No_dev; Dev_all; Dev_hidden; Dev_playout ]
 
 let models =
   create_models max_time
-    ~mcts_opt_list:MCTS.[ (Dev_all, Random, (base_opt, (1, 1), full_opt)) ]
+    ~mcts_opt_list:MCTS.[ (Dev_all 5, Random, (base_opt, (1, 1), full_opt)) ]
 
 (* let models =
    create_models max_time
