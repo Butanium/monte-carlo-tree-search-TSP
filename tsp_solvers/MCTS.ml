@@ -468,7 +468,10 @@ let add_child parent child =
     [EN] create the nodes of a tour or refresh them *)
 let rec forward_propagation node tour score length =
   if node.info.depth <> !arg.city_count && length >= 0 then (
-    assert (node.info.city = tour.(node.info.depth - 1));
+    (if not (node.info.city = tour.(node.info.depth - 1)) then
+     let exception T of (int array * int * int) in
+     raise
+     @@ T (Array.sub tour 0 node.info.depth, node.info.city, node.info.depth));
     let next_city = tour.(node.info.depth) in
     match
       List.find_opt (fun x -> x.info.city = next_city) node.info.children
