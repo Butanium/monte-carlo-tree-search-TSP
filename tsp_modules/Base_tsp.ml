@@ -34,6 +34,13 @@ let best_tour_length ?(file_path = "tsp_instances") config eval =
   let tour = Reader_tsp.open_tour ~file_path config in
   tour_length eval tour
 
+let string_of_tour tour =
+  let s = Printf.sprintf "[%d] " tour.(0) |> ref in
+  for i = 0 to Array.length tour - 2 do
+    s := !s ^ Printf.sprintf "-> %d " tour.(i)
+  done;
+  !s ^ Printf.sprintf "-> %d" tour.(Array.length tour - 1)
+  
 let print_tour ?(oc = stdout) tour =
   Array.iteri
     (fun i v ->
