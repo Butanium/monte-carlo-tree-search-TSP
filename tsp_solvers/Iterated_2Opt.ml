@@ -2,7 +2,7 @@ open Two_Opt
 
 type random_creation = Roulette | Random
 
-let string_of_random_mode = function
+let string_of_random_policy = function
   | Random -> "Random"
   | Roulette -> "Roulette"
 
@@ -10,17 +10,17 @@ let weight_update adj last q = function
   | Random -> ()
   | Roulette -> RndQ.roulette_weights adj last q
 
-let randomize_tour q adj mode tour_arr =
+let randomize_tour q adj policy tour_arr =
   for i = 0 to Array.length tour_arr - 1 do
     let v = RndQ.take q in
-    weight_update adj v q mode;
+    weight_update adj v q policy;
     tour_arr.(i) <- v
   done
 
 (* type debug = {mutable } *)
 
 let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
-    ?(check_time = 10) adj_matrix city_count rnd_mode max_time max_try =
+    ?(check_time = 10) adj_matrix city_count rnd_policy max_time max_try =
   let seed =
     match seed with
     | None ->
@@ -49,7 +49,7 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
            else true)
        || get_time () < max_time)
   do
-    randomize_tour queue adj_matrix rnd_mode tour_arr;
+    randomize_tour queue adj_matrix rnd_policy tour_arr;
     let max_time =
       if max_time = infinity then infinity else max_time -. get_time ()
     in

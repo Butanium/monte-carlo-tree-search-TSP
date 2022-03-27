@@ -17,13 +17,13 @@ let max_time = 180.
 
 let max_playout = 100000000
 
-let playout_selection_mode = MCTS.Roulette
+let playout_selection_policy = MCTS.Roulette
 
-let exploration_mode = MCTS.Min_spanning_tree
+let exploration_policy = MCTS.Min_spanning_tree
 
 let (tour, length), (opt_path, opt_length), root =
   MCTS.proceed_mcts ~debug_tree ~generate_log_file ~city_config
-    ~playout_selection_mode ~exploration_mode city_count adj_matrix max_time
+    ~playout_selection_policy ~exploration_policy city_count adj_matrix max_time
     max_playout
 
 let () =

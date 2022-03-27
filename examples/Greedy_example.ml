@@ -10,10 +10,10 @@ let max_time = 1800.
 
 let max_try = max_int
 
-let random_mode = Greedy_Random.Roulette
+let random_policy = Greedy_Random.Roulette
 
 let tour =
-  Greedy_Random.greedy adj_matrix city_count random_mode max_time max_try
+  Greedy_Random.greedy adj_matrix city_count random_policy max_time max_try
 
 let () =
   Show_tsp.show_solution_and_wait cities tour;

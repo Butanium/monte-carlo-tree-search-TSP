@@ -9,7 +9,7 @@ let amount = 128
 
 let max_time = 1.
 
-let sim_name = Printf.sprintf "Full-TSP%d-experiment" test_set
+let sim_name = Printf.sprintf "GarbageFull-TSP%d-experiment" test_set
 
 let configs =
   let rec aux i =

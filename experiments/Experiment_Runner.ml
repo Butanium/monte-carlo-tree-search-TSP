@@ -31,9 +31,9 @@ type model_result = {
   opt_max_dev : float;
 }
 
-let is_valid_dev hidden_mode dev_mode = 
+let is_valid_dev hidden_policy dev_policy = 
   let open MCTS in 
-  match hidden_mode, dev_mode with
+  match hidden_policy, dev_policy with
   | No_opt, Dev_all _ -> false
   | No_opt, Dev_hidden _ -> false
   | _ -> true
@@ -87,7 +87,7 @@ let get_model_results (best_lengths : int list) model =
     opt_min_dev;
   }
 
-type named_opt = { opt : MCTS.optimization_mode; name : string }
+type named_opt = { opt : MCTS.optimization_policy; name : string }
 
 let init_model solver =
   { solver; experiment_count = 0; lengths = []; opted_lengths = [] }
@@ -139,58 +139,58 @@ let opt_of_tuple (opt, (total_factor, length_factor)) =
 let def_opt = create_mcts_opt 1 1
 
 (** Create model record which will be run by the Solver_Runner module *)
-let create_models ?(exploration_mode = MCTS.Standard_deviation)
+let create_models ?(exploration_policy = MCTS.Standard_deviation)
     ?(mcts_vanilla_list = []) ?(mcts_opt_list = []) ?(iter2opt_list = [])
     max_time =
-  let suffix hidden_opt dev_mode =
+  let suffix hidden_opt dev_policy =
     (if hidden_opt = MCTS.No_opt then ""
     else
       Printf.sprintf "-hidden_%s"
-      @@ MCTS.str_of_optimization_mode_short hidden_opt)
+      @@ MCTS.str_of_optimization_policy_short hidden_opt)
     ^
-    if dev_mode = MCTS.No_dev then ""
-    else "-" ^ MCTS.str_of_develop_mode dev_mode
+    if dev_policy = MCTS.No_dev then ""
+    else "-" ^ MCTS.str_of_develop_policy dev_policy
   in
-  let create_opt_mcts (dev_mode,selection_mode, (opt, t, hidden_opt)) =
+  let create_opt_mcts (dev_policy,selection_policy, (opt, t, hidden_opt)) =
     let { opt; name } = opt_of_tuple (opt, t) in
     MCTS
       {
         name =
           Printf.sprintf "MCTS-%s-%s%s" name
-            (MCTS.str_of_selection_mode selection_mode)
-          @@ suffix hidden_opt dev_mode;
+            (MCTS.str_of_selection_policy selection_policy)
+          @@ suffix hidden_opt dev_policy;
         max_time;
-        exploration_mode;
-        optimization_mode = opt;
-        selection_mode;
+        exploration_policy;
+        optimization_policy = opt;
+        selection_policy;
         hidden_opt;
-        dev_mode;
+        dev_policy;
       }
   in
-  let create_vanilla_mcts (dev_mode, selection_mode, hidden_opt) =
+  let create_vanilla_mcts (dev_policy, selection_policy, hidden_opt) =
     MCTS
       {
         name =
           Printf.sprintf "MCTS-Vanilla-%s%s"
-            (MCTS.str_of_selection_mode selection_mode)
-          @@ suffix hidden_opt dev_mode;
+            (MCTS.str_of_selection_policy selection_policy)
+          @@ suffix hidden_opt dev_policy;
         max_time;
-        exploration_mode;
-        optimization_mode = No_opt;
-        selection_mode = Random;
+        exploration_policy;
+        optimization_policy = No_opt;
+        selection_policy = Random;
         hidden_opt;
-        dev_mode;
+        dev_policy;
       }
   in
-  let create_iterated_opt (max_iter, random_mode) =
+  let create_iterated_opt (max_iter, random_policy) =
     Iter
       {
         max_iter;
         max_time;
-        random_mode;
+        random_policy;
         name =
           Printf.sprintf "Iterated2Opt-%s%s"
-            (Iterated_2Opt.string_of_random_mode random_mode)
+            (Iterated_2Opt.string_of_random_policy random_policy)
             (if max_iter = max_iter then ""
             else Printf.sprintf "-%diters" max_iter);
       }

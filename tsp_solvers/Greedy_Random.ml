@@ -2,13 +2,13 @@ module RndQ = Random_Queue
 
 type random_creation = Roulette | Random
 
-let string_of_rnd_mode = function Random -> "Random" | Roulette -> "Roulette"
+let string_of_rnd_policy = function Random -> "Random" | Roulette -> "Roulette"
 
 let weight_update eval last q = function
   | Random -> ()
   | Roulette -> RndQ.roulette_weights eval last q
 
-let greedy ?(generate_log_file = true) adj_matrix city_count rnd_mode max_time
+let greedy ?(generate_log_file = true) adj_matrix city_count rnd_policy max_time
     max_try =
   let best_scores_hist = ref [] in
   let scores_hist = ref [] in
@@ -27,7 +27,7 @@ let greedy ?(generate_log_file = true) adj_matrix city_count rnd_mode max_time
     RndQ.reset queue;
     incr try_count;
     for i = 1 to city_count - 1 do
-      weight_update adj_matrix tour.(i - 1) queue rnd_mode;
+      weight_update adj_matrix tour.(i - 1) queue rnd_policy;
       tour.(i) <- RndQ.take queue
     done;
     let length = get_tour_length tour in
@@ -44,7 +44,7 @@ let greedy ?(generate_log_file = true) adj_matrix city_count rnd_mode max_time
   (if generate_log_file then
    let suffix =
      Printf.sprintf "-Greedy_%s-%.0f_s-%d_tries"
-       (string_of_rnd_mode rnd_mode)
+       (string_of_rnd_policy rnd_policy)
        (get_time ()) !try_count
    in
    let file_path, file_name = ("logs/score_logs", "all_scores" ^ suffix) in

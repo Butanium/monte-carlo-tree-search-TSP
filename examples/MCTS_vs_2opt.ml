@@ -17,7 +17,7 @@ let two_path, ((mcts_path, _), _, _) =
   in
   ( two_opt,
     MCTS.proceed_mcts
-      ~optimization_mode:
+      ~optimization_policy:
         (MCTS.Two_opt { max_length = 400; max_iter = 400; max_time = 1. })
       city_count adj_matrix
       (Unix.gettimeofday () -. t)

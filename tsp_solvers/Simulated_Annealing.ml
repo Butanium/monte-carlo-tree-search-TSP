@@ -1,4 +1,4 @@
-type random_change_mode = Swap | Insert | Invert
+type random_change_policy = Swap | Insert | Invert
 
 type argument = {
   mutable problem_size : float;
@@ -58,7 +58,7 @@ let get_randomize_fun mode () =
       arg.solution.(arg.j) <- m
   | _ -> failwith "not implemented yet"
 
-let start_sa city_count eval init_T final_T iter_count cooling_ratio rnd_mode =
+let start_sa city_count eval init_T final_T iter_count cooling_ratio rnd_policy =
   let q =
     Random_Queue.simple_create city_count @@ Array.init city_count Fun.id
   in
@@ -66,8 +66,8 @@ let start_sa city_count eval init_T final_T iter_count cooling_ratio rnd_mode =
   arg.problem_size <- float_of_int @@ (city_count - 1);
   arg.eval <- eval;
   arg.city_count <- city_count;
-  let randomize = get_randomize_fun rnd_mode in
-  let delta = get_delta_fun rnd_mode in
+  let randomize = get_randomize_fun rnd_policy in
+  let delta = get_delta_fun rnd_policy in
   let rec aux temp =
     if temp <= final_T then arg.solution
     else (
