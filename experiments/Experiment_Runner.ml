@@ -1,15 +1,5 @@
 open Solver_Runner
 
-let to_triple (a, (b, c)) = (a, b, c)
-
-let ( $$ ) = Base.List.cartesian_product
-
-let ( *$ ) a b = Base.List.cartesian_product [ a ] b
-
-let ( *$- ) a b = List.map to_triple (a *$ b)
-
-let ( $$- ) a b = List.map to_triple (a $$ b)
-
 type model_experiment = {
   solver : solver;
   mutable experiment_count : int;
@@ -31,12 +21,7 @@ type model_result = {
   opt_max_dev : float;
 }
 
-let is_valid_dev hidden_policy dev_policy = 
-  let open MCTS in 
-  match hidden_policy, dev_policy with
-  | No_opt, Dev_all _ -> false
-  | No_opt, Dev_hidden _ -> false
-  | _ -> true
+
 
 let get_model_results (best_lengths : int list) model =
   let n = float model.experiment_count in

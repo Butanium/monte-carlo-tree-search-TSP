@@ -1,4 +1,4 @@
 (library
-  (name simulations)
-  (modules Solver_Runner Experiment_Runner)
+  (name experiments)
+  (modules Solver_Runner Experiment_Runner Experiment)
   (libraries tsp_modules tsp_solvers tools base))
