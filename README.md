@@ -1,6 +1,6 @@
 # Monte Carlo Tree Search for TSP
 
-In this repo, I made different heuristic solutions for the TSP written in OCaml. My main goal is to study the effectiveness of the Monte Carlo Tree Search to solve the TSP.
+In this repo, I made different heuristic solutions for the TSP written in OCaml. My main goal is to study the effectiveness of the Monte Carlo Tree Search to solve the TSP. I'm not using any neural network in this project.
 
 ## Available heuristics
 
@@ -34,6 +34,6 @@ configuration used in most of the papers related to TSP
 - [World](http://www.math.uwaterloo.ca/tsp/world/countries.html) a set of tsp instances based on the location of real world countries
 - [Hard TSP instances](http://www.or.uni-bonn.de/~hougardy/HardTSPInstances.html) a set of instances which are designed to be very hard to solve for exact solvers as concorde
 
-## How can I ask my questions or look for help ?
+## Where can I ask my questions or look for help ?
 
 You can open an issue in this repo, contact me by email or join [my discord server](https://discord.com/invite/DWRJxA5yHB)
