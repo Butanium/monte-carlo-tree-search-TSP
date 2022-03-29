@@ -21,8 +21,6 @@ type model_result = {
   opt_max_dev : float;
 }
 
-
-
 let get_model_results (best_lengths : int list) model =
   let n = float model.experiment_count in
   let exp_count = List.length best_lengths in
@@ -136,7 +134,7 @@ let create_models ?(exploration_policy = MCTS.Standard_deviation)
     if dev_policy = MCTS.No_dev then ""
     else "-" ^ MCTS.str_of_develop_policy dev_policy
   in
-  let create_opt_mcts (dev_policy,selection_policy, (opt, t, hidden_opt)) =
+  let create_opt_mcts (dev_policy, selection_policy, (opt, t, hidden_opt)) =
     let { opt; name } = opt_of_tuple (opt, t) in
     MCTS
       {
@@ -167,24 +165,30 @@ let create_models ?(exploration_policy = MCTS.Standard_deviation)
         dev_policy;
       }
   in
-  let create_iterated_opt (max_iter, random_policy) =
+  let create_iterated_opt ?name (max_iter, random_policy) =
     Iter
       {
         max_iter;
         max_time;
         random_policy;
         name =
-          Printf.sprintf "Iterated2Opt-%s%s"
-            (Iterated_2Opt.string_of_random_policy random_policy)
-            (if max_iter = max_iter then ""
-            else Printf.sprintf "-%diters" max_iter);
+          (match name with
+          | Some n -> n
+          | None ->
+              Printf.sprintf "Iterated2Opt-%s%s"
+                (Iterated_2Opt.string_of_random_policy random_policy)
+                (if max_iter = max_iter then ""
+                else Printf.sprintf "-%diters" max_iter));
       }
   in
+  let iter1Random = create_iterated_opt (1, Random) ~name:"1Random2Opt" in
+  let iter1Roulette = create_iterated_opt (1, Roulette) ~name:"1Roulette2Opt" in
   List.map init_model
-    (List.map create_opt_mcts mcts_opt_list
+    ((iter1Random :: iter1Roulette :: List.map create_opt_mcts mcts_opt_list)
     @ List.map create_vanilla_mcts mcts_vanilla_list
     @ List.map create_iterated_opt iter2opt_list)
 
+(** Run the different models and collect their results *)
 let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
     configs models =
   let exception Break of int list in
