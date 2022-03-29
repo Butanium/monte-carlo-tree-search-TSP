@@ -277,9 +277,8 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                         last_debug := Unix.gettimeofday ());
                       let length, opt_length =
                         solver_simulation config city_count adj log_files_path
-                          model.solver
-                          ~verbose:(verbose - 1)
-                          ~generate_log_file:(- min 1 i)
+                          model.solver ~verbose:(verbose - 1)
+                          ~generate_log_file:(-min 1 i)
                           ?seed
                       in
                       model.experiment_count <- model.experiment_count + 1;
@@ -288,8 +287,9 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                       if !update_csv then (
                         update_csv := false;
                         update_log_file best_lengths;
-                        Printf.printf "csv updated, check it at %s%s\n%!"
-                          logs.file_path logs.file_name);
+                        Printf.printf
+                          "csv updated for experiment %s, check it at %s%s\n%!"
+                          sim_name logs.file_path logs.file_name);
                       if !stop_experiment then raise @@ Break best_lengths)
              done;
              best_lengths)
@@ -298,6 +298,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
   in
   update_log_file best_lengths;
   Printf.printf
-    "\n\nExperiment ended in %g seconds\nResult file available at : %s%s\n"
+    "\n\nExperiment %s ended in %g seconds\nResult file available at : %s%s\n"
+    sim_name
     (Unix.gettimeofday () -. start_time)
     logs.file_path logs.file_name
