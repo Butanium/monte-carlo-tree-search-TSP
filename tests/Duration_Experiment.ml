@@ -1,10 +1,10 @@
 (* let durations = [ 0.01; 0.05; 0.1; 0.25; 0.5; 1.; 2. ] *)
-let durations = [ 0.01; 0.05 ]
+let durations = [ 0.01; 0.05 ; 0.1 ; 0.5 ; 1. ; 2. ; 10. ; 60. ]
 (* let linux_duration = List.map (fun x -> x *. 60.) durations *)
 
 let () =
   (* let durations = if Sys.os_type == "Unix" then linux_duration else durations in *)
   List.iter
     (fun max_time ->
-      Experiments.Experiment.experiment_all ~max_time ~amount:50 ~test_set:50 ())
+      Experiments.Experiment.experiment_all ~max_time ~amount:128 ~test_set:100 ~try_per_config:5 ())
     durations

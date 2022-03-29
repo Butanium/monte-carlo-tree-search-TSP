@@ -190,7 +190,7 @@ let create_models ?(exploration_policy = MCTS.Standard_deviation)
 
 (** Run the different models and collect their results *)
 let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
-    configs models =
+    ?(try_per_config = 1) configs models =
   let exception Break of int list in
   let update_csv = ref false in
   if Sys.os_type <> "Win32" then
@@ -254,40 +254,46 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
     (Scanf.sscanf log_files_path "logs/%s" Fun.id);
   let best_lengths =
     try
-      List.fold_left
-        (fun best_lengths (file_path, config) ->
-          let city_count, cities = Reader_tsp.open_tsp ~file_path config in
-          let adj = Base_tsp.get_adj_matrix cities in
-          let best_lengths =
-            Base_tsp.best_tour_length ~file_path config adj :: best_lengths
-          in
-          List.iter
-            (fun model ->
-              let diff = Unix.gettimeofday () -. !last_debug in
-              if diff > 3600. then (
-                debug_count := !debug_count + (int_of_float diff / 3600);
-                update_log_file best_lengths;
-                if verbose > 0 then
-                  Printf.printf
-                    "currently testing %s, has been running for %d hours\n%!"
-                    config !debug_count;
-                last_debug := Unix.gettimeofday ());
-              let length, opt_length =
-                solver_simulation config city_count adj log_files_path
-                  model.solver ~verbose:(verbose - 1) ?seed
-              in
-              model.experiment_count <- model.experiment_count + 1;
-              model.lengths <- length :: model.lengths;
-              model.opted_lengths <- opt_length :: model.opted_lengths;
-              if !update_csv then (
-                update_csv := false;
-                update_log_file best_lengths;
-                Printf.printf "csv updated, check it at %s%s\n%!" logs.file_path
-                  logs.file_name);
-              if !stop_experiment then raise @@ Break best_lengths)
-            models;
-          best_lengths)
-        [] configs
+      configs
+      |> List.fold_left
+           (fun best_lengths (file_path, config) ->
+             let city_count, cities = Reader_tsp.open_tsp ~file_path config in
+             let adj = Base_tsp.get_adj_matrix cities in
+             let best_lengths =
+               Base_tsp.best_tour_length ~file_path config adj :: best_lengths
+             in
+             for i = 1 to try_per_config do
+               models
+               |> List.iter (fun model ->
+                      let diff = Unix.gettimeofday () -. !last_debug in
+                      if diff > 3600. then (
+                        debug_count := !debug_count + (int_of_float diff / 3600);
+                        update_log_file best_lengths;
+                        if verbose > 0 then
+                          Printf.printf
+                            "currently testing %s, has been running for %d hours\n\
+                             %!"
+                            config !debug_count;
+                        last_debug := Unix.gettimeofday ());
+                      let length, opt_length =
+                        solver_simulation config city_count adj log_files_path
+                          model.solver
+                          ~verbose:(verbose - 1)
+                          ~generate_log_file:(- min 1 i)
+                          ?seed
+                      in
+                      model.experiment_count <- model.experiment_count + 1;
+                      model.lengths <- length :: model.lengths;
+                      model.opted_lengths <- opt_length :: model.opted_lengths;
+                      if !update_csv then (
+                        update_csv := false;
+                        update_log_file best_lengths;
+                        Printf.printf "csv updated, check it at %s%s\n%!"
+                          logs.file_path logs.file_name);
+                      if !stop_experiment then raise @@ Break best_lengths)
+             done;
+             best_lengths)
+           []
     with Break best_lengths -> best_lengths
   in
   update_log_file best_lengths;

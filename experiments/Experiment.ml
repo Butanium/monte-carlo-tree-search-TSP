@@ -55,7 +55,7 @@ let models max_time =
     ~mcts_opt_list ~mcts_vanilla_list
 
 let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
-    ?(max_time = default_time) () =
+    ?(max_time = default_time) ?(try_per_config=1) () =
   let configs =
     let rec aux i =
       if i > amount then []
@@ -69,4 +69,4 @@ let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
     | None -> Printf.sprintf "Full-TSP%d-experiment-%.3gs" test_set max_time
     | Some s -> s
   in
-  Experiment_Runner.run_models ~sim_name configs (models max_time)
+  Experiment_Runner.run_models ~sim_name configs (models max_time) ~try_per_config
