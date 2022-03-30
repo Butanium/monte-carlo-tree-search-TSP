@@ -21,25 +21,21 @@ type model_result = {
   opt_max_dev : float;
 }
 
-let get_model_results (best_lengths : int list) model =
+let get_model_results (best_lengths : int list) model exp_per_config =
   let n = float model.experiment_count in
-  let exp_count = List.length best_lengths in
   let mean_list list = List.fold_left ( +. ) 0. list /. n in
   let get_deviations lengths =
-    try
-      List.map2
-        (fun len opt_len -> float (len - opt_len) /. float opt_len)
-        lengths
-        (if exp_count = model.experiment_count then best_lengths
-        else List.tl best_lengths)
-    with Invalid_argument e | Failure e ->
-      raise
-      @@ Invalid_argument
-           (Printf.sprintf
-              "error : %s, size of lenghts : %d, size of best_lengths : %d, \
-               experiment count : %d"
-              e (List.length lengths) exp_count model.experiment_count)
+    let rec aux exp_i best_lengths lengths acc =
+      match (best_lengths, lengths) with
+      | bl :: bls, l :: ls ->
+          if exp_i = exp_per_config then aux 1 bls lengths acc
+          else
+            aux (exp_i + 1) best_lengths ls ((float (l - bl) /. float bl) :: acc)
+      | _ -> acc
+    in
+    aux 1 best_lengths lengths []
   in
+
   let deviations = get_deviations model.lengths in
   let opt_deviations = get_deviations model.opted_lengths in
   let deviation = mean_list deviations in
@@ -190,7 +186,7 @@ let create_models ?(exploration_policy = MCTS.Standard_deviation)
 
 (** Run the different models and collect their results *)
 let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
-    ?(try_per_config = 1) configs models =
+    ?(exp_per_config = 1) configs models =
   let exception Break of int list in
   let update_csv = ref false in
   if Sys.os_type <> "Win32" then
@@ -229,7 +225,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
       (List.filter_map
          (fun model ->
            if model.experiment_count = 0 then None
-           else Some (get_model_results best_lengths model))
+           else Some (get_model_results best_lengths model exp_per_config))
          models
       |> List.sort (fun a b -> compare a.opt_deviation b.opt_deviation)
       |> File_log.log_data
@@ -262,7 +258,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
              let best_lengths =
                Base_tsp.best_tour_length ~file_path config adj :: best_lengths
              in
-             for i = 1 to try_per_config do
+             for i = 1 to exp_per_config do
                models
                |> List.iter (fun model ->
                       let diff = Unix.gettimeofday () -. !last_debug in
