@@ -44,7 +44,9 @@ let solver_simulation ?(generate_log_file = 1) ?(verbose = 0) ?seed city_config
       let tour =
         Iterated_2Opt.iter_two_opt eval city_count solver.random_policy
           solver.max_time solver.max_iter ~name:solver.name ~city_config
-          ~logs_path:log_files_path ~verbose:(verbose > 0) ?seed
+          ?logs_path:
+            (if generate_log_file < 0 then None else Some log_files_path)
+          ~verbose:(verbose > 0) ?seed
       in
       let score = Base_tsp.tour_length eval tour in
       (score, score)

@@ -273,7 +273,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                       let length, opt_length =
                         solver_simulation config city_count adj log_files_path
                           model.solver ~verbose:(verbose - 1)
-                          ~generate_log_file:(-min 1 i)
+                          ~generate_log_file:(1 - min 1 i)
                           ?seed
                       in
                       model.experiment_count <- model.experiment_count + 1;
