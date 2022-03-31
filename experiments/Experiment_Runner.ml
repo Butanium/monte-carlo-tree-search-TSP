@@ -119,7 +119,7 @@ let def_opt = create_mcts_opt 1 1
 (** Create model record which will be run by the Solver_Runner module *)
 let create_models ?(exploration_policy = MCTS.Standard_deviation)
     ?(mcts_vanilla_list = []) ?(mcts_opt_list = []) ?(iter2opt_list = [])
-    max_time =
+    ?(greedy_list = []) max_time =
   let suffix hidden_opt dev_policy =
     (if hidden_opt = MCTS.No_opt then ""
     else
@@ -176,12 +176,29 @@ let create_models ?(exploration_policy = MCTS.Standard_deviation)
                 else Printf.sprintf "-%diters" max_iter));
       }
   in
+  let create_greedy ?name (max_iter, random_policy) =
+    Greedy
+      {
+        max_iter;
+        max_time;
+        random_policy;
+        name =
+          (match name with
+          | Some n -> n
+          | None ->
+              Printf.sprintf "Greedy-%s%s"
+                (Greedy_Random.string_of_random_policy random_policy)
+                (if max_iter = max_iter then ""
+                else Printf.sprintf "-%diters" max_iter));
+      }
+  in
   let iter1Random = create_iterated_opt (1, Random) ~name:"1Random2Opt" in
   let iter1Roulette = create_iterated_opt (1, Roulette) ~name:"1Roulette2Opt" in
   List.map init_model
     ((iter1Random :: iter1Roulette :: List.map create_opt_mcts mcts_opt_list)
     @ List.map create_vanilla_mcts mcts_vanilla_list
-    @ List.map create_iterated_opt iter2opt_list)
+    @ List.map create_iterated_opt iter2opt_list
+    @ List.map create_greedy greedy_list)
 
 (** Run the different models and collect their results *)
 let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
@@ -207,9 +224,9 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
   let start_time = Unix.gettimeofday () in
   let last_debug = ref start_time in
   let debug_count = ref 0 in
-  let tour = Printf.sprintf "logs/%s" sim_name in
+  let file_path = Printf.sprintf "logs/%s" sim_name in
   let log_files_path =
-    if mk_new_log_dir then File_log.create_log_dir tour else tour
+    if mk_new_log_dir then File_log.create_log_dir file_path else file_path
   in
   let file_name = "all_mcts_tests-" ^ sim_name in
   let logs = File_log.create_file ~file_path:log_files_path ~file_name () in
