@@ -28,14 +28,13 @@ let get_model_results (best_lengths : int list) model exp_per_config =
     let rec aux exp_i best_lengths lengths acc =
       match (best_lengths, lengths) with
       | bl :: bls, l :: ls ->
-          if exp_i = exp_per_config then aux 1 bls lengths acc
+          if exp_i = exp_per_config then aux 0 bls lengths acc
           else
             aux (exp_i + 1) best_lengths ls ((float (l - bl) /. float bl) :: acc)
       | _ -> acc
     in
-    aux 1 best_lengths lengths []
+    aux 0 best_lengths lengths []
   in
-
   let deviations = get_deviations model.lengths in
   let opt_deviations = get_deviations model.opted_lengths in
   let deviation = mean_list deviations in
