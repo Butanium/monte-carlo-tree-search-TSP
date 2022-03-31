@@ -3,6 +3,7 @@ module Optimizer_2opt = Two_Opt
 
 type node_info = {
   mutable visit : float;
+  mutable dev_visit : int;
   mutable score : float;
   mutable best_score : float;
   mutable best_hidden_score : float;
@@ -211,11 +212,11 @@ let reset_deb log_file hidden_opt =
 
 let get_node_info node =
   Printf.sprintf
-    "city : [%d], active : %b, visits : %.0f, best hidden score : %.0f, best \
-     score : %.0f, average score : %.0f, depth : %d, max child depth : %d not \
-     developed : %d\n"
-    node.info.city node.info.active node.info.visit node.info.best_hidden_score
-    node.info.best_score
+    "city : [%d], active : %b, dev visits/visits : %d/%.0f, best hidden score \
+     : %.0f, best score : %.0f, average score : %.0f, depth : %d, max child \
+     depth : %d not developed : %d\n"
+    node.info.city node.info.active node.info.dev_visit node.info.visit
+    node.info.best_hidden_score node.info.best_score
     (node.info.score /. node.info.visit)
     node.info.depth node.info.max_child_depth
     (!arg.city_count - node.info.depth - node.info.developed)
@@ -270,6 +271,7 @@ let create_node parent city =
   let info =
     {
       visit = 0.;
+      dev_visit = 0;
       score = 0.;
       best_score = infinity;
       best_hidden_score = infinity;
@@ -505,9 +507,11 @@ let rec forward_propagation node tour score length =
         let new_node = create_node node next_city in
         add_child node new_node;
         add_score new_node score;
+        new_node.info.dev_visit <- new_node.info.dev_visit + 1;
         forward_propagation new_node tour score (length - 1)
     | Some next_node ->
         add_score next_node score;
+        next_node.info.dev_visit <- next_node.info.dev_visit + 1;
         forward_propagation next_node tour score (length - 1))
 
 (** {FR} convertis le ou les tours en noeuds en fonction de la valeur de `develop_playout_policy`
@@ -675,6 +679,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
   let start_time = Unix.gettimeofday () in
   let info =
     {
+      dev_visit = 0;
       visit = 0.;
       score = 0.;
       best_score = infinity;
