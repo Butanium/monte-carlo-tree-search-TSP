@@ -1,6 +1,6 @@
 open Two_Opt
 
-type random_creation = Roulette | Random
+type random_policy = Roulette | Random
 
 let string_of_random_policy = function
   | Random -> "Random"
