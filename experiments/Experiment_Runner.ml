@@ -30,7 +30,9 @@ let get_model_results (best_lengths : int list) model exp_per_config =
       | bl :: bls, l :: ls ->
           if exp_i = exp_per_config then aux 0 bls lengths acc
           else
-            aux (exp_i + 1) best_lengths ls ((float (l - bl) /. float bl) :: acc)
+            let diff = float (l - bl) /. float bl in
+            assert (diff >= 0.);
+            aux (exp_i + 1) best_lengths ls (diff :: acc)
       | _ -> acc
     in
     aux 0 best_lengths lengths []
