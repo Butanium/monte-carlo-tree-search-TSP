@@ -283,9 +283,10 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                         update_log_file best_lengths;
                         if verbose > 0 then
                           Printf.printf
-                            "currently testing %s, has been running for %d hours\n\
+                            "currently testing %s, Simulation %s has been \
+                             running for %d hours\n\
                              %!"
-                            config !debug_count;
+                            config sim_name !debug_count;
                         last_debug := Unix.gettimeofday ());
                       let length, opt_length =
                         solver_simulation config city_count adj log_files_path
