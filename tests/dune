@@ -1,4 +1,9 @@
 (executables
- (names Single_test MCTS_main two_opt_tests Launch_Experiment Duration_Experiment)
- (libraries tsp_modules tsp_solvers experiments tools)
-)
+ (names
+  Single_test
+  MCTS_main
+  two_opt_tests
+  Launch_Experiment
+  Duration_experiment
+  Exploration_experiment)
+ (libraries tsp_modules tsp_solvers experiments tools))

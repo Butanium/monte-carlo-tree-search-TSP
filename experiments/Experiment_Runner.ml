@@ -119,7 +119,7 @@ let opt_of_tuple (opt, (total_factor, length_factor)) =
 let def_opt = create_mcts_opt 1 1
 
 (** Create model record which will be run by the Solver_Runner module *)
-let create_models ?(exploration_policy = MCTS.Standard_deviation)
+let create_models ?(exploration_policy = MCTS.Standard_deviation 1.)
     ?(mcts_vanilla_list = []) ?(mcts_opt_list = []) ?(iter2opt_list = [])
     ?(greedy_list = []) max_time =
   let suffix hidden_opt dev_policy =

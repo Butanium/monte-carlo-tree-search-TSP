@@ -51,13 +51,14 @@ let mcts_vanilla_list =
 
 let greedy_list = Greedy_Random.[ (max_int, Roulette); (max_int, Random) ]
 
-let models max_time =
+let models max_time exploration_policy =
   Experiment_Runner.create_models max_time
     ~iter2opt_list:(max_int *$ [ Iterated_2Opt.Random; Roulette ])
-    ~mcts_opt_list ~mcts_vanilla_list ~greedy_list
+    ~mcts_opt_list ~mcts_vanilla_list ~greedy_list ~exploration_policy
 
 let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
-    ?(max_time = default_time) ?(exp_per_config = 1) () =
+    ?(max_time = default_time) ?(exp_per_config = 1)
+    ?(exploration_policy = MCTS.Standard_deviation 1.) () =
   let configs =
     let rec aux i =
       if i > amount then []
@@ -68,8 +69,8 @@ let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
   in
   let sim_name =
     match sim_name with
-    | None -> Printf.sprintf "Full-TSP%d-experiment-%.3gs" test_set max_time
+    | None -> Printf.sprintf "Duration-%.3gs-TSP%d" max_time test_set
     | Some s -> s
   in
-  Experiment_Runner.run_models ~sim_name configs (models max_time)
-    ~exp_per_config
+  let models = models max_time exploration_policy in
+  Experiment_Runner.run_models ~sim_name configs models ~exp_per_config
