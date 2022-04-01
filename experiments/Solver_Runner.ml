@@ -65,6 +65,6 @@ let solver_simulation ?(generate_log_file = 1) ?(verbose = 0) ?seed city_config
       let score, _ =
         Greedy_Random.greedy adj_mat city_count solver.random_policy
           solver.max_time solver.max_iter ~logs_path:log_files_path
-          ~generate_log_file
+          ~generate_log_file ~verbose:(verbose - 1)
       in
       (score, score)

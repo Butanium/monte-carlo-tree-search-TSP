@@ -10,8 +10,8 @@ let weight_update eval last q = function
   | Random -> ()
   | Roulette -> RndQ.roulette_weights eval last q
 
-let greedy ?(generate_log_file = 1) ?(logs_path = "logs") adj_matrix city_count
-    rnd_policy max_time max_try =
+let greedy ?(generate_log_file = 1) ?(logs_path = "logs") ?(verbose = 0)
+    adj_matrix city_count rnd_policy max_time max_try =
   let best_scores_hist = ref [] in
   let scores_hist = ref [] in
 
@@ -41,8 +41,10 @@ let greedy ?(generate_log_file = 1) ?(logs_path = "logs") adj_matrix city_count
       best_scores_hist := (get_time (), !try_count, length) :: !best_scores_hist);
     scores_hist := (get_time (), length) :: !scores_hist
   done;
-  Printf.printf "completed in %.0f seconds with %d tries, %d best score found\n"
-    (get_time ()) !try_count !best_score;
+  if verbose > 0 then
+    Printf.printf
+      "completed in %.0f seconds with %d tries, %d best score found\n"
+      (get_time ()) !try_count !best_score;
   (if generate_log_file > 0 then
    let suffix =
      Printf.sprintf "-Greedy_%s-%.0f_s-%d_tries"
@@ -62,7 +64,8 @@ let greedy ?(generate_log_file = 1) ?(logs_path = "logs") adj_matrix city_count
      @@ ((get_time (), !try_count, !best_score) :: !best_scores_hist)
    in
    let start = String.length "best_scores" + 1 in
-   Printf.printf "simulation ref for log files : %s\n"
-   @@ String.sub file.file_name start
-   @@ (String.length file.file_name - start));
+   if verbose > 0 then
+     Printf.printf "simulation ref for log files : %s\n"
+     @@ String.sub file.file_name start
+     @@ (String.length file.file_name - start));
   (!best_score, best_tour)
