@@ -60,14 +60,16 @@ let str_of_develop_policy = function
       - [Min_spanning_tree] utilise la longueur de l'arbre couvrant minimal
       - [Standard_deviation] utilise la valeur de l'écart type entre les scores des noeuds une fois que la racine de l'arbre
           est entièrement développé
-   {EN} Define the exploration parameter used to select the best child of a node
+    {EN} Define the exploration parameter used to select the best child of a node
       - [Min_spanning_tree] use the length of the minimal spanning tree
       - [Standard_deviation] use the standard deviation of the score of all the children of the root once they are developed *)
-type exploration_policy = Min_spanning_tree | Standard_deviation
+type exploration_policy =
+  | Min_spanning_tree of float
+  | Standard_deviation of float
 
 let str_of_exploration_policy = function
-  | Min_spanning_tree -> "Min_spanning_tree"
-  | Standard_deviation -> "Standard_deviation"
+  | Min_spanning_tree c -> Printf.sprintf "Min_spanning_tree_%.2f" c
+  | Standard_deviation c -> Printf.sprintf "Standard_deviation_%.2f" c
 
 (** {FR} Définie comment le score estimé est calculé à partir d'un noeud
       - [Average] utilise la moyenne des scores du noeud
@@ -299,12 +301,13 @@ let get_node_score_fun root exploration_policy expected_length_policy
     exploration_constant_factor =
   let c =
     match exploration_policy with
-    | Min_spanning_tree ->
-        float
-        @@ Prim_Alg.prim_alg
-             (fun i j -> !arg.adj_matrix.(i).(j))
-             !arg.city_count
-    | Standard_deviation ->
+    | Min_spanning_tree factor ->
+        factor
+        *. float
+             (Prim_Alg.prim_alg
+                (fun i j -> !arg.adj_matrix.(i).(j))
+                !arg.city_count)
+    | Standard_deviation factor ->
         let tot = float (!arg.city_count - 1) in
         let average =
           List.fold_left
@@ -312,11 +315,12 @@ let get_node_score_fun root exploration_policy expected_length_policy
             0. root.info.children
           /. tot
         in
-        (List.fold_left
-           (fun acc node -> acc +. ((node.info.score -. average) ** 2.))
-           0. root.info.children
-        /. tot)
-        ** 0.5
+        factor
+        *. (List.fold_left
+              (fun acc node -> acc +. ((node.info.score -. average) ** 2.))
+              0. root.info.children
+           /. tot)
+           ** 0.5
   in
   !arg.exploration_constant <- c;
   let get_parent_visit n =
@@ -665,9 +669,10 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     ?(debug_tree = false) ?(expected_length_policy = Average)
     ?(city_config = "") ?(config_path = "tsp_instances")
     ?(playout_selection_policy = Roulette)
-    ?(exploration_policy = Standard_deviation) ?(optimization_policy = No_opt)
-    ?(stop_on_leaf = true) ?(optimize_end_path = true) ?(verbose = 1)
-    ?(hidden_opt = No_opt) ?(optimize_end_path_time = infinity) ?(name = "")
+    ?(exploration_policy = Standard_deviation 1.)
+    ?(optimization_policy = No_opt) ?(stop_on_leaf = true)
+    ?(optimize_end_path = true) ?(verbose = 1) ?(hidden_opt = No_opt)
+    ?(optimize_end_path_time = infinity) ?(name = "")
     ?(develop_playout_policy = No_dev) ?(catch_SIGINT = true)
     ?(exploration_constant_factor = 1.) ?seed city_count adj_matrix max_time
     max_playout =
