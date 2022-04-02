@@ -3,16 +3,16 @@ let max_time = 10.
 let exploration_policies =
   MCTS.
     [
-      Standard_deviation 2.;
-      Standard_deviation 1.;
-      Standard_deviation 0.5;
-      Standard_deviation 0.1;
       Standard_deviation 0.01;
-      Min_spanning_tree 2.;
-      Min_spanning_tree 1.;
-      Min_spanning_tree 0.5;
-      Min_spanning_tree 0.1;
+      Standard_deviation 0.1;
+      Standard_deviation 0.5;
+      Standard_deviation 1.;
       Min_spanning_tree 0.01;
+      Min_spanning_tree 0.1;
+      Min_spanning_tree 0.5;
+      Min_spanning_tree 1.;
+      Standard_deviation 2.;
+      Min_spanning_tree 2.;
     ]
 
 let () =
