@@ -1,1 +1,1 @@
-let () = Experiments.Experiment_all.experiment_all ()
+let () = Experiments.Experiment_Generator.experiment_all ()

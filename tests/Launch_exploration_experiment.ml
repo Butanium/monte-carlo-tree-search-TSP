@@ -19,6 +19,6 @@ let () =
   (* let durations = if Sys.os_type == "Unix" then linux_duration else durations in *)
   List.iter
     (fun exploration_policy ->
-      Experiments.Experiment_exploration.experiment_all ~exploration_policy ~max_time
+      Experiments.Experiment_Generator.experiment_partial ~exploration_policy ~max_time
         ~amount:128 ~test_set:100 ~exp_per_config:5 ())
     exploration_policies
