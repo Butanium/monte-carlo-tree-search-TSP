@@ -4,6 +4,6 @@
   MCTS_main
   two_opt_tests
   Launch_experiment
-  Duration_experiment
-  Exploration_experiment)
+  Launch_duration_experiment
+  Launch_exploration_experiment)
  (libraries tsp_modules tsp_solvers experiments tools))
