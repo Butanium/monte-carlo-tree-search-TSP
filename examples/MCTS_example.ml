@@ -19,7 +19,7 @@ let max_playout = 100000000
 
 let playout_selection_policy = MCTS.Roulette
 
-let exploration_policy = MCTS.Min_spanning_tree
+let exploration_policy = MCTS.Min_spanning_tree 1.
 
 let (tour, length), (opt_path, opt_length), root =
   MCTS.proceed_mcts ~debug_tree ~generate_log_file ~city_config

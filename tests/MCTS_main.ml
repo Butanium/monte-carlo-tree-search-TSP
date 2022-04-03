@@ -13,7 +13,7 @@ let max_playout = 100000000
 
 let playout_selection_policy = MCTS.Random
 
-let exploration_policy = MCTS.Min_spanning_tree
+let exploration_policy = MCTS.Min_spanning_tree 1.
 
 let expected_length_policy = MCTS.Average
 

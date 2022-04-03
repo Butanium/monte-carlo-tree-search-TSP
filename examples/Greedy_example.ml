@@ -12,7 +12,7 @@ let max_try = max_int
 
 let random_policy = Greedy_Random.Roulette
 
-let tour =
+let _, tour =
   Greedy_Random.greedy adj_matrix city_count random_policy max_time max_try
 
 let () =
