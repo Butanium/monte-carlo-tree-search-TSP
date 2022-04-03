@@ -24,7 +24,7 @@ let base_opt =
 
 let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int }
 
-let dev_modes = MCTS.[ No_dev; Dev_all 5; Dev_hidden 5; Dev_playout 5 ]
+let dev_modes = MCTS.[ Dev_hidden 5; Dev_playout 5; No_dev; Dev_all 5 ]
 
 let mcts_opt_list =
   MCTS.(
