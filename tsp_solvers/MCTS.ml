@@ -1,3 +1,4 @@
+(* todo : enlever certains éléments de debug et les mettre dans arg car c'est plus logique *)
 module RndQ = Random_Queue
 module Optimizer_2opt = Two_Opt
 
@@ -237,9 +238,9 @@ let creation_queue = ref @@ RndQ.simple_create 0 [||]
 
 let playout_path = ref [||]
 
-let r_playout_tour = ref [||]
+let playout_tour_container = ref [||]
 
-let r_hidden_tour = ref [||]
+let hidden_tour_container = ref [||]
 
 let get_next_city_arr = ref [||]
 
@@ -255,12 +256,23 @@ let init seed =
   in
   let arr () = Array.make !arg.city_count (-1) in
   playout_path := arr ();
-  r_playout_tour := arr ();
-  r_hidden_tour := arr ();
+  playout_tour_container := arr ();
+  hidden_tour_container := arr ();
   get_next_city_arr := Array.make !arg.city_count false;
   creation_queue := RndQ.simple_create !arg.city_count @@ arr ();
   Random.init seed;
   seed
+
+(** {FR} Renvoie le chemin parcouru pour arriver au noeud en partant 
+         de la racine
+    {EN} Return the path from the root to the node *)
+let path_of_node =
+  let rec aux acc node =
+    match node.heritage with
+    | Parent parent -> aux (node.info.city :: acc) parent
+    | Root -> node.info.city :: acc
+  in
+  aux []
 
 (** {FR} Créer un noeud vide fils de `parent` avec la ville `city`
     {EN} Create a node with the city `city` as a child of `parent` *)
@@ -363,14 +375,14 @@ let available queue =
   done;
   queue
 
-(** {FR} remplie `store` avec le chemin construit dans la sélection puis la fin générée pendant le playout
-    {EN} fill `store` with the path built during selection and the end generated during the playout *)
-let fill_tour store size =
+(** {FR} remplie `container` avec le chemin construit dans la sélection puis la fin générée pendant le playout
+    {EN} fill `container` with the path built during selection and the end generated during the playout *)
+let fill_tour container size =
   for i = 0 to !arg.path_size - 1 do
-    store.(i) <- !arg.current_path.(i)
+    container.(i) <- !arg.current_path.(i)
   done;
   for i = 0 to size - 1 do
-    store.(!arg.path_size + i) <- !playout_path.(i + 1)
+    container.(!arg.path_size + i) <- !playout_path.(i + 1)
   done
 
 (** {FR} Optimise le chemin en fonction de la politique d'optimisation
@@ -414,7 +426,7 @@ let playout last_city =
         update_weights queue c;
         !playout_path.(k) <- c
       done;
-      optimize_tour !r_playout_tour size !arg.optimization_policy)
+      optimize_tour !playout_tour_container size !arg.optimization_policy)
     else !arg.current_path
   in
   let playout_score = Base_tsp.tour_length !arg.adj_matrix playout_tour in
@@ -431,7 +443,9 @@ let playout last_city =
 
   let hidden_score =
     if deb.hidden_opt <> No_opt && size > 0 then (
-      let hidden_tour = optimize_tour !r_hidden_tour size deb.hidden_opt in
+      let hidden_tour =
+        optimize_tour !hidden_tour_container size deb.hidden_opt
+      in
       Base_tsp.set_tour_start 0 hidden_tour;
       let opt_score = Base_tsp.tour_length !arg.adj_matrix hidden_tour in
       if opt_score < deb.hidden_best_score then (
@@ -491,18 +505,33 @@ let add_child parent child =
 let rec forward_propagation node tour score length =
   if node.info.depth <> !arg.city_count && length >= 0 then (
     if not (node.info.city = tour.(node.info.depth - 1)) then (
-      let exception T of (int array * int * int) in
+      let exception Forward_propagation of (int array * int * int) in
+      (* todo : delete if fixed *)
       Printf.printf
-        "\nError at depth %d with city %d, prev city : %d, the path is : "
-        node.info.depth node.info.city
+        "\n\
+         Error at depth %d, length %d \n\
+         with node city %d instead of %d\n\
+         prev city : %d (depth %d), the path is : " node.info.depth length
+        node.info.city
+        tour.(node.info.depth - 1)
         (match node.heritage with
         | Root -> -1
-        | Parent parent -> parent.info.city);
-      Array.iter
-        (fun c -> Printf.printf "%d " c)
-        (Array.sub tour 0 @@ (1 + node.info.depth));
+        | Parent parent -> parent.info.city)
+        (match node.heritage with
+        | Root -> -1
+        | Parent parent -> parent.info.depth);
+      Array.iteri
+        (fun i c ->
+          Printf.printf "%s%d%s "
+            (if i = node.info.depth - 1 then "**" else "")
+            c
+            (if i = node.info.depth then "**" else ""))
+        tour;
+      Printf.printf "\nthe node path is : ";
+      List.iter (fun x -> Printf.printf "%d " x) @@ path_of_node node;
       raise
-      @@ T (Array.sub tour 0 node.info.depth, node.info.city, node.info.depth));
+      @@ Forward_propagation
+           (Array.sub tour 0 node.info.depth, node.info.city, node.info.depth));
     let next_city = tour.(node.info.depth) in
     match
       List.find_opt (fun x -> x.info.city = next_city) node.info.children
@@ -513,10 +542,11 @@ let rec forward_propagation node tour score length =
         add_score new_node score;
         new_node.info.dev_visit <- new_node.info.dev_visit + 1;
         forward_propagation new_node tour score (length - 1)
-    | Some next_node ->
+    | Some next_node when next_node.info.active ->
         add_score next_node score;
         next_node.info.dev_visit <- next_node.info.dev_visit + 1;
-        forward_propagation next_node tour score (length - 1))
+        forward_propagation next_node tour score (length - 1)
+    | _ -> ())
 
 (** {FR} convertis le ou les tours en noeuds en fonction de la valeur de `develop_playout_policy`
     {EN} convert the tour in nodes according to the value of `develop_playout_policy` *)
@@ -524,12 +554,13 @@ let convert_tours ~hidden_score ~playout_score node =
   let root = Option.get !arg.root in
   let dev_hidden =
     add_score root hidden_score;
-    forward_propagation root !r_hidden_tour hidden_score
+    forward_propagation root !hidden_tour_container hidden_score
   in
   let dev_playout =
     match !arg.optimization_policy with
-    | Full_Two_opt _ -> forward_propagation root !r_playout_tour playout_score
-    | _ -> forward_propagation node !r_playout_tour playout_score
+    | Full_Two_opt _ ->
+        forward_propagation root !playout_tour_container playout_score
+    | _ -> forward_propagation node !playout_tour_container playout_score
   in
   let error () =
     raise
@@ -550,19 +581,15 @@ let convert_tours ~hidden_score ~playout_score node =
 (** {FR} Développe l'arbre en créant un nouveau noeud relié à `node`
     {EN} Expand the tree by creating a new node connected to `node` *)
 let expand node =
-  let city =
-    try get_next_city node
-    with Invalid_argument e ->
-      raise @@ Invalid_argument (e ^ ": get next node failed")
-  in
+  let city = get_next_city node in
   !arg.current_path.(!arg.path_size) <- city;
   !arg.path_size <- !arg.path_size + 1;
-  assert (node.info.depth <> !arg.path_size);
+  assert (node.info.depth + 1 = !arg.path_size);
   !arg.visited.(city) <- true;
   let new_node = create_node node city in
   add_child node new_node;
   let playout_score, hidden_score = playout city in
-  convert_tours ~playout_score ~hidden_score node;
+  convert_tours ~playout_score ~hidden_score new_node;
   backpropagation new_node playout_score hidden_score (node.info.depth + 1)
 
 (** {FR} Renvoie le fils de `node` ayant le score le plus bas
@@ -766,16 +793,16 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
            deb.hidden_best_score;
       deb.hidden_best_tour)
   in
-  let r_playout_tour, opt_score =
+  let result_playout_tour, opt_score =
     if optimize_end_path then (
       let start_time = Unix.gettimeofday () in
-      let r_playout_tour = Array.copy best_tour in
+      let result_playout_tour = Array.copy best_tour in
       let opted =
         Optimizer_2opt.opt_fast adj_matrix ~max_time:optimize_end_path_time
-          r_playout_tour
+          result_playout_tour
       in
       let opt_time = Unix.gettimeofday () -. start_time in
-      let opt_score = Base_tsp.tour_length adj_matrix r_playout_tour in
+      let opt_score = Base_tsp.tour_length adj_matrix result_playout_tour in
       let opt_delta = best_score - opt_score in
       add_debug
         (if opted then Printf.sprintf "Returned tour already optimized\n"
@@ -783,7 +810,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
           Printf.sprintf
             "Optimized returned tour in %g/%.0f seconds with %d delta \n"
             opt_time optimize_end_path_time opt_delta);
-      (r_playout_tour, opt_score))
+      (result_playout_tour, opt_score))
     else (best_tour, best_score)
   in
 
@@ -857,10 +884,10 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     Printf.fprintf oc "\n\n________________START DEBUG TREE_______________\n";
     debug_mcts oc root;
     close_out oc;
-    Base_tsp.create_opt_file ~file_path r_playout_tour;
+    Base_tsp.create_opt_file ~file_path result_playout_tour;
     if verbose >= 0 then
       let start = String.length "logs/" in
       Printf.printf "simulation directory for log files : %s\n"
       @@ String.sub file_path start
       @@ (String.length file_path - start));
-  ((best_tour, best_score), (r_playout_tour, opt_score), root)
+  ((best_tour, best_score), (result_playout_tour, opt_score), root)
