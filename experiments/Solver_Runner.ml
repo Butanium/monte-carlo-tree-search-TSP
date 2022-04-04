@@ -26,14 +26,17 @@ type solver =
   | MCTS of mcts_solver
   | Iter of iterated2opt_solver
   | Greedy of greedy_solver
+  | Exact
 
 let solver_name = function
   | MCTS { name; _ } | Iter { name; _ } | Greedy { name; _ } -> name
+  | Exact -> "Exact-Solver"
 
 let solver_simulation ?(generate_log_file = 1) ?(verbose = 0) ?seed city_config
     city_count adj_mat log_path =
   let log_files_path = Printf.sprintf "%s/%s" log_path city_config in
   function
+  | Exact -> -1, -1
   | MCTS solver ->
       let max_time = solver.max_time in
       let max_playout = 100000000 in

@@ -197,7 +197,8 @@ let create_models ?(exploration_policy = MCTS.Standard_deviation 1.)
   let iter1Random = create_iterated_opt (1, Random) ~name:"1Random2Opt" in
   let iter1Roulette = create_iterated_opt (1, Roulette) ~name:"1Roulette2Opt" in
   List.map init_model
-    ((iter1Random :: iter1Roulette :: List.map create_opt_mcts mcts_opt_list)
+    (Exact :: iter1Random :: iter1Roulette
+     :: List.map create_opt_mcts mcts_opt_list
     @ List.map create_vanilla_mcts mcts_vanilla_list
     @ List.map create_iterated_opt iter2opt_list
     @ List.map create_greedy greedy_list)
@@ -275,9 +276,10 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
            (fun best_lengths (file_path, config) ->
              let city_count, cities = Reader_tsp.open_tsp ~file_path config in
              let adj = Base_tsp.get_adj_matrix cities in
-             let best_lengths =
-               Base_tsp.best_tour_length ~file_path config adj :: best_lengths
+             let best_tour_length =
+               Base_tsp.best_tour_length ~file_path config adj
              in
+             let best_lengths = best_tour_length :: best_lengths in
              for i = 1 to exp_per_config do
                models
                |> List.iter (fun model ->
@@ -294,14 +296,19 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                         update_log_file best_lengths
                           ~missing_exp:(exp_per_config - i);
                         last_debug := Unix.gettimeofday ());
+
+                      (* ___ Get model results ___ *)
                       let length, opt_length =
-                        solver_simulation config city_count adj log_files_path
-                          model.solver ~verbose:(verbose - 1)
-                          ~generate_log_file:(if i = 1 then 3 else 1)
-                          ?seed
+                        if model.solver = Exact then
+                          (best_tour_length, best_tour_length)
+                        else
+                          solver_simulation config city_count adj log_files_path
+                            model.solver ~verbose:(verbose - 1)
+                            ~generate_log_file:(if i = 1 then 3 else 1)
+                            ?seed
                       in
 
-                      (* ___ Update model with new result ___ *)
+                      (* ___ Update model with new results ___ *)
                       model.experiment_count <- model.experiment_count + 1;
                       model.lengths <- length :: model.lengths;
                       model.opted_lengths <- opt_length :: model.opted_lengths;
