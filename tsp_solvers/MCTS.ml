@@ -690,6 +690,22 @@ let debug_mcts oc root =
   in
   aux root
 
+let verbose_message =
+  "\n\nStarting MCTS, I'll keep informed every minutes :)\n"
+  ^ "You can stop the program at anytime by pressing Ctrl+C and it'll return \
+     you its current progress \n\n"
+  ^ "    ccee88oo\n\
+    \  C8O8O8Q8PoOb o8oo\n\
+    \ dOB69QO8PdUOpugoO9bD\n\
+     CgggbU8OU qOp qOdoUOdcb\n\
+    \    6OuU  /p u gcoUodpP\n\
+    \      \\\\\\//  /douUP\n\
+    \        \\\\\\////\n\
+    \         |||/\\\n\
+    \         |||\\/\n\
+    \         |:)|\n\
+    \   .....//||||\\....\n\n"
+
 (** {FR} Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout
     {EN} Create and develop the tree, keeping in memory the best tour done during the playouts *)
 let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
@@ -703,12 +719,15 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     ?(develop_playout_policy = No_dev) ?(catch_SIGINT = true)
     ?(exploration_constant_factor = 1.) ?seed city_count adj_matrix max_time
     max_playout =
+  (* ____ allow user exit with Ctrl+C sigint ____ *)
   let user_interrupt = ref false in
   if catch_SIGINT then
     Sys.set_signal Sys.sigint
       (Sys.Signal_handle (fun _ -> user_interrupt := true));
-  (* allow user exit with Ctrl+C sigint*)
+      
   let start_time = Unix.gettimeofday () in
+
+  (* ______ initialize root node ______ *)
   let info =
     {
       dev_visit = 0;
@@ -726,6 +745,8 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     }
   in
   let root = { info; heritage = Root } in
+
+  (* Initialize arg, the record containing all the information needed *)
   arg :=
     {
       start_time;
@@ -745,25 +766,14 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       develop_playout_policy;
       root = Some root;
     };
+    
   let seed = init seed in
   reset_deb generate_log_file hidden_opt;
 
   let get_time () = Unix.gettimeofday () -. start_time in
-  if verbose > 0 then
-    Printf.printf @@ "\n\nStarting MCTS, I'll keep informed every minutes :)\n"
-    ^^ "You can stop the program at anytime by pressing Ctrl+C and it'll \
-        return you its current progress \n\n"
-    ^^ "    ccee88oo\n\
-       \  C8O8O8Q8PoOb o8oo\n\
-       \ dOB69QO8PdUOpugoO9bD\n\
-        CgggbU8OU qOp qOdoUOdcb\n\
-       \    6OuU  /p u gcoUodpP\n\
-       \      \\\\\\//  /douUP\n\
-       \        \\\\\\////\n\
-       \         |||/\\\n\
-       \         |||\\/\n\
-       \         |:)|\n\
-       \   .....//||||\\....%!\n\n";
+  if verbose > 0 then Printf.printf "%s%!" verbose_message;
+
+  (* ____________ MCTS algorithm ____________ *)
   while
     !arg.playout_count = 0
     || !arg.playout_count < max_playout
@@ -779,6 +789,8 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
         get_node_score_fun root exploration_policy expected_length_policy
           exploration_constant_factor
   done;
+
+  (* _______________ Debug _______________ *)
   let debug_string = ref "" in
   let add_debug s = debug_string := !debug_string ^ s in
   let spent_time = Unix.gettimeofday () -. start_time in
@@ -793,6 +805,8 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
            deb.hidden_best_score;
       deb.hidden_best_tour)
   in
+
+  (* ________ Optimize returned path ________ *)
   let result_playout_tour, opt_score =
     if optimize_end_path then (
       let start_time = Unix.gettimeofday () in
@@ -814,6 +828,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     else (best_tour, best_score)
   in
 
+  (* _______________ Log files _______________ *)
   let sim_name =
     Printf.sprintf "MCTS-%s-%.0fs-%s-%s-%s" city_config spent_time
       (str_of_selection_policy playout_selection_policy)
@@ -846,13 +861,13 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     print_endline "\n\n_________________END DEBUG TREE_______________\n";
     debug_info stdout);
 
-  if generate_log_file >= 0 then (
+  if generate_log_file > 0 then (
     let suffix = if name <> "" then name else sim_name in
 
-    let file_path =
-      File_log.create_log_dir @@ Printf.sprintf "%s/%s" log_files_path suffix
-    in
-    if generate_log_file > 0 then (
+    let file_path = Printf.sprintf "%s/%s" log_files_path suffix in
+    let _ = File_log.create_dir_if_not_exist file_path in
+
+    if generate_log_file > 2 then (
       let file = File_log.create_file ~file_path ~file_name:"all_scores" () in
       let oc =
         File_log.log_string_endline ~close:false ~file "timestamp,length"
@@ -874,20 +889,26 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       @@ (Unix.gettimeofday () -. start_time, !arg.playout_count, best_score)
          :: deb.best_score_hist;
       close_out oc);
-    let file =
-      File_log.create_file ~file_path ~file_name:"debug" ~extension:"txt" ()
-    in
-    let oc = File_log.get_oc file in
-    debug_info oc;
-    Base_tsp.print_error_ratio ~oc ~file_path:config_path best_tour adj_matrix
-      city_config;
-    Printf.fprintf oc "\n\n________________START DEBUG TREE_______________\n";
-    debug_mcts oc root;
-    close_out oc;
+
+    if generate_log_file > 1 then (
+      let file =
+        File_log.create_file ~file_path ~file_name:"debug" ~extension:"txt" ()
+      in
+      let oc = File_log.get_oc file in
+      debug_info oc;
+      Base_tsp.print_error_ratio ~oc ~file_path:config_path best_tour adj_matrix
+        city_config;
+      Printf.fprintf oc "\n\n________________START DEBUG TREE_______________\n";
+      debug_mcts oc root;
+      close_out oc);
+
     Base_tsp.create_opt_file ~file_path result_playout_tour;
     if verbose >= 0 then
       let start = String.length "logs/" in
       Printf.printf "simulation directory for log files : %s\n"
       @@ String.sub file_path start
       @@ (String.length file_path - start));
+
+  (* ______________ Return result ______________ *)
+  assert (Base_tsp.check_tour_validity best_tour);
   ((best_tour, best_score), (result_playout_tour, opt_score), root)
