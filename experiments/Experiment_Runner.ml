@@ -294,7 +294,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                              %!"
                             config sim_name !debug_count;
                         update_log_file best_lengths
-                          ~missing_exp:(exp_per_config - i - 1);
+                          ~missing_exp:(exp_per_config - (i - 1));
                         last_debug := Unix.gettimeofday ());
 
                       (* ___ Get model results ___ *)
