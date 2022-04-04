@@ -281,16 +281,18 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
              for i = 1 to exp_per_config do
                models
                |> List.iter (fun model ->
+                      (* _________ Save progress _________ *)
                       let diff = Unix.gettimeofday () -. !last_debug in
                       if diff > 3600. then (
                         debug_count := !debug_count + (int_of_float diff / 3600);
-                        update_log_file best_lengths;
                         if verbose > 0 then
                           Printf.printf
                             "currently testing %s, Simulation %s has been \
                              running for %d hours\n\
                              %!"
                             config sim_name !debug_count;
+                        update_log_file best_lengths
+                          ~missing_exp:(exp_per_config - i);
                         last_debug := Unix.gettimeofday ());
                       let length, opt_length =
                         solver_simulation config city_count adj log_files_path
@@ -298,12 +300,17 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                           ~generate_log_file:(if i = 0 then 3 else 1)
                           ?seed
                       in
+
+                      (* ___ Update model with new result ___ *)
                       model.experiment_count <- model.experiment_count + 1;
                       model.lengths <- length :: model.lengths;
                       model.opted_lengths <- opt_length :: model.opted_lengths;
+
+                      (* ___ If update csv signal received, update csv file ___ *)
                       if !update_csv then (
                         update_csv := false;
-                        update_log_file best_lengths ~missing_exp:(exp_per_config - i);
+                        update_log_file best_lengths
+                          ~missing_exp:(exp_per_config - i);
                         Printf.printf
                           "csv updated for experiment %s, check it at %s%s\n%!"
                           sim_name logs.file_path logs.file_name);
