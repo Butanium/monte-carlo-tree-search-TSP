@@ -21,7 +21,7 @@ type model_result = {
   opt_max_dev : float;
 }
 
-let get_model_results (best_lengths : int list) model exp_per_config =
+let get_model_results ?(missing_exp = 0) best_lengths model exp_per_config =
   let n = float model.experiment_count in
   let mean_list list = List.fold_left ( +. ) 0. list /. n in
   let get_deviations lengths =
@@ -35,7 +35,7 @@ let get_model_results (best_lengths : int list) model exp_per_config =
             aux (exp_i + 1) best_lengths ls (diff :: acc)
       | _ -> acc
     in
-    aux 0 best_lengths lengths []
+    aux missing_exp best_lengths lengths []
   in
   let deviations = get_deviations model.lengths in
   let opt_deviations = get_deviations model.opted_lengths in
@@ -233,7 +233,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
   let file_name = "all_mcts_tests-" ^ sim_name in
   let logs = File_log.create_file ~file_path:log_files_path ~file_name () in
 
-  let update_log_file best_lengths =
+  let update_log_file ?(missing_exp = 0) best_lengths =
     let first_row =
       "solver-name,average-deviation,standard-deviation-deviation,average-length,average-opted-deviation,standard-deviation-deviation,average-opted-length,max-deviation,min-deviation,opt-max-deviation,opt-min-deviation"
     in
@@ -243,7 +243,9 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
       (List.filter_map
          (fun model ->
            if model.experiment_count = 0 then None
-           else Some (get_model_results best_lengths model exp_per_config))
+           else
+             Some
+               (get_model_results ~missing_exp best_lengths model exp_per_config))
          models
       |> List.sort (fun a b -> compare a.opt_deviation b.opt_deviation)
       |> File_log.log_data
@@ -293,7 +295,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                       let length, opt_length =
                         solver_simulation config city_count adj log_files_path
                           model.solver ~verbose:(verbose - 1)
-                          ~generate_log_file:(1 - min 1 i)
+                          ~generate_log_file:(if i = 0 then 3 else 1)
                           ?seed
                       in
                       model.experiment_count <- model.experiment_count + 1;
@@ -301,7 +303,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                       model.opted_lengths <- opt_length :: model.opted_lengths;
                       if !update_csv then (
                         update_csv := false;
-                        update_log_file best_lengths;
+                        update_log_file best_lengths ~missing_exp:(exp_per_config - i);
                         Printf.printf
                           "csv updated for experiment %s, check it at %s%s\n%!"
                           sim_name logs.file_path logs.file_name);
