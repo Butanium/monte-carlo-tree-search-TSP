@@ -2,6 +2,8 @@
 
 In this repo, I made different heuristic solutions for the TSP written in OCaml. My main goal is to study the effectiveness of the Monte Carlo Tree Search to solve the TSP. I'm not using any neural network in this project.
 
+My implementation of the monte carlo tree search is in [this module](tsp_solvers/MCTS.ml) 
+
 ## Available heuristics
 
 - [**2-opt**](https://en.wikipedia.org/wiki/2-opt) : classic 2-opt algorithm, which makes a locally optimized solution
