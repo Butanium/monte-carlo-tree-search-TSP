@@ -1,3 +1,8 @@
+(*
+   Run several experiments with different solver (iterated 2 Opt, MCTS, Greedy)
+   This is what I use to compare the results of the different algorithms.
+*)
+
 open Solver_Runner
 
 type model_experiment = {

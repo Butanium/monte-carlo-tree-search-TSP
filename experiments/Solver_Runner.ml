@@ -1,3 +1,7 @@
+(*
+   Run a solver on a given instance and return the score of the best tour.
+*)
+
 type mcts_solver = {
   mutable name : string;
   max_time : float;
@@ -36,7 +40,7 @@ let solver_simulation ?(generate_log_file = 1) ?(verbose = 0) ?seed city_config
     city_count adj_mat log_path =
   let log_files_path = Printf.sprintf "%s/%s" log_path city_config in
   function
-  | Exact -> -1, -1
+  | Exact -> (-1, -1) (* Experiement Runner handles it *)
   | MCTS solver ->
       let max_time = solver.max_time in
       let max_playout = 100000000 in
