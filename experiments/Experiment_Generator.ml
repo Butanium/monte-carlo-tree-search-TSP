@@ -21,6 +21,30 @@ let default_time = 1.
 
 let dev_modes = MCTS.[ Dev_hidden 5; Dev_playout 5; No_dev; Dev_all 5 ]
 
+let all_iter2opt_list = max_int *$ [ Iterated_2Opt.Random; Roulette ]
+
+let configs test_set amount =
+  let rec aux i =
+    if i > amount then []
+    else (file_path, Printf.sprintf "TSP%d/instance%d" test_set i) :: aux (i + 1)
+  in
+  aux 1
+
+let experiment_iter2opt ?sim_name ?(amount = 128) ?(test_set = 200)
+    ?(max_time = default_time) ?(exp_per_config = 1) () =
+  let models =
+    Experiment_Runner.create_models max_time ~iter2opt_list:all_iter2opt_list
+  in
+
+  let sim_name =
+    match sim_name with
+    | None -> Printf.sprintf "Iter2Opt-TSP%d-%.3gs" test_set max_time
+    | Some s -> s
+  in
+
+  let configs = configs test_set amount in
+  Experiment_Runner.run_models ~sim_name configs models ~exp_per_config
+
 let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
     ?(max_time = default_time) ?(exp_per_config = 1)
     ?(exploration_policy = MCTS.Standard_deviation 1.) () =
@@ -45,18 +69,9 @@ let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
     |> List.filter (fun (d, _, h) -> is_valid_dev h d)
   in
 
-  let models max_time exploration_policy =
+  let models =
     Experiment_Runner.create_models max_time ~mcts_opt_list ~mcts_vanilla_list
       ~exploration_policy
-  in
-
-  let configs =
-    let rec aux i =
-      if i > amount then []
-      else
-        (file_path, Printf.sprintf "TSP%d/instance%d" test_set i) :: aux (i + 1)
-    in
-    aux 1
   in
 
   let sim_name =
@@ -68,7 +83,8 @@ let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
     | Some s -> s
   in
 
-  let models = models max_time exploration_policy in
+  let configs = configs test_set amount in
+
   Experiment_Runner.run_models ~sim_name configs models ~exp_per_config
 
 let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
@@ -107,20 +123,12 @@ let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
     |> List.filter (fun (d, _, h) -> is_valid_dev h d)
   in
 
-  let models max_time exploration_policy =
-    Experiment_Runner.create_models max_time
-      ~iter2opt_list:(max_int *$ [ Iterated_2Opt.Random; Roulette ])
+  let models =
+    Experiment_Runner.create_models max_time ~iter2opt_list:all_iter2opt_list
       ~mcts_opt_list ~mcts_vanilla_list ~greedy_list ~exploration_policy
   in
 
-  let configs =
-    let rec aux i =
-      if i > amount then []
-      else
-        (file_path, Printf.sprintf "TSP%d/instance%d" test_set i) :: aux (i + 1)
-    in
-    aux 1
-  in
+  let configs = configs test_set amount in
 
   let sim_name =
     match sim_name with
@@ -128,5 +136,4 @@ let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
     | Some s -> s
   in
 
-  let models = models max_time exploration_policy in
   Experiment_Runner.run_models ~sim_name configs models ~exp_per_config
