@@ -1,4 +1,4 @@
-let max_time = 10.
+let max_time = 30.
 
 let exploration_policies =
   MCTS.
@@ -15,10 +15,21 @@ let exploration_policies =
       Min_spanning_tree 2.;
     ]
 
-let () =
-  (* let durations = if Sys.os_type == "Unix" then linux_duration else durations in *)
+(* 
+  # First exploration experiment
+
+  let () =
   List.iter
     (fun exploration_policy ->
       Experiments.Experiment_Generator.experiment_partial ~exploration_policy ~max_time
         ~amount:128 ~test_set:100 ~exp_per_config:5 ())
+    exploration_policies 
+*)
+
+(* # Second exploration experiment *)
+let () =
+  List.iter
+    (fun exploration_policy ->
+      Experiments.Experiment_Generator.experiment_partial ~exploration_policy ~max_time
+        ~amount:128 ~test_set:100 ~exp_per_config:5 ~ignore_level:3 ())
     exploration_policies

@@ -47,7 +47,7 @@ let experiment_iter2opt ?sim_name ?(amount = 128) ?(test_set = 200)
 
 let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
     ?(max_time = default_time) ?(exp_per_config = 1)
-    ?(exploration_policy = MCTS.Standard_deviation 1.) () =
+    ?(exploration_policy = MCTS.Standard_deviation 1.) ?(ignore_level = 0) () =
   let base_opt =
     MCTS.Two_opt { max_time = 1.; max_length = test_set; max_iter = max_int }
   in
@@ -55,18 +55,31 @@ let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
   let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int } in
 
   let mcts_opt_list =
-    MCTS.(
-      dev_modes
-      $$- ([ Random; Roulette ]
-          $$ (base_opt *$- [ ((1, 1), No_opt); ((1, 1), full_opt) ])
-             @ [ (full_opt, (1, 1), No_opt) ]))
-    |> List.filter (fun (d, _, (_, _, h)) -> is_valid_dev h d)
+    match ignore_level with
+    | 0 ->
+        MCTS.(
+          dev_modes
+          $$- ([ Random; Roulette ]
+              $$ (base_opt *$- [ ((1, 1), No_opt); ((1, 1), full_opt) ])
+                 @ [ (full_opt, (1, 1), No_opt) ]))
+        |> List.filter (fun (d, _, (_, _, h)) -> is_valid_dev h d)
+    | _ ->
+        MCTS.(
+          dev_modes
+          $$- ([ Random; Roulette ] $$ [ (base_opt, (1, 1), full_opt) ]))
+        |> List.filter (fun (d, _, (_, _, h)) -> is_valid_dev h d)
   in
 
   let mcts_vanilla_list =
-    MCTS.(
-      dev_modes $$- ([ Roulette; Random ] $$ [ full_opt; base_opt; No_opt ]))
-    |> List.filter (fun (d, _, h) -> is_valid_dev h d)
+    match ignore_level with
+    | 0 ->
+        MCTS.(
+          dev_modes $$- ([ Roulette; Random ] $$ [ full_opt; base_opt; No_opt ]))
+        |> List.filter (fun (d, _, h) -> is_valid_dev h d)
+    | 1 ->
+        MCTS.(dev_modes $$- ([ Roulette; Random ] $$ [ full_opt ]))
+        |> List.filter (fun (d, _, h) -> is_valid_dev h d)
+    | _ -> []
   in
 
   let models =
