@@ -1,6 +1,6 @@
 let open_tsp ?(file_path = "tsp_instances") tsp_name =
   let city_count = Scanf.sscanf tsp_name "%[^0-9]%d" (fun _ c -> c) in
-  
+
   let cities = Array.make city_count (-1., -1.) in
   let fill =
     let i = ref 0 in
@@ -14,9 +14,10 @@ let open_tsp ?(file_path = "tsp_instances") tsp_name =
     try
       let s = String.trim @@ input_line ic in
       if started then (
-        let x, y = Scanf.sscanf s "%d %f %f" (fun _ x y -> (x, y)) in
-        fill (x, y);
-        loop true)
+        if not (s = "EOF" || s = "" || s = "\n") then (
+          let x, y = Scanf.sscanf s "%d %f %f" (fun _ x y -> (x, y)) in
+          fill (x, y);
+          loop true))
       else
         loop
           ("NODE_COORD_SECTION" = s
