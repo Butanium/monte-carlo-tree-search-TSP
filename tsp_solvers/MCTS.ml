@@ -1,4 +1,3 @@
-(* todo : enlever certains éléments de debug et les mettre dans arg car c'est plus logique *)
 module RndQ = Random_Queue
 module Optimizer_2opt = Two_Opt
 
@@ -124,36 +123,23 @@ let str_of_optimization_policy_short = function
 
 type debug = {
   mutable closed_nodes : int;
-  mutable playout_time : float;
-  mutable available_time : float;
-  mutable pl_creation : float;
   mutable max_depth : int;
   mutable score_hist : (float * int * int) list;
   mutable best_score_hist : (float * int * int) list;
-  mutable opt_time : float;
   mutable generate_log_file : int;
-  mutable hidden_opt : optimization_policy;
-  mutable hidden_best_tour : int array;
-  mutable hidden_best_score : int;
 }
 
 let deb =
   {
     closed_nodes = 0;
-    playout_time = 0.;
-    available_time = 0.;
-    pl_creation = 0.;
     max_depth = 0;
     score_hist = [];
     best_score_hist = [];
-    opt_time = 0.;
     generate_log_file = -1;
-    hidden_opt = No_opt;
-    hidden_best_tour = [||];
-    hidden_best_score = max_int;
   }
 
 type arguments = {
+  hidden_opt : optimization_policy;
   start_time : float;
   mutable exploration_constant : float;
   playout_selection_policy : playout_selection_policy;
@@ -169,6 +155,8 @@ type arguments = {
   expected_length_policy : expected_expected_length_policy;
   optimization_policy : optimization_policy;
   develop_playout_policy : develop_playout_policy;
+  hidden_best_tour : int array;
+  mutable hidden_best_score : int;
   root : node option;
 }
 (** {FR} Type contenant tous les arguments qui n'auront donc pas besoin d'être passés
@@ -181,6 +169,9 @@ type arguments = {
 let arg =
   ref
     {
+      hidden_opt = No_opt;
+      hidden_best_score = max_int;
+      hidden_best_tour = [||];
       start_time = 0.;
       exploration_constant = -1.;
       playout_selection_policy = Random;
@@ -199,19 +190,12 @@ let arg =
       root = None;
     }
 
-let reset_deb log_file hidden_opt =
-  deb.opt_time <- 0.;
+let reset_deb log_file =
   deb.closed_nodes <- 0;
-  deb.playout_time <- 0.;
-  deb.available_time <- 0.;
-  deb.pl_creation <- 0.;
   deb.max_depth <- 0;
   deb.score_hist <- [];
   deb.best_score_hist <- [];
-  deb.generate_log_file <- log_file;
-  deb.hidden_opt <- hidden_opt;
-  deb.hidden_best_tour <- Array.make !arg.city_count (-1);
-  deb.hidden_best_score <- max_int
+  deb.generate_log_file <- log_file
 
 let get_node_info node =
   Printf.sprintf
@@ -442,15 +426,15 @@ let playout last_city =
         :: deb.best_score_hist);
 
   let hidden_score =
-    if deb.hidden_opt <> No_opt && size > 0 then (
+    if !arg.hidden_opt <> No_opt && size > 0 then (
       let hidden_tour =
-        optimize_tour !hidden_tour_container size deb.hidden_opt
+        optimize_tour !hidden_tour_container size !arg.hidden_opt
       in
       Base_tsp.set_tour_start 0 hidden_tour;
       let opt_score = Base_tsp.tour_length !arg.adj_matrix hidden_tour in
-      if opt_score < deb.hidden_best_score then (
-        Util.copy_in_place deb.hidden_best_tour hidden_tour;
-        deb.hidden_best_score <- opt_score);
+      if opt_score < !arg.hidden_best_score then (
+        Util.copy_in_place !arg.hidden_best_tour hidden_tour;
+        !arg.hidden_best_score <- opt_score);
       opt_score)
     else playout_score
   in
@@ -570,11 +554,11 @@ let convert_tours ~hidden_score ~playout_score node =
   match !arg.develop_playout_policy with
   | No_dev -> ()
   | Dev_all extra_length ->
-      if deb.hidden_opt = No_opt then error ();
+      if !arg.hidden_opt = No_opt then error ();
       dev_playout extra_length;
       dev_hidden (extra_length + node.info.depth)
   | Dev_hidden extra_length ->
-      if deb.hidden_opt = No_opt then error ();
+      if !arg.hidden_opt = No_opt then error ();
       dev_hidden (extra_length + node.info.depth)
   | Dev_playout length -> dev_playout length
 
@@ -724,7 +708,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
   if catch_SIGINT then
     Sys.set_signal Sys.sigint
       (Sys.Signal_handle (fun _ -> user_interrupt := true));
-      
+
   let start_time = Unix.gettimeofday () in
 
   (* ______ initialize root node ______ *)
@@ -747,6 +731,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
   let root = { info; heritage = Root } in
 
   (* Initialize arg, the record containing all the information needed *)
+  let arr () = Array.make city_count (-1) in 
   arg :=
     {
       start_time;
@@ -757,18 +742,21 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       path_size = 0;
       adj_matrix;
       get_node_score = (fun _ -> -1.);
-      current_path = Array.make city_count (-1);
-      best_tour = Array.make city_count (-1);
+      current_path = arr();
+      best_tour = arr();
       best_score = max_int;
       playout_count = 0;
       expected_length_policy;
       optimization_policy;
       develop_playout_policy;
       root = Some root;
+      hidden_opt;
+      hidden_best_tour = arr();
+      hidden_best_score = max_int
     };
-    
+
   let seed = init seed in
-  reset_deb generate_log_file hidden_opt;
+  reset_deb generate_log_file;
 
   let get_time () = Unix.gettimeofday () -. start_time in
   if verbose > 0 then Printf.printf "%s%!" verbose_message;
@@ -795,15 +783,15 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
   let add_debug s = debug_string := !debug_string ^ s in
   let spent_time = Unix.gettimeofday () -. start_time in
   let best_score =
-    if hidden_opt = No_opt then !arg.best_score else deb.hidden_best_score
+    if hidden_opt = No_opt then !arg.best_score else !arg.hidden_best_score
   in
   let best_tour =
     if hidden_opt = No_opt then !arg.best_tour
     else (
       add_debug
       @@ Printf.sprintf "%d but %d hidden score\n" !arg.best_score
-           deb.hidden_best_score;
-      deb.hidden_best_tour)
+           !arg.hidden_best_score;
+      !arg.hidden_best_tour)
   in
 
   (* ________ Optimize returned path ________ *)
