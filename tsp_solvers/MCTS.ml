@@ -77,9 +77,9 @@ let str_of_exploration_policy = function
    {EN} define how the expected reward will be calculated in the selection formula :
       - [Average] will use the average length that the node got in playouts
       - [Best] will use the best length that the node got in playouts*)
-type expected_expected_length_policy = Average | Best
+type expected_length_policy = Average | Best
 
-let str_of_expected_expected_length_policy = function
+let str_of_expected_length_policy = function
   | Average -> "Average"
   | Best -> "Best"
 
@@ -139,25 +139,30 @@ let deb =
   }
 
 type arguments = {
-  hidden_opt : optimization_policy;
+  (* Problem constants *)
   start_time : float;
-  mutable exploration_constant : float;
-  playout_selection_policy : playout_selection_policy;
-  visited : bool array;
   city_count : int;
-  mutable path_size : int;
   adj_matrix : int array array;
+  (* Algorithm objects *)
+  root : node option;
+  mutable exploration_constant : float;
   mutable get_node_score : node -> float;
+  (* Algorithm policies *)
+  hidden_opt : optimization_policy;
+  playout_selection_policy : playout_selection_policy;
+  expected_length_policy : expected_length_policy;
+  optimization_policy : optimization_policy;
+  develop_playout_policy : develop_playout_policy;
+  (* 1 iteration variable *)
+  visited : bool array;
+  mutable path_size : int;
   current_path : int array;
+  (* Algorithm results *)
   best_tour : int array;
   mutable best_score : int;
   mutable playout_count : int;
-  expected_length_policy : expected_expected_length_policy;
-  optimization_policy : optimization_policy;
-  develop_playout_policy : develop_playout_policy;
   hidden_best_tour : int array;
   mutable hidden_best_score : int;
-  root : node option;
 }
 (** {FR} Type contenant tous les arguments qui n'auront donc pas besoin d'être passés
       dans les différentes fonctions
@@ -731,7 +736,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
   let root = { info; heritage = Root } in
 
   (* Initialize arg, the record containing all the information needed *)
-  let arr () = Array.make city_count (-1) in 
+  let arr () = Array.make city_count (-1) in
   arg :=
     {
       start_time;
@@ -742,8 +747,8 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       path_size = 0;
       adj_matrix;
       get_node_score = (fun _ -> -1.);
-      current_path = arr();
-      best_tour = arr();
+      current_path = arr ();
+      best_tour = arr ();
       best_score = max_int;
       playout_count = 0;
       expected_length_policy;
@@ -751,8 +756,8 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       develop_playout_policy;
       root = Some root;
       hidden_opt;
-      hidden_best_tour = arr();
-      hidden_best_score = max_int
+      hidden_best_tour = arr ();
+      hidden_best_score = max_int;
     };
 
   let seed = init seed in
