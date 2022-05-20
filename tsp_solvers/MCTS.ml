@@ -422,7 +422,7 @@ let playout last_city =
 
   if playout_score < !arg.best_score then (
     !arg.best_score <- playout_score;
-    Util.copy_in_place !arg.best_tour playout_tour;
+    Util.copy_in_place !arg.best_tour ~model:playout_tour;
     if deb.generate_log_file > 0 then
       deb.best_score_hist <-
         ( Unix.gettimeofday () -. !arg.start_time,
@@ -438,7 +438,7 @@ let playout last_city =
       Base_tsp.set_tour_start 0 hidden_tour;
       let opt_score = Base_tsp.tour_length !arg.adj_matrix hidden_tour in
       if opt_score < !arg.hidden_best_score then (
-        Util.copy_in_place !arg.hidden_best_tour hidden_tour;
+        Util.copy_in_place !arg.hidden_best_tour ~model:hidden_tour;
         !arg.hidden_best_score <- opt_score);
       opt_score)
     else playout_score
@@ -468,7 +468,7 @@ let rec backpropagation node score hidden_score max_depth =
 (** {FR} sélectionne le noeud à développer
     {EN} select the node to be expanded *)
 let get_next_city node =
-  Util.copy_in_place !get_next_city_arr !arg.visited;
+  Util.copy_in_place !get_next_city_arr ~model:!arg.visited;
   List.iter
     (fun x -> !get_next_city_arr.(x.info.city) <- true)
     node.info.children;
@@ -679,21 +679,7 @@ let debug_mcts oc root =
   in
   aux root
 
-let verbose_message =
-  "\n\nStarting MCTS, I'll keep informed every minutes :)\n"
-  ^ "You can stop the program at anytime by pressing Ctrl+C and it'll return \
-     you its current progress \n\n"
-  ^ "    ccee88oo\n\
-    \  C8O8O8Q8PoOb o8oo\n\
-    \ dOB69QO8PdUOpugoO9bD\n\
-     CgggbU8OU qOp qOdoUOdcb\n\
-    \    6OuU  /p u gcoUodpP\n\
-    \      \\\\\\//  /douUP\n\
-    \        \\\\\\////\n\
-    \         |||/\\\n\
-    \         |||\\/\n\
-    \         |:)|\n\
-    \   .....//||||\\....\n\n"
+let verbose_message = Util.mcts_verbose_message
 
 (** {FR} Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout
     {EN} Create and develop the tree, keeping in memory the best tour done during the playouts *)
