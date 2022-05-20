@@ -6,5 +6,6 @@
   Launch_experiment
   Launch_duration_experiment
   Launch_exploration_experiment
-  prim_test)
+  prim_test
+  MCTS_heat_test)
  (libraries tsp_modules tsp_solvers experiments tools))
