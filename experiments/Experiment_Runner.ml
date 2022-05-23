@@ -126,7 +126,7 @@ let def_opt = create_mcts_opt 1 1
 (** Create model record which will be run by the Solver_Runner module *)
 let create_models ?(exploration_policy = MCTS.Standard_deviation 1.)
     ?(mcts_vanilla_list = []) ?(mcts_opt_list = []) ?(iter2opt_list = [])
-    ?(greedy_list = []) max_time =
+    ?(greedy_list = []) ?(score_policy = MCTS.Average) max_time =
   let suffix hidden_opt dev_policy =
     (if hidden_opt = MCTS.No_opt then ""
     else
@@ -150,6 +150,7 @@ let create_models ?(exploration_policy = MCTS.Standard_deviation 1.)
         selection_policy;
         hidden_opt;
         dev_policy;
+        score_policy;
       }
   in
   let create_vanilla_mcts (dev_policy, selection_policy, hidden_opt) =
@@ -165,6 +166,7 @@ let create_models ?(exploration_policy = MCTS.Standard_deviation 1.)
         selection_policy = Random;
         hidden_opt;
         dev_policy;
+        score_policy;
       }
   in
   let create_iterated_opt ?name (max_iter, random_policy) =

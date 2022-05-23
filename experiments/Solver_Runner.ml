@@ -10,6 +10,7 @@ type mcts_solver = {
   selection_policy : MCTS.playout_selection_policy;
   hidden_opt : MCTS.optimization_policy;
   dev_policy : MCTS.develop_playout_policy;
+  score_policy : MCTS.expected_length_policy;
 }
 
 type iterated2opt_solver = {
@@ -46,7 +47,7 @@ let solver_simulation ?(generate_log_file = 1) ?(verbose = 0) ?seed city_config
       let max_playout = 100000000 in
       let playout_selection_policy = solver.selection_policy in
       let exploration_policy = solver.exploration_policy in
-      let expected_length_policy = MCTS.Average in
+      let expected_length_policy = solver.score_policy in
       let optimization_policy = solver.optimization_policy in
       let hidden_opt = solver.hidden_opt in
       let (_, length), (_, opt_length), _ =

@@ -47,7 +47,9 @@ let experiment_iter2opt ?sim_name ?(amount = 128) ?(test_set = 200)
 
 let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
     ?(max_time = default_time) ?(exp_per_config = 1)
-    ?(exploration_policy = MCTS.Standard_deviation 1.) ?(ignore_level = 0) () =
+    ?(exploration_policy = MCTS.Standard_deviation 1.) ?(ignore_level = 0)
+    ?(score_policy = MCTS.Average)
+     () =
   let base_opt =
     MCTS.Two_opt { max_time = 1.; max_length = test_set; max_iter = max_int }
   in
@@ -84,7 +86,7 @@ let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
 
   let models =
     Experiment_Runner.create_models max_time ~mcts_opt_list ~mcts_vanilla_list
-      ~exploration_policy
+      ~exploration_policy ~score_policy
   in
 
   let sim_name =

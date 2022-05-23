@@ -31,5 +31,5 @@ let () =
   List.iter
     (fun exploration_policy ->
       Experiments.Experiment_Generator.experiment_partial ~exploration_policy ~max_time
-        ~amount:128 ~test_set:100 ~exp_per_config:5 ~ignore_level:3 ())
+        ~amount:128 ~test_set:100 ~exp_per_config:5 ~ignore_level:3 ~score_policy:MCTS.Best ())
     exploration_policies
