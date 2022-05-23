@@ -1,6 +1,8 @@
 module RndQ = Random_Queue
 module Optimizer_2opt = Two_Opt
 
+let test_warning = 2
+
 type edge = {
   from_city : int;
   to_city : int;
@@ -325,6 +327,7 @@ let simulation ?(first_edge = !arg.edges.(!arg.start).(!arg.start)) () =
         if !arg.develop_opt then opt_propagation ();
         if !arg.hidden_opt <> None then hidden_opt ()
     | Some next_edge ->
+        update_arg next_edge;
         aux next_edge (next_edge :: used_edges) (dist + next_edge.cost)
   in
   aux first_edge [ first_edge ] first_edge.cost
@@ -340,7 +343,7 @@ let reset_arg () =
 (* let debug_all_edges oc root = ()
    todo : implement *)
 
-let create_edges () =
+let create_edges ~city_count ~adj_matrix =
   let create_edge i j =
     {
       from_city = i;
@@ -350,11 +353,11 @@ let create_edges () =
       score = 0.;
       best_score = max_int;
       best_hidden_score = max_int;
-      cost = !arg.adj_matrix.(i).(j);
+      cost = adj_matrix.(i).(j);
       active = i <> j (* edge on the diagonal are not active *);
     }
   in
-  Util.init_matrix !arg.city_count !arg.city_count create_edge
+  Util.init_matrix city_count city_count create_edge
 
 let verbose_message = Util.mcts_verbose_message
 
@@ -378,7 +381,6 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       (Sys.Signal_handle (fun _ -> user_interrupt := true));
 
   let start_time = Unix.gettimeofday () in
-  let edges : edge array array = [| [||] |] in
 
   (* todo creatte matrix *)
 
@@ -386,7 +388,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
   let arr () = Array.make city_count (-1) in
   arg :=
     {
-      edges;
+      edges = create_edges ~city_count ~adj_matrix;
       start;
       start_time;
       exploration_constant = 0.;
@@ -408,7 +410,6 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       hidden_best_tour = arr ();
       hidden_best_score = max_int;
     };
-
   let seed = init seed in
   reset_deb generate_log_file;
 
@@ -550,4 +551,4 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
 
   (* ______________ Return result ______________ *)
   assert (Base_tsp.check_tour_validity best_tour);
-  ((best_tour, best_score), (result_playout_tour, opt_score), edges)
+  ((best_tour, best_score), (result_playout_tour, opt_score), !arg.edges)
