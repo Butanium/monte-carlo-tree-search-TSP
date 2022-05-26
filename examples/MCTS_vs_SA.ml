@@ -19,8 +19,8 @@ let () =
   let max_time = Unix.gettimeofday () -. start_time in
   Printf.printf "\nmax time for mcts : %.4f seconds" max_time;
   let (mcts_path, _), _, _ =
-    MCTS.proceed_mcts ~debug_tree:false ~generate_log_file:0 city_count
-      adj_matrix max_time (max_int - 2)
+    MCTS.proceed_mcts ~debug_tree:false ~generate_log_file:0 ~city_count
+      ~adj_matrix max_time (max_int - 2)
   in
   let mst_length = foi @@ Prim_Alg.prim_alg eval city_count in
   Printf.printf "mst ratios : \n   - mcts : %.2f\n   - sa : %.2f\n\n"

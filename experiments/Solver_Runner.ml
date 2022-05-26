@@ -38,7 +38,7 @@ let solver_name = function
   | Exact -> "Exact-Solver"
 
 let solver_simulation ?(generate_log_file = 1) ?(verbose = 0) ?seed city_config
-    city_count adj_mat log_path =
+    city_count adj_matrix log_path =
   let log_files_path = Printf.sprintf "%s/%s" log_path city_config in
   function
   | Exact -> (-1, -1) (* Experiement Runner handles it *)
@@ -55,23 +55,23 @@ let solver_simulation ?(generate_log_file = 1) ?(verbose = 0) ?seed city_config
           ~simulation_selection_policy ~exploration_policy ~optimization_policy
           ~generate_log_file ~stop_on_leaf:false ~optimize_end_path:true
           ~name:solver.name ~log_files_path ~verbose:(verbose - 1) ~hidden_opt
-          ?seed ~catch_SIGINT:false city_count adj_mat max_time max_simulation
+          ?seed ~catch_SIGINT:false ~city_count ~adj_matrix max_time max_simulation
           ~develop_simulation_policy:solver.dev_policy
       in
       (length, opt_length)
   | Iter solver ->
       let tour =
-        Iterated_2Opt.iter_two_opt adj_mat city_count solver.random_policy
+        Iterated_2Opt.iter_two_opt adj_matrix city_count solver.random_policy
           solver.max_time solver.max_iter ~name:solver.name ~city_config
           ?logs_path:
             (if generate_log_file < 0 then None else Some log_files_path)
           ~verbose:(verbose > 0) ?seed
       in
-      let score = Base_tsp.tour_length adj_mat tour in
+      let score = Base_tsp.tour_length adj_matrix tour in
       (score, score)
   | Greedy solver ->
       let score, _ =
-        Greedy_Random.greedy adj_mat city_count solver.random_policy
+        Greedy_Random.greedy adj_matrix city_count solver.random_policy
           solver.max_time solver.max_iter ~logs_path:log_files_path
           ~generate_log_file ~verbose:(verbose - 1)
       in

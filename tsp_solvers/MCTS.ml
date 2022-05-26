@@ -148,6 +148,7 @@ type arguments = {
   mutable exploration_constant : float;
   mutable get_node_score : node -> float;
   (* Algorithm policies *)
+  close_nodes : bool;
   hidden_opt : optimization_policy;
   simulation_selection_policy : simulation_selection_policy;
   expected_length_policy : expected_length_policy;
@@ -174,6 +175,7 @@ type arguments = {
 let arg =
   ref
     {
+      close_nodes = false;
       hidden_opt = No_opt;
       hidden_best_score = max_int;
       hidden_best_tour = [||];
@@ -446,7 +448,8 @@ let simulation last_city =
   in
   if deb.generate_log_file > 0 then
     deb.score_hist <-
-      (float !arg.simulation_count, simulation_score, hidden_score) :: deb.score_hist;
+      (float !arg.simulation_count, simulation_score, hidden_score)
+      :: deb.score_hist;
 
   (float simulation_score, float hidden_score)
 
@@ -627,7 +630,7 @@ let rec selection node =
         match get_best_child node with
         | Some child -> selection child
         | None ->
-            node.info.active <- false;
+            if !arg.close_nodes then node.info.active <- false;
             deb.closed_nodes <- deb.closed_nodes + 1;
             backpropagation node node.info.best_score
               node.info.best_hidden_score node.info.max_child_depth)
@@ -683,17 +686,29 @@ let verbose_message = Util.mcts_verbose_message
 
 (** {FR} Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents simulation
     {EN} Create and develop the tree, keeping in memory the best tour done during the simulations *)
-let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
-    ?(debug_tree = false) ?(expected_length_policy = Average)
-    ?(city_config = "") ?(config_path = "tsp_instances")
+let proceed_mcts 
+    (* Policy arguments *)
+    ?(expected_length_policy = Average)
+    ?(close_nodes = true) 
     ?(simulation_selection_policy = Roulette)
     ?(exploration_policy = Standard_deviation 1.)
     ?(optimization_policy = No_opt) ?(stop_on_leaf = true)
-    ?(optimize_end_path = true) ?(verbose = 1) ?(hidden_opt = No_opt)
-    ?(optimize_end_path_time = infinity) ?(name = "")
-    ?(develop_simulation_policy = No_dev) ?(catch_SIGINT = true)
-    ?(exploration_constant_factor = 1.) ?seed city_count adj_matrix max_time
-    max_simulation =
+    ?(optimize_end_path = true)  ?(hidden_opt = No_opt)
+    ?(optimize_end_path_time = infinity) 
+    ?(develop_simulation_policy = No_dev)
+    ?(exploration_constant_factor = 1.) ?seed 
+    
+    (* Problem arguments *)
+    ?(city_config = "") ?(config_path = "tsp_instances") 
+    ~city_count ~adj_matrix
+
+    (* debug arguments *)
+    ?(generate_log_file = -1) ?(log_files_path = "logs")
+    ?(debug_tree = false)  ?(verbose = 1) ?(catch_SIGINT = true)
+    ?(name = "")
+
+    (* Algorithm exit conditions*)
+     max_time max_simulation = 
   (* ____ allow user exit with Ctrl+C sigint ____ *)
   let user_interrupt = ref false in
   if catch_SIGINT then
@@ -725,6 +740,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
   let arr () = Array.make city_count (-1) in
   arg :=
     {
+      close_nodes;
       start_time;
       exploration_constant = 0.;
       simulation_selection_policy;
@@ -826,8 +842,8 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       "\n\
        %d simulations in %.0f s, max depth : %d, best score : %d, exploration \
        constant : %.1f, closed_nodes : %d\n\
-       random seed : %d" !arg.simulation_count spent_time deb.max_depth best_score
-      !arg.exploration_constant deb.closed_nodes seed;
+       random seed : %d" !arg.simulation_count spent_time deb.max_depth
+      best_score !arg.exploration_constant deb.closed_nodes seed;
     Printf.fprintf oc "\nbest tour :\n";
     Base_tsp.print_tour ~oc best_tour;
 

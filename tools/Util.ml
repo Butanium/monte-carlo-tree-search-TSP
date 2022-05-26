@@ -4,10 +4,11 @@ let map_in_place f a =
   for i = 0 to Array.length a - 1 do
     a.(i) <- f a.(i)
   done
+
 let matrix_iter f m = Array.iter (fun arr -> Array.iter f arr) m
-  
+
 let init_matrix n p f = Array.init n (fun i -> Array.init p (f i))
-  
+
 let mapi_in_place f a =
   for i = 0 to Array.length a - 1 do
     a.(i) <- f i a.(i)
@@ -39,3 +40,20 @@ let mcts_verbose_message =
     \         |||\\/\n\
     \         |:)|\n\
     \   .....//||||\\....\n\n"
+
+let list_comp ( <?> ) key = function
+  | [] -> None
+  | x :: xs ->
+      Some
+        (List.fold_left
+           (fun (acc, acc_score) x ->
+             let score = key x in
+             if score <?> acc_score then (x, score) else (acc, acc_score))
+           (x, key x)
+           xs)
+
+let list_min k l = list_comp ( < ) k l
+
+let list_max k l = list_comp ( > ) k l
+
+let interpolate (x1, y1) (x2, y2) x = y1 +. ((y2 -. y1) *. (x -. x1) /. (x2 -. x1))

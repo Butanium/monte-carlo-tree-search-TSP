@@ -26,7 +26,10 @@ let debug_tree = false
 
 let optimize_end_path = false
 
-let stop_on_leaf = true
+let stop_on_leaf = false
+
+let close_nodes = false
+
 
 let name =
   Printf.sprintf "vanilla-test-%s"
@@ -34,9 +37,9 @@ let name =
 
 let _, (tour, length), tree =
   Printf.printf "%d city_count\n" city_count;
-  MCTS.proceed_mcts ~name ~debug_tree ~city_config ~expected_length_policy
+  MCTS.proceed_mcts ~name ~debug_tree ~city_config ~expected_length_policy ~close_nodes
     ~simulation_selection_policy ~exploration_policy ~optimization_policy
-    ~generate_log_file ~stop_on_leaf ~optimize_end_path city_count adj_matrix
+    ~generate_log_file ~stop_on_leaf ~optimize_end_path ~city_count ~adj_matrix
     max_time max_simulation
 
 let () =
