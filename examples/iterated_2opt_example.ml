@@ -22,6 +22,6 @@ let two_path, (mcts_path, _, _) =
         max_int )
 
 let () =
-  Show_tsp.show_solution_and_wait ~title:"two-opt tour" cities two_path;
+  Show_tsp.show_tour_and_wait ~title:"two-opt tour" cities two_path;
   Base_tsp.print_error_ratio two_path adj_matrix city_config;
-  Show_tsp.show_solution_and_wait ~title:"two-opt tour" cities two_path
+  Show_tsp.show_tour_and_wait ~title:"two-opt tour" cities two_path

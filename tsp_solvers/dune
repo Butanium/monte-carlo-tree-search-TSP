@@ -2,4 +2,5 @@
  (wrapped false)
  (name tsp_solvers)
  (modules Iterated_2Opt MCTS Simulated_Annealing Greedy_Random MCTS_Heat)
- (libraries graphics tools tsp_modules))
+ (libraries graphics tools tsp_modules)
+ (preprocess (pps ppx_deriving.show)))

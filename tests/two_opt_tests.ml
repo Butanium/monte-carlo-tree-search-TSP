@@ -2,7 +2,8 @@
   dune exec ./tests/two_opt_main.exe
 *)
 
-let city_config = "TSP100/instance2"
+(* let city_config = "TSP100/instance2" *)
+let city_config = "TSPLIB/att48"
 
 let city_count, cities = Reader_tsp.open_tsp city_config
 
@@ -14,6 +15,7 @@ let tour =
 
 let max_time = 10.
 
+(* let () = Show_tsp.show_tour *)
 let max_try = max_int
 (* let tour = Iterated_2Opt.iter_two_opt adj_matrix city_count Iterated_2Opt.Roulette max_time max_try *)
 
@@ -23,7 +25,7 @@ let max_try = max_int
      Printf.printf "\n%% of error : %.2f %%\n"
        (100. *. float_of_int (len - best_len) /. float_of_int best_len);
      Base_tsp.print_tour tour;
-     Show_tsp.show_solution_and_wait cities tour
+     Show_tsp.show_tour_and_wait cities tour
 
    let () =
      show ();
@@ -31,7 +33,7 @@ let max_try = max_int
        tour;
      show () *)
 
-let crash_test =
+(* let crash_test =
   Iterated_2Opt.(
     iter_two_opt adj_matrix city_count ~seed:386772978 Random 5000. max_int
-      ~logs_path:"logs/crash_test_2opt")
+      ~logs_path:"logs/crash_test_2opt") *)

@@ -26,34 +26,34 @@ and node = { info : node_info; heritage : heritage }
 (** {FR} Un noeud de l'arbre de monte carlo
     {EN} Represents a node in the monte carlo tree *)
 
-(** {FR} Politique de selection des villes lors du playout : [Random] correspond à une sélection aléatoire 
+(** {FR} Politique de selection des villes lors du simulation : [Random] correspond à une sélection aléatoire 
     et [Roulette] à une selection aléatoire pondérée par la distance à la dernière ville choisie
-    {EN} selection policy for the end of a playout.
+    {EN} selection policy for the end of a simulation.
       - For [Roulette], the probability of choosing a city 'c'
       as the `i+1` city is pondered by `1 / distance c c_i`.
       - [Random] is just uniform random selection *)
-type playout_selection_policy = Roulette | Random
+type simulation_selection_policy = Roulette | Random
 
 let str_of_selection_policy = function
   | Roulette -> "Roulette"
   | Random -> "Random"
 
-(* {FR} Définie si les tours renvoyés par playout sont convertis en noeuds ou non :
+(* {FR} Définie si les tours renvoyés par simulation sont convertis en noeuds ou non :
       - Dev_all pour tous
       - Dev_hidden pour ceux optimisés secrètement
-      - Dev_playout pour ceux non optimisé
+      - Dev_simulation pour ceux non optimisé
       - No_dev pour aucun des deux
-   {EN} Define if playout tours are converted in nodes *)
-type develop_playout_policy =
+   {EN} Define if simulation tours are converted in nodes *)
+type develop_simulation_policy =
   | Dev_all of int
   | Dev_hidden of int
-  | Dev_playout of int
+  | Dev_simulation of int
   | No_dev
 
 let str_of_develop_policy = function
   | Dev_all length -> Printf.sprintf "Dev_all_%d" length
   | Dev_hidden length -> Printf.sprintf "Dev_hidden%d" length
-  | Dev_playout length -> Printf.sprintf "Dev_playout%d" length
+  | Dev_simulation length -> Printf.sprintf "Dev_simulation%d" length
   | No_dev -> "No_dev"
 
 (** {FR} Définie le paramètre d'exploration utilisée pour sélectionner le meilleur fils d'un noeud
@@ -75,23 +75,23 @@ let str_of_exploration_policy = function
       - [Average] utilise la moyenne des scores du noeud
       - [Best] utilise le meilleur score du noeud
    {EN} define how the expected reward will be calculated in the selection formula :
-      - [Average] will use the average length that the node got in playouts
-      - [Best] will use the best length that the node got in playouts*)
+      - [Average] will use the average length that the node got in simulations
+      - [Best] will use the best length that the node got in simulations*)
 type expected_length_policy = Average | Best
 
 let str_of_expected_length_policy = function
   | Average -> "Average"
   | Best -> "Best"
 
-(** {FR} Définie la manière dont le trajet créé pendant le playout va être optimisé :
+(** {FR} Définie la manière dont le trajet créé pendant le simulation va être optimisé :
     - [No_opt] : aucune optimisation
-    - [Two_opt { max_length; max_iter; max_time }] : optimisation 2-opt depuis le début du playout jusqu'à la max_length-ième ville
+    - [Two_opt { max_length; max_iter; max_time }] : optimisation 2-opt depuis le début du simulation jusqu'à la max_length-ième ville
       avec au maximum max_try itérations et max_time secondes
     - [Full_Two_opt { max_iter; max_time }] : optimisation complète du chemin avec du 2-opt, ne conserve pas l'intégrité du chemin
       construit pendant sélection
-    {EN} Define how the path created during the playout will be optimized :
+    {EN} Define how the path created during the simulation will be optimized :
       - [No_opt] : no optimization
-      - [Two_opt { max_length; max_iter; max_time }] : 2-opt optimization from the beginning of the playout until the max_length-th city
+      - [Two_opt { max_length; max_iter; max_time }] : 2-opt optimization from the beginning of the simulation until the max_length-th city
         with at most max_iter iterations and max_time seconds
       - [Full_Two_opt { max_iter; max_time }] : full optimization of the path, do not preserve the path built during selection *)
 type optimization_policy =
@@ -149,10 +149,10 @@ type arguments = {
   mutable get_node_score : node -> float;
   (* Algorithm policies *)
   hidden_opt : optimization_policy;
-  playout_selection_policy : playout_selection_policy;
+  simulation_selection_policy : simulation_selection_policy;
   expected_length_policy : expected_length_policy;
   optimization_policy : optimization_policy;
-  develop_playout_policy : develop_playout_policy;
+  develop_simulation_policy : develop_simulation_policy;
   (* 1 iteration variable *)
   visited : bool array;
   mutable path_size : int;
@@ -160,7 +160,7 @@ type arguments = {
   (* Algorithm results *)
   best_tour : int array;
   mutable best_score : int;
-  mutable playout_count : int;
+  mutable simulation_count : int;
   hidden_best_tour : int array;
   mutable hidden_best_score : int;
 }
@@ -179,7 +179,7 @@ let arg =
       hidden_best_tour = [||];
       start_time = 0.;
       exploration_constant = -1.;
-      playout_selection_policy = Random;
+      simulation_selection_policy = Random;
       visited = [||];
       city_count = -1;
       path_size = -1;
@@ -188,10 +188,10 @@ let arg =
       current_path = [||];
       best_tour = [||];
       best_score = -1;
-      playout_count = 0;
+      simulation_count = 0;
       expected_length_policy = Average;
       optimization_policy = No_opt;
-      develop_playout_policy = No_dev;
+      develop_simulation_policy = No_dev;
       root = None;
     }
 
@@ -216,18 +216,18 @@ let get_node_info node =
 let debug_node oc node = Printf.fprintf oc "%s" @@ get_node_info node
 
 (** {FR} Actualise les poids des différentes villes par rapport à la dernière ville choisie
-          pour le chemin aléatoire du playout
-    {EN} Update the weights in the random queue according to the last city added to the playout tour *)
+          pour le chemin aléatoire du simulation
+    {EN} Update the weights in the random queue according to the last city added to the simulation tour *)
 let update_weights queue last =
-  match !arg.playout_selection_policy with
+  match !arg.simulation_selection_policy with
   | Random -> ()
   | Roulette -> RndQ.roulette_weights !arg.adj_matrix last queue
 
 let creation_queue = ref @@ RndQ.simple_create 0 [||]
 
-let playout_path = ref [||]
+let simulation_path = ref [||]
 
-let playout_tour_container = ref [||]
+let simulation_tour_container = ref [||]
 
 let hidden_tour_container = ref [||]
 
@@ -244,8 +244,8 @@ let init seed =
         Random.int 1073741823
   in
   let arr () = Array.make !arg.city_count (-1) in
-  playout_path := arr ();
-  playout_tour_container := arr ();
+  simulation_path := arr ();
+  simulation_tour_container := arr ();
   hidden_tour_container := arr ();
   get_next_city_arr := Array.make !arg.city_count false;
   creation_queue := RndQ.simple_create !arg.city_count @@ arr ();
@@ -267,6 +267,7 @@ let path_of_node =
     {EN} Create a node with the city `city` as a child of `parent` *)
 let create_node parent city =
   let depth = parent.info.depth + 1 in
+  deb.max_depth <- max deb.max_depth depth;
   let tot_dist =
     parent.info.tot_dist + !arg.adj_matrix.(parent.info.city).(city)
   in
@@ -364,14 +365,14 @@ let available queue =
   done;
   queue
 
-(** {FR} remplie `container` avec le chemin construit dans la sélection puis la fin générée pendant le playout
-    {EN} fill `container` with the path built during selection and the end generated during the playout *)
+(** {FR} remplie `container` avec le chemin construit dans la sélection puis la fin générée pendant le simulation
+    {EN} fill `container` with the path built during selection and the end generated during the simulation *)
 let fill_tour container size =
   for i = 0 to !arg.path_size - 1 do
     container.(i) <- !arg.current_path.(i)
   done;
   for i = 0 to size - 1 do
-    container.(!arg.path_size + i) <- !playout_path.(i + 1)
+    container.(!arg.path_size + i) <- !simulation_path.(i + 1)
   done
 
 (** {FR} Optimise le chemin en fonction de la politique d'optimisation
@@ -384,7 +385,7 @@ let optimize_tour container size = function
       let _ =
         Optimizer_2opt.opt_fast ~partial_path:true
           ~upper_bound:(min size max_length) ~max_iter ~max_time !arg.adj_matrix
-          !playout_path
+          !simulation_path
       in
       fill_tour container size;
       container
@@ -403,31 +404,31 @@ let optimize_tour container size = function
     et retourne la longueur obtenue
     {EN} Finish randomly the path started during the exploration, optimize it if asked and 
     return the computed length *)
-let playout last_city =
+let simulation last_city =
   let queue = available !creation_queue in
   let size = !arg.city_count - !arg.path_size in
-  let playout_tour =
+  let simulation_tour =
     if size > 0 then (
       update_weights queue last_city;
-      !playout_path.(0) <- last_city;
+      !simulation_path.(0) <- last_city;
       for k = 1 to size do
         let c = RndQ.take queue in
         update_weights queue c;
-        !playout_path.(k) <- c
+        !simulation_path.(k) <- c
       done;
-      optimize_tour !playout_tour_container size !arg.optimization_policy)
+      optimize_tour !simulation_tour_container size !arg.optimization_policy)
     else !arg.current_path
   in
-  let playout_score = Base_tsp.tour_length !arg.adj_matrix playout_tour in
+  let simulation_score = Base_tsp.tour_length !arg.adj_matrix simulation_tour in
 
-  if playout_score < !arg.best_score then (
-    !arg.best_score <- playout_score;
-    Util.copy_in_place !arg.best_tour ~model:playout_tour;
+  if simulation_score < !arg.best_score then (
+    !arg.best_score <- simulation_score;
+    Util.copy_in_place !arg.best_tour ~model:simulation_tour;
     if deb.generate_log_file > 0 then
       deb.best_score_hist <-
         ( Unix.gettimeofday () -. !arg.start_time,
-          !arg.playout_count,
-          playout_score )
+          !arg.simulation_count,
+          simulation_score )
         :: deb.best_score_hist);
 
   let hidden_score =
@@ -441,16 +442,16 @@ let playout last_city =
         Util.copy_in_place !arg.hidden_best_tour ~model:hidden_tour;
         !arg.hidden_best_score <- opt_score);
       opt_score)
-    else playout_score
+    else simulation_score
   in
   if deb.generate_log_file > 0 then
     deb.score_hist <-
-      (float !arg.playout_count, playout_score, hidden_score) :: deb.score_hist;
+      (float !arg.simulation_count, simulation_score, hidden_score) :: deb.score_hist;
 
-  (float playout_score, float hidden_score)
+  (float simulation_score, float hidden_score)
 
 (** {FR} Actualise le nombre de visites et le score total sur les noeuds
-    {EN} Update the node visited during the exploration according to the playout score 
+    {EN} Update the node visited during the exploration according to the simulation score 
     @param node the current node to be updated
     @param score the score to add to the node
     @param hidden_score the hidden score to add to the node
@@ -537,35 +538,35 @@ let rec forward_propagation node tour score length =
         forward_propagation next_node tour score (length - 1)
     | _ -> ())
 
-(** {FR} convertis le ou les tours en noeuds en fonction de la valeur de `develop_playout_policy`
-    {EN} convert the tour in nodes according to the value of `develop_playout_policy` *)
-let convert_tours ~hidden_score ~playout_score node =
+(** {FR} convertis le ou les tours en noeuds en fonction de la valeur de `develop_simulation_policy`
+    {EN} convert the tour in nodes according to the value of `develop_simulation_policy` *)
+let convert_tours ~hidden_score ~simulation_score node =
   let root = Option.get !arg.root in
   let dev_hidden =
     add_score root hidden_score;
     forward_propagation root !hidden_tour_container hidden_score
   in
-  let dev_playout =
+  let dev_simulation =
     match !arg.optimization_policy with
     | Full_Two_opt _ ->
-        forward_propagation root !playout_tour_container playout_score
-    | _ -> forward_propagation node !playout_tour_container playout_score
+        forward_propagation root !simulation_tour_container simulation_score
+    | _ -> forward_propagation node !simulation_tour_container simulation_score
   in
   let error () =
     raise
     @@ Invalid_argument
          "MCTS Error : You can't convert hidden tour if there are no hidden opt"
   in
-  match !arg.develop_playout_policy with
+  match !arg.develop_simulation_policy with
   | No_dev -> ()
   | Dev_all extra_length ->
       if !arg.hidden_opt = No_opt then error ();
-      dev_playout extra_length;
+      dev_simulation extra_length;
       dev_hidden (extra_length + node.info.depth)
   | Dev_hidden extra_length ->
       if !arg.hidden_opt = No_opt then error ();
       dev_hidden (extra_length + node.info.depth)
-  | Dev_playout length -> dev_playout length
+  | Dev_simulation length -> dev_simulation length
 
 (** {FR} Développe l'arbre en créant un nouveau noeud relié à `node`
     {EN} Expand the tree by creating a new node connected to `node` *)
@@ -577,9 +578,9 @@ let expand node =
   !arg.visited.(city) <- true;
   let new_node = create_node node city in
   add_child node new_node;
-  let playout_score, hidden_score = playout city in
-  convert_tours ~playout_score ~hidden_score new_node;
-  backpropagation new_node playout_score hidden_score (node.info.depth + 1)
+  let simulation_score, hidden_score = simulation city in
+  convert_tours ~simulation_score ~hidden_score new_node;
+  backpropagation new_node simulation_score hidden_score (node.info.depth + 1)
 
 (** {FR} Renvoie le fils de `node` ayant le score le plus bas
     {EN} Return the child of `node` with the lowest score *)
@@ -609,7 +610,6 @@ let update_arg node =
         is reached, and expand this node there *)
 let rec selection node =
   update_arg node;
-  deb.max_depth <- max deb.max_depth !arg.path_size;
   if node.info.developed + node.info.depth = !arg.city_count then
     match node.info.children with
     | [] ->
@@ -681,19 +681,19 @@ let debug_mcts oc root =
 
 let verbose_message = Util.mcts_verbose_message
 
-(** {FR} Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents playout
-    {EN} Create and develop the tree, keeping in memory the best tour done during the playouts *)
+(** {FR} Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents simulation
+    {EN} Create and develop the tree, keeping in memory the best tour done during the simulations *)
 let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     ?(debug_tree = false) ?(expected_length_policy = Average)
     ?(city_config = "") ?(config_path = "tsp_instances")
-    ?(playout_selection_policy = Roulette)
+    ?(simulation_selection_policy = Roulette)
     ?(exploration_policy = Standard_deviation 1.)
     ?(optimization_policy = No_opt) ?(stop_on_leaf = true)
     ?(optimize_end_path = true) ?(verbose = 1) ?(hidden_opt = No_opt)
     ?(optimize_end_path_time = infinity) ?(name = "")
-    ?(develop_playout_policy = No_dev) ?(catch_SIGINT = true)
+    ?(develop_simulation_policy = No_dev) ?(catch_SIGINT = true)
     ?(exploration_constant_factor = 1.) ?seed city_count adj_matrix max_time
-    max_playout =
+    max_simulation =
   (* ____ allow user exit with Ctrl+C sigint ____ *)
   let user_interrupt = ref false in
   if catch_SIGINT then
@@ -727,7 +727,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     {
       start_time;
       exploration_constant = 0.;
-      playout_selection_policy;
+      simulation_selection_policy;
       visited = Array.make city_count false;
       city_count;
       path_size = 0;
@@ -736,10 +736,10 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       current_path = arr ();
       best_tour = arr ();
       best_score = max_int;
-      playout_count = 0;
+      simulation_count = 0;
       expected_length_policy;
       optimization_policy;
-      develop_playout_policy;
+      develop_simulation_policy;
       root = Some root;
       hidden_opt;
       hidden_best_tour = arr ();
@@ -754,16 +754,16 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
 
   (* ____________ MCTS algorithm ____________ *)
   while
-    !arg.playout_count = 0
-    || !arg.playout_count < max_playout
+    !arg.simulation_count = 0
+    || !arg.simulation_count < max_simulation
        && (max_time = infinity || get_time () < max_time)
        && ((not stop_on_leaf) || deb.max_depth < city_count)
        && not !user_interrupt
   do
     reset_arg ();
-    !arg.playout_count <- !arg.playout_count + 1;
+    !arg.simulation_count <- !arg.simulation_count + 1;
     selection root;
-    if !arg.playout_count = city_count - 1 then
+    if !arg.simulation_count = city_count - 1 then
       !arg.get_node_score <-
         get_node_score_fun root exploration_policy expected_length_policy
           exploration_constant_factor
@@ -786,16 +786,16 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
   in
 
   (* ________ Optimize returned path ________ *)
-  let result_playout_tour, opt_score =
+  let result_simulation_tour, opt_score =
     if optimize_end_path then (
       let start_time = Unix.gettimeofday () in
-      let result_playout_tour = Array.copy best_tour in
+      let result_simulation_tour = Array.copy best_tour in
       let opted =
         Optimizer_2opt.opt_fast adj_matrix ~max_time:optimize_end_path_time
-          result_playout_tour
+          result_simulation_tour
       in
       let opt_time = Unix.gettimeofday () -. start_time in
-      let opt_score = Base_tsp.tour_length adj_matrix result_playout_tour in
+      let opt_score = Base_tsp.tour_length adj_matrix result_simulation_tour in
       let opt_delta = best_score - opt_score in
       add_debug
         (if opted then Printf.sprintf "Returned tour already optimized\n"
@@ -803,14 +803,14 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
           Printf.sprintf
             "Optimized returned tour in %g/%.0f seconds with %d delta \n"
             opt_time optimize_end_path_time opt_delta);
-      (result_playout_tour, opt_score))
+      (result_simulation_tour, opt_score))
     else (best_tour, best_score)
   in
 
   (* _______________ Log files _______________ *)
   let sim_name =
     Printf.sprintf "MCTS-%s-%.0fs-%s-%s-%s" city_config spent_time
-      (str_of_selection_policy playout_selection_policy)
+      (str_of_selection_policy simulation_selection_policy)
       (str_of_exploration_policy exploration_policy)
       (str_of_optimization_policy optimization_policy)
   in
@@ -824,9 +824,9 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
     Printf.fprintf oc "%s" !debug_string;
     Printf.fprintf oc
       "\n\
-       %d playouts in %.0f s, max depth : %d, best score : %d, exploration \
+       %d simulations in %.0f s, max depth : %d, best score : %d, exploration \
        constant : %.1f, closed_nodes : %d\n\
-       random seed : %d" !arg.playout_count spent_time deb.max_depth best_score
+       random seed : %d" !arg.simulation_count spent_time deb.max_depth best_score
       !arg.exploration_constant deb.closed_nodes seed;
     Printf.fprintf oc "\nbest tour :\n";
     Base_tsp.print_tour ~oc best_tour;
@@ -860,12 +860,12 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       let file = File_log.create_file ~file_path ~file_name:"best_scores" () in
       let oc =
         File_log.log_string_endline ~close:false ~file
-          "playout,timestamp,length"
+          "simulation,timestamp,length"
       in
       Util.iter_rev (fun (t, p, len) ->
           if t = 0. then Printf.fprintf oc "%d,0,%d\n" p len
           else Printf.fprintf oc "%d,%g,%d\n" p t len)
-      @@ (Unix.gettimeofday () -. start_time, !arg.playout_count, best_score)
+      @@ (Unix.gettimeofday () -. start_time, !arg.simulation_count, best_score)
          :: deb.best_score_hist;
       close_out oc);
 
@@ -881,7 +881,7 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
       debug_mcts oc root;
       close_out oc);
 
-    Base_tsp.create_opt_file ~file_path result_playout_tour;
+    Base_tsp.create_opt_file ~file_path result_simulation_tour;
     if verbose >= 0 then
       let start = String.length "logs/" in
       Printf.printf "simulation directory for log files : %s\n"
@@ -890,4 +890,4 @@ let proceed_mcts ?(generate_log_file = -1) ?(log_files_path = "logs")
 
   (* ______________ Return result ______________ *)
   assert (Base_tsp.check_tour_validity best_tour);
-  ((best_tour, best_score), (result_playout_tour, opt_score), root)
+  ((best_tour, best_score), (result_simulation_tour, opt_score), root)

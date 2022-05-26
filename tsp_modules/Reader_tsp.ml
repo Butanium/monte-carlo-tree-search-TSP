@@ -50,7 +50,7 @@ let open_tour ?(file_path = "tsp_instances") tsp_name =
   let rec loop started =
     try
       let s = String.trim @@ input_line ic in
-      if started then (
+      if started && s <> "-1" && s <> "EOF" then (
         List.iter fill @@ List.map int_of_string @@ String.split_on_char ' ' s;
         loop true)
       else loop ("TOUR_SECTION" = s)

@@ -7,9 +7,9 @@ type mcts_solver = {
   max_time : float;
   exploration_policy : MCTS.exploration_policy;
   optimization_policy : MCTS.optimization_policy;
-  selection_policy : MCTS.playout_selection_policy;
+  selection_policy : MCTS.simulation_selection_policy;
   hidden_opt : MCTS.optimization_policy;
-  dev_policy : MCTS.develop_playout_policy;
+  dev_policy : MCTS.develop_simulation_policy;
   score_policy : MCTS.expected_length_policy;
 }
 
@@ -44,19 +44,19 @@ let solver_simulation ?(generate_log_file = 1) ?(verbose = 0) ?seed city_config
   | Exact -> (-1, -1) (* Experiement Runner handles it *)
   | MCTS solver ->
       let max_time = solver.max_time in
-      let max_playout = 100000000 in
-      let playout_selection_policy = solver.selection_policy in
+      let max_simulation = 100000000 in
+      let simulation_selection_policy = solver.selection_policy in
       let exploration_policy = solver.exploration_policy in
       let expected_length_policy = solver.score_policy in
       let optimization_policy = solver.optimization_policy in
       let hidden_opt = solver.hidden_opt in
       let (_, length), (_, opt_length), _ =
         MCTS.proceed_mcts ~debug_tree:false ~city_config ~expected_length_policy
-          ~playout_selection_policy ~exploration_policy ~optimization_policy
+          ~simulation_selection_policy ~exploration_policy ~optimization_policy
           ~generate_log_file ~stop_on_leaf:false ~optimize_end_path:true
           ~name:solver.name ~log_files_path ~verbose:(verbose - 1) ~hidden_opt
-          ?seed ~catch_SIGINT:false city_count adj_mat max_time max_playout
-          ~develop_playout_policy:solver.dev_policy
+          ?seed ~catch_SIGINT:false city_count adj_mat max_time max_simulation
+          ~develop_simulation_policy:solver.dev_policy
       in
       (length, opt_length)
   | Iter solver ->

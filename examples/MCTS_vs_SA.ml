@@ -31,8 +31,8 @@ let () =
   print_endline "monte carlo tour : ";
   Base_tsp.print_tour mcts_path;
   let title = "simulated annealing tour" in
-  Show_tsp.show_solution ~title cities sa_path;
+  Show_tsp.show_tour ~title cities sa_path;
   print_endline "\nsend anything to see the mcts tour";
   let _ = read_line () in
   let title = "\nmcts tour" in
-  Show_tsp.show_solution_and_wait ~title cities mcts_path
+  Show_tsp.show_tour_and_wait ~title cities mcts_path

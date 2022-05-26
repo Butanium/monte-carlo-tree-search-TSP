@@ -18,7 +18,7 @@ My implementation of the monte carlo tree search is in [this module](tsp_solvers
 
 My point with MCTS is to use the approach described
 in [this paper](http://sasimi.jp/new/sasimi2016/files/archive/pdf/p352_R4-14.pdf) and try to see if adding some 2-opt in
-playouts and doing some other modifications, can end up in a better result.
+simulations and doing some other modifications, can end up in a better result.
 
 ## How can I test it ?
 

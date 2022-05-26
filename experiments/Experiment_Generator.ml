@@ -19,7 +19,7 @@ let file_path = "tsp_instances"
 
 let default_time = 1.
 
-let dev_modes = MCTS.[ Dev_hidden 5; Dev_playout 5; No_dev; Dev_all 5 ]
+let dev_modes = MCTS.[ Dev_hidden 5; Dev_simulation 5; No_dev; Dev_all 5 ]
 
 let all_iter2opt_list = max_int *$ [ Iterated_2Opt.Random; Roulette ]
 

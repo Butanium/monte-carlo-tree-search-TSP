@@ -15,16 +15,16 @@ let generate_log_file = 0
 let max_time = 180.
 (* 3 minute run, can be longer like 30 minutes for good results *)
 
-let max_playout = 100000000
+let max_simulation = 100000000
 
-let playout_selection_policy = MCTS.Roulette
+let simulation_selection_policy = MCTS.Roulette
 
 let exploration_policy = MCTS.Min_spanning_tree 1.
 
 let (tour, length), (opt_path, opt_length), root =
   MCTS.proceed_mcts ~debug_tree ~generate_log_file ~city_config
-    ~playout_selection_policy ~exploration_policy city_count adj_matrix max_time
-    max_playout
+    ~simulation_selection_policy ~exploration_policy city_count adj_matrix max_time
+    max_simulation
 
 let () =
   Graphics.sound 100 2000;
@@ -32,7 +32,7 @@ let () =
   (*make some sound when monte carlo is complete *)
   print_endline "mcts tour : ";
   Base_tsp.print_tour tour;
-  Show_tsp.show_solution_and_wait cities tour
+  Show_tsp.show_tour_and_wait cities tour
 (* Show the computed solution *)
 
 let () = Base_tsp.print_error_ratio tour adj_matrix city_config

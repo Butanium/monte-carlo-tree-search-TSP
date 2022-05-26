@@ -12,5 +12,5 @@ let tour =
     Simulated_Annealing.Swap
 
 let () =
-  Show_tsp.show_solution_and_wait cities tour;
+  Show_tsp.show_tour_and_wait cities tour;
   Base_tsp.print_error_ratio tour adj_matrix city_config

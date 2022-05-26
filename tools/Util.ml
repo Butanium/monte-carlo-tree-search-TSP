@@ -4,10 +4,10 @@ let map_in_place f a =
   for i = 0 to Array.length a - 1 do
     a.(i) <- f a.(i)
   done
-
-let init_matrix n p f = 
-  Array.init n (fun i -> Array.init p (f i))
-
+let matrix_iter f m = Array.iter (fun arr -> Array.iter f arr) m
+  
+let init_matrix n p f = Array.init n (fun i -> Array.init p (f i))
+  
 let mapi_in_place f a =
   for i = 0 to Array.length a - 1 do
     a.(i) <- f i a.(i)
