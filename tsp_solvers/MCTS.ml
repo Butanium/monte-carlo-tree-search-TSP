@@ -287,7 +287,7 @@ let create_node parent city =
       tot_dist;
       children = [];
       developed = 0;
-      active = depth <> !arg.city_count;
+      active = depth <> !arg.city_count || not !arg.close_nodes;
     }
   in
   { heritage = Parent parent; info }
@@ -497,34 +497,6 @@ let add_child parent child =
     {EN} create the nodes associated to the tour or update them *)
 let rec forward_propagation node tour score length =
   if node.info.depth <> !arg.city_count && length >= 0 then (
-    if not (node.info.city = tour.(node.info.depth - 1)) then (
-      let exception Forward_propagation of (int array * int * int) in
-      (* todo : delete if fixed *)
-      Printf.printf
-        "\n\
-         Error at depth %d, length %d \n\
-         with node city %d instead of %d\n\
-         prev city : %d (depth %d), the path is : " node.info.depth length
-        node.info.city
-        tour.(node.info.depth - 1)
-        (match node.heritage with
-        | Root -> -1
-        | Parent parent -> parent.info.city)
-        (match node.heritage with
-        | Root -> -1
-        | Parent parent -> parent.info.depth);
-      Array.iteri
-        (fun i c ->
-          Printf.printf "%s%d%s "
-            (if i = node.info.depth - 1 then "**" else "")
-            c
-            (if i = node.info.depth then "**" else ""))
-        tour;
-      Printf.printf "\nthe node path is : ";
-      List.iter (fun x -> Printf.printf "%d " x) @@ path_of_node node;
-      raise
-      @@ Forward_propagation
-           (Array.sub tour 0 node.info.depth, node.info.city, node.info.depth));
     let next_city = tour.(node.info.depth) in
     match
       List.find_opt (fun x -> x.info.city = next_city) node.info.children
@@ -630,8 +602,8 @@ let rec selection node =
         match get_best_child node with
         | Some child -> selection child
         | None ->
-            if !arg.close_nodes then node.info.active <- false;
-            deb.closed_nodes <- deb.closed_nodes + 1;
+            if !arg.close_nodes then (node.info.active <- false;
+              deb.closed_nodes <- deb.closed_nodes + 1);
             backpropagation node node.info.best_score
               node.info.best_hidden_score node.info.max_child_depth)
   else
@@ -686,6 +658,7 @@ let verbose_message = Util.mcts_verbose_message
 
 (** {FR} Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents simulation
     {EN} Create and develop the tree, keeping in memory the best tour done during the simulations *)
+(* TODO : refactor arguments with a record as argumennt for optional values *)
 let proceed_mcts 
     (* Policy arguments *)
     ?(expected_length_policy = Average)
