@@ -56,4 +56,10 @@ let list_min k l = list_comp ( < ) k l
 
 let list_max k l = list_comp ( > ) k l
 
-let interpolate (x1, y1) (x2, y2) x = y1 +. ((y2 -. y1) *. (x -. x1) /. (x2 -. x1))
+let interpolate (x1, y1) (x2, y2) x =
+  y1 +. ((y2 -. y1) *. (x -. x1) /. (x2 -. x1))
+
+let print_list to_string list =
+  print_string "[";
+  List.iter (fun x -> Printf.printf " %s," @@ to_string x) list;
+  print_string " ]"
