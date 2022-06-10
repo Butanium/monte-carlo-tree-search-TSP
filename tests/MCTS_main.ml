@@ -9,7 +9,7 @@ let adj_matrix = Base_tsp.get_adj_matrix cities
 
 let max_time = 3600.
 
-let max_simulation = 100000000
+let max_simulation = max_int
 
 let simulation_selection_policy = MCTS.Roulette
 
@@ -28,8 +28,7 @@ let optimize_end_path = false
 
 let stop_on_leaf = false
 
-let close_nodes = false
-
+let close_nodes = true
 
 let name =
   Printf.sprintf "vanilla-test-%s"

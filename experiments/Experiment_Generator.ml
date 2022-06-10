@@ -19,9 +19,20 @@ let file_path = "tsp_instances"
 
 let default_time = 1.
 
-let dev_modes = MCTS.[ Dev_hidden 5; Dev_simulation 5; No_dev; Dev_all 5 ]
+let dev_modes =
+  MCTS.
+    [
+      Dev_hidden 5; Dev_simulation 5; No_dev; Dev_all 5; Dev_hidden 0; Dev_all 0;
+    ]
 
-let all_iter2opt_list = max_int *$ [ Iterated_2Opt.Random; Roulette ]
+let dev_modes_small = MCTS.[ Dev_hidden 5; Dev_all 5; Dev_hidden 0; Dev_all 0 ]
+
+let all_iter2opt_list =
+  max_int
+  *$- Iterated_2Opt.([ Random; Roulette ] $$ Two_Opt.[ Fast; Best; First ])
+
+let single_opt_list =
+  1 *$- Iterated_2Opt.([ Random; Roulette ] $$ Two_Opt.[ Fast; Best; First ])
 
 let configs test_set amount =
   let rec aux i =
@@ -31,9 +42,13 @@ let configs test_set amount =
   aux 1
 
 let experiment_iter2opt ?sim_name ?(amount = 128) ?(test_set = 200)
-    ?(max_time = default_time) ?(exp_per_config = 1) () =
+    ?(max_time = default_time) ?(exp_per_config = 1) ?(exp_type = `Both) () =
+  let create = Experiment_Runner.create_models ~max_time in
   let models =
-    Experiment_Runner.create_models max_time ~iter2opt_list:all_iter2opt_list
+    match exp_type with
+    | `Iterated -> create ~iter2opt_list:all_iter2opt_list ()
+    | `Single -> create ~iter2opt_list:single_opt_list ()
+    | `Both -> create ~iter2opt_list:(all_iter2opt_list @ single_opt_list) ()
   in
 
   let sim_name =
@@ -48,8 +63,7 @@ let experiment_iter2opt ?sim_name ?(amount = 128) ?(test_set = 200)
 let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
     ?(max_time = default_time) ?(exp_per_config = 1)
     ?(exploration_policy = MCTS.Standard_deviation 1.) ?(ignore_level = 0)
-    ?(score_policy = MCTS.Average)
-     () =
+    ?(score_policy = MCTS.Average) () =
   let base_opt =
     MCTS.Two_opt { max_time = 1.; max_length = test_set; max_iter = max_int }
   in
@@ -57,19 +71,22 @@ let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
   let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int } in
 
   let mcts_opt_list =
-    match ignore_level with
+    (match ignore_level with
     | 0 ->
         MCTS.(
           dev_modes
           $$- ([ Random; Roulette ]
               $$ (base_opt *$- [ ((1, 1), No_opt); ((1, 1), full_opt) ])
                  @ [ (full_opt, (1, 1), No_opt) ]))
-        |> List.filter (fun (d, _, (_, _, h)) -> is_valid_dev h d)
-    | _ ->
+    | 1 ->
         MCTS.(
           dev_modes
           $$- ([ Random; Roulette ] $$ [ (base_opt, (1, 1), full_opt) ]))
-        |> List.filter (fun (d, _, (_, _, h)) -> is_valid_dev h d)
+    | _ ->
+        MCTS.(
+          dev_modes_small
+          $$- ([ Random; Roulette ] $$ [ (base_opt, (1, 1), full_opt) ])))
+    |> List.filter (fun (d, _, (_, _, h)) -> is_valid_dev h d)
   in
 
   let mcts_vanilla_list =
@@ -85,8 +102,8 @@ let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
   in
 
   let models =
-    Experiment_Runner.create_models max_time ~mcts_opt_list ~mcts_vanilla_list
-      ~exploration_policy ~score_policy
+    Experiment_Runner.create_models ~max_time ~mcts_opt_list ~mcts_vanilla_list
+      ~exploration_policy ~score_policy ()
   in
 
   let sim_name =
@@ -139,8 +156,8 @@ let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
   in
 
   let models =
-    Experiment_Runner.create_models max_time ~iter2opt_list:all_iter2opt_list
-      ~mcts_opt_list ~mcts_vanilla_list ~greedy_list ~exploration_policy
+    Experiment_Runner.create_models ~max_time ~iter2opt_list:all_iter2opt_list
+      ~mcts_opt_list ~mcts_vanilla_list ~greedy_list ~exploration_policy ()
   in
 
   let configs = configs test_set amount in

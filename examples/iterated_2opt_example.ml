@@ -13,7 +13,7 @@ let max_try = 100
 let two_path, (mcts_path, _, _) =
   let t = Unix.gettimeofday () in
   Iterated_2Opt.
-    ( iter_two_opt adj_matrix city_count Random max_time max_try,
+    ( iter_two_opt ~adj_matrix ~city_count ~random_policy:Random max_time max_try,
       MCTS.proceed_mcts
         ~optimization_policy:
           (MCTS.Two_opt { max_length = 400; max_iter = 400; max_time = 1. })

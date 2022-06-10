@@ -18,6 +18,7 @@ type iterated2opt_solver = {
   max_time : float;
   max_iter : int;
   random_policy : Iterated_2Opt.random_policy;
+  opt_policy : Two_Opt.two_opt_type;
 }
 
 type greedy_solver = {
@@ -55,14 +56,15 @@ let solver_simulation ?(generate_log_file = 1) ?(verbose = 0) ?seed city_config
           ~simulation_selection_policy ~exploration_policy ~optimization_policy
           ~generate_log_file ~stop_on_leaf:false ~optimize_end_path:true
           ~name:solver.name ~log_files_path ~verbose:(verbose - 1) ~hidden_opt
-          ?seed ~catch_SIGINT:false ~city_count ~adj_matrix max_time max_simulation
-          ~develop_simulation_policy:solver.dev_policy
+          ?seed ~catch_SIGINT:false ~city_count ~adj_matrix max_time
+          max_simulation ~develop_simulation_policy:solver.dev_policy
       in
       (length, opt_length)
   | Iter solver ->
       let tour =
-        Iterated_2Opt.iter_two_opt adj_matrix city_count solver.random_policy
-          solver.max_time solver.max_iter ~name:solver.name ~city_config
+        Iterated_2Opt.iter_two_opt ~adj_matrix ~city_count
+          ~opt_policy:solver.opt_policy ~random_policy:solver.random_policy
+          ~name:solver.name ~city_config solver.max_time solver.max_iter
           ?logs_path:
             (if generate_log_file < 0 then None else Some log_files_path)
           ~verbose:(verbose > 0) ?seed

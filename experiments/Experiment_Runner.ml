@@ -126,7 +126,7 @@ let def_opt = create_mcts_opt 1 1
 (** Create model record which will be run by the Solver_Runner module *)
 let create_models ?(exploration_policy = MCTS.Standard_deviation 1.)
     ?(mcts_vanilla_list = []) ?(mcts_opt_list = []) ?(iter2opt_list = [])
-    ?(greedy_list = []) ?(score_policy = MCTS.Average) max_time =
+    ?(greedy_list = []) ?(score_policy = MCTS.Average) ~max_time () =
   let suffix hidden_opt dev_policy =
     (if hidden_opt = MCTS.No_opt then ""
     else
@@ -169,20 +169,28 @@ let create_models ?(exploration_policy = MCTS.Standard_deviation 1.)
         score_policy;
       }
   in
-  let create_iterated_opt ?name (max_iter, random_policy) =
+  let create_iterated_opt ?name (max_iter, random_policy, opt_policy) =
     Iter
       {
         max_iter;
         max_time;
         random_policy;
+        opt_policy;
         name =
-          (match name with
-          | Some n -> n
-          | None ->
-              Printf.sprintf "Iterated2Opt-%s%s"
-                (Iterated_2Opt.string_of_random_policy random_policy)
-                (if max_iter = max_iter then ""
-                else Printf.sprintf "-%diters" max_iter));
+          Iterated_2Opt.(
+            match name with
+            | Some n -> n
+            | None ->
+                if max_iter <> 1 then
+                  Printf.sprintf "Iterated2Opt-%s-%s%s"
+                    (string_of_random_policy random_policy)
+                    (Two_Opt.string_of_opt_policy opt_policy)
+                    (if max_iter = max_int then ""
+                    else Printf.sprintf "-%diters" max_iter)
+                else
+                  Printf.sprintf "1%s-%s"
+                    (string_of_random_policy random_policy)
+                    (Two_Opt.string_of_opt_policy opt_policy));
       }
   in
   let create_greedy ?name (max_iter, random_policy) =
@@ -201,11 +209,8 @@ let create_models ?(exploration_policy = MCTS.Standard_deviation 1.)
                 else Printf.sprintf "-%diters" max_iter));
       }
   in
-  let iter1Random = create_iterated_opt (1, Random) ~name:"1Random2Opt" in
-  let iter1Roulette = create_iterated_opt (1, Roulette) ~name:"1Roulette2Opt" in
   List.map init_model
-    (Exact :: iter1Random :: iter1Roulette
-     :: List.map create_opt_mcts mcts_opt_list
+    ((Exact :: List.map create_opt_mcts mcts_opt_list)
     @ List.map create_vanilla_mcts mcts_vanilla_list
     @ List.map create_iterated_opt iter2opt_list
     @ List.map create_greedy greedy_list)

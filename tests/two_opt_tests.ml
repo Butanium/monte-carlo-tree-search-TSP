@@ -2,8 +2,8 @@
   dune exec ./tests/two_opt_main.exe
 *)
 
-(* let city_config = "TSP100/instance2" *)
-let city_config = "TSPLIB/att48"
+let city_config = "TSP100/instance1"
+(* let city_config = "TSPLIB/att48" *)
 
 let city_count, cities = Reader_tsp.open_tsp city_config
 
