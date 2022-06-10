@@ -299,10 +299,18 @@ let add_score node score =
   if score < node.info.best_score then node.info.best_score <- score;
   node.info.score <- node.info.score +. score
 
+(**
+  {FR} Renvoie la longueur attendue si on choisit ce noeud
+  {EN} Return the expected length of the tour if we chose this node  
+*)
+let get_expected_length =
+  match !arg.expected_length_policy with
+  | Average -> fun node -> node.info.score /. node.info.visit
+  | Best -> fun node -> node.info.best_score
+
 (** {FR} Renvoie la fonction d'évaluation qui sera utilisée pendant la sélection
     {EN} Return the function which will return the score of a node during selection *)
-let get_node_score_fun root exploration_policy expected_length_policy
-    exploration_constant_factor =
+let get_node_score_fun root exploration_policy exploration_constant_factor =
   let c =
     match exploration_policy with
     | Min_spanning_tree factor ->
@@ -332,11 +340,7 @@ let get_node_score_fun root exploration_policy expected_length_policy
     | Root -> failwith "can't calculate score of the root"
     | Parent p -> p.info.visit
   in
-  let get_expected_length =
-    match expected_length_policy with
-    | Average -> fun node -> node.info.score /. node.info.visit
-    | Best -> fun node -> node.info.best_score
-  in
+
   fun node ->
     get_expected_length node
     -. 2. *. c *. exploration_constant_factor
@@ -495,23 +499,23 @@ let add_child parent child =
 
 (** {FR} créer les noeuds associé au tour ou les actualise
     {EN} create the nodes associated to the tour or update them *)
-let rec forward_propagation node tour score length =
-  if node.info.depth <> !arg.city_count && length >= 0 then (
+let rec prepropagation node tour score length =
+  if node.info.depth <> !arg.city_count then
     let next_city = tour.(node.info.depth) in
     match
       List.find_opt (fun x -> x.info.city = next_city) node.info.children
     with
-    | None ->
+    | None when length >= 0 ->
         let new_node = create_node node next_city in
         add_child node new_node;
         add_score new_node score;
         new_node.info.dev_visit <- new_node.info.dev_visit + 1;
-        forward_propagation new_node tour score (length - 1)
+        prepropagation new_node tour score (length - 1)
     | Some next_node when next_node.info.active ->
         add_score next_node score;
         next_node.info.dev_visit <- next_node.info.dev_visit + 1;
-        forward_propagation next_node tour score (length - 1)
-    | _ -> ())
+        prepropagation next_node tour score (length - 1)
+    | _ -> ()
 
 (** {FR} convertis le ou les tours en noeuds en fonction de la valeur de `develop_simulation_policy`
     {EN} convert the tour in nodes according to the value of `develop_simulation_policy` *)
@@ -519,13 +523,13 @@ let convert_tours ~hidden_score ~simulation_score node =
   let root = Option.get !arg.root in
   let dev_hidden =
     add_score root hidden_score;
-    forward_propagation root !hidden_tour_container hidden_score
+    prepropagation root !hidden_tour_container hidden_score
   in
   let dev_simulation =
     match !arg.optimization_policy with
     | Full_Two_opt _ ->
-        forward_propagation root !simulation_tour_container simulation_score
-    | _ -> forward_propagation node !simulation_tour_container simulation_score
+        prepropagation root !simulation_tour_container simulation_score
+    | _ -> prepropagation node !simulation_tour_container simulation_score
   in
   let error () =
     raise
@@ -602,7 +606,8 @@ let rec selection node =
         match get_best_child node with
         | Some child -> selection child
         | None ->
-            if !arg.close_nodes then (node.info.active <- false;
+            if !arg.close_nodes then (
+              node.info.active <- false;
               deb.closed_nodes <- deb.closed_nodes + 1);
             backpropagation node node.info.best_score
               node.info.best_hidden_score node.info.max_child_depth)
@@ -641,7 +646,7 @@ let debug_mcts oc root =
         let n, _ =
           List.fold_left
             (fun ((_, acc_s) as acc) n ->
-              let s = n.info.score /. n.info.visit in
+              let s = get_expected_length node in
               if s < acc_s then (n, s) else acc)
             (node, infinity) l
         in
@@ -656,32 +661,25 @@ let debug_mcts oc root =
 
 let verbose_message = Util.mcts_verbose_message
 
+(* TODO : refactor arguments with a record as argumennt for optional values *)
+
 (** {FR} Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents simulation
     {EN} Create and develop the tree, keeping in memory the best tour done during the simulations *)
-(* TODO : refactor arguments with a record as argumennt for optional values *)
-let proceed_mcts 
-    (* Policy arguments *)
-    ?(expected_length_policy = Average)
-    ?(close_nodes = true) 
+let proceed_mcts ?((* Policy arguments *)
+                 expected_length_policy = Average) ?(close_nodes = true)
     ?(simulation_selection_policy = Roulette)
     ?(exploration_policy = Standard_deviation 1.)
     ?(optimization_policy = No_opt) ?(stop_on_leaf = true)
-    ?(optimize_end_path = true)  ?(hidden_opt = No_opt)
-    ?(optimize_end_path_time = infinity) 
-    ?(develop_simulation_policy = No_dev)
-    ?(exploration_constant_factor = 1.) ?seed 
-    
-    (* Problem arguments *)
-    ?(city_config = "") ?(config_path = "tsp_instances") 
-    ~city_count ~adj_matrix
-
-    (* debug arguments *)
-    ?(generate_log_file = -1) ?(log_files_path = "logs")
-    ?(debug_tree = false)  ?(verbose = 1) ?(catch_SIGINT = true)
-    ?(name = "")
-
+    ?(optimize_end_path = true) ?(hidden_opt = No_opt)
+    ?(optimize_end_path_time = infinity) ?(develop_simulation_policy = No_dev)
+    ?(exploration_constant_factor = 1.) ?seed
+    ?((* Problem arguments *)
+    city_config = "") ?(config_path = "tsp_instances") ~city_count ~adj_matrix
+    ?((* debug arguments *)
+    generate_log_file = -1) ?(log_files_path = "logs") ?(debug_tree = false)
+    ?(verbose = 1) ?(catch_SIGINT = true) ?(name = "")
     (* Algorithm exit conditions*)
-     max_time max_simulation = 
+      max_time max_simulation =
   (* ____ allow user exit with Ctrl+C sigint ____ *)
   let user_interrupt = ref false in
   if catch_SIGINT then
@@ -754,8 +752,7 @@ let proceed_mcts
     selection root;
     if !arg.simulation_count = city_count - 1 then
       !arg.get_node_score <-
-        get_node_score_fun root exploration_policy expected_length_policy
-          exploration_constant_factor
+        get_node_score_fun root exploration_policy exploration_constant_factor
   done;
 
   (* _______________ Debug _______________ *)
