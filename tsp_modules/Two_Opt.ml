@@ -1,5 +1,12 @@
 module RndQ = Random_Queue
 
+type two_opt_type = Fast | Best | First
+
+let string_of_opt_policy = function
+  | Fast -> "Fast"
+  | First -> "First"
+  | Best -> "Best"
+
 let max (x : int) (y : int) = if x < y then y else x
 
 let invertPath i j tour =
@@ -96,15 +103,28 @@ let opt_fast ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
     is_opt
   with Timed_Out -> false
 
-let opt_best ?(debug = false) ?(partial_path = false) ?(max_iter = -1) eval tour
-    =
+let opt_best ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
+    ?(max_time = infinity) ?(check_time = 1000) adj_matrix tour =
+  let last_time_check = ref 0 in
+  let start_time = if max_time = infinity then 0. else Unix.gettimeofday () in
   let bound = Array.length tour in
   let partial = if partial_path then 1 else 0 in
+  let eval i j = adj_matrix.(i).(j) in
   let rec loop k =
     let diff = ref 0 in
     let minI, minJ = (ref 0, ref 0) in
     for i = 0 to bound - 4 - partial do
       for j = i + 2 to bound - 1 - max (2 * partial) (1 - i) do
+        if
+          max_time <> infinity
+          && (if !last_time_check > check_time then (
+              last_time_check := 0;
+              true)
+             else (
+               incr last_time_check;
+               false))
+          && Unix.gettimeofday () -. start_time > max_time
+        then raise Timed_Out;
         let d =
           eval tour.(i) tour.(j)
           + eval tour.(i + 1) tour.((j + 1) mod bound)
@@ -122,7 +142,7 @@ let opt_best ?(debug = false) ?(partial_path = false) ?(max_iter = -1) eval tour
       if debug then Printf.printf "\ninverted %d and %d" !minI !minJ;
       if k < max_iter || max_iter < 0 then loop (k + 1))
   in
-  loop 1
+  try loop 1 with Timed_Out -> ()
 
 let opt_first ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
     ?(max_time = infinity) ?(lower_bound = 0) ?(upper_bound = -1)
@@ -169,3 +189,18 @@ let opt_first ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
        && loop2 i (j + 1)
   in
   try ignore (rec_while 0) with Timed_Out -> ()
+
+let two_opt ?(debug = false) ?(partial_path = false) ?(max_iter = -1)
+    ?(max_time = infinity) ?(lower_bound = 0) ?(upper_bound = -1)
+    ?(check_time = 1000) opt_mode adj_matrix tour =
+  match opt_mode with
+  | Fast ->
+      opt_fast ~debug ~partial_path ~max_iter ~max_time ~lower_bound
+        ~upper_bound ~check_time adj_matrix tour
+      |> ignore
+  | First ->
+      opt_first ~debug ~partial_path ~max_iter ~max_time ~lower_bound
+        ~upper_bound ~check_time adj_matrix tour
+  | Best ->
+      opt_best ~debug ~partial_path ~max_iter ~max_time ~check_time adj_matrix
+        tour

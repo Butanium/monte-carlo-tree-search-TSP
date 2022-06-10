@@ -1,3 +1,4 @@
+module RndQ = Random_Queue
 open Two_Opt
 
 type random_policy = Roulette | Random
@@ -10,6 +11,15 @@ let weight_update adj last q = function
   | Random -> ()
   | Roulette -> RndQ.roulette_weights adj last q
 
+let optimize_path adj_matrix tour ~max_time = function
+  | First -> opt_first ~max_time adj_matrix tour
+  | Fast ->
+      let _ = opt_fast ~max_time adj_matrix tour in
+      ()
+  | Best ->
+      let _ = opt_best ~max_time adj_matrix tour in
+      ()
+
 let randomize_tour q adj policy tour_arr =
   for i = 0 to Array.length tour_arr - 1 do
     let v = RndQ.take q in
@@ -20,7 +30,8 @@ let randomize_tour q adj policy tour_arr =
 (* type debug = {mutable } *)
 
 let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
-    ?(check_time = 10) adj_matrix city_count rnd_policy max_time max_try =
+    ?(check_time = 10) ?(random_policy = Random) ?(opt_policy = Fast)
+    ~adj_matrix ~city_count max_time max_try =
   let seed =
     match seed with
     | None ->
@@ -49,11 +60,11 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
            else true)
        || get_time () < max_time)
   do
-    randomize_tour queue adj_matrix rnd_policy tour_arr;
+    randomize_tour queue adj_matrix random_policy tour_arr;
     let max_time =
       if max_time = infinity then infinity else max_time -. get_time ()
     in
-    ignore (opt_fast ~max_time adj_matrix tour_arr);
+    optimize_path ~max_time adj_matrix tour_arr opt_policy;
     let len = Base_tsp.tour_length adj_matrix tour_arr in
     if len < !best_len then (
       best_len := len;
@@ -89,8 +100,10 @@ let iter_two_opt ?city_config ?name ?(verbose = true) ?logs_path ?seed
         @@ Printf.sprintf "%s/%s" log_path
              (match name with
              | None ->
-                 Printf.sprintf "%sIterated2Opt"
+                 Printf.sprintf "%s-%s-%sIterated2Opt"
                    (match city_config with None -> "" | Some c -> c ^ "-")
+                   (string_of_random_policy random_policy)
+                   (string_of_opt_policy opt_policy)
              | Some name -> name)
       in
       let file =
