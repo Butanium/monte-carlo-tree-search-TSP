@@ -51,9 +51,11 @@ type develop_simulation_policy =
   | No_dev
 
 let str_of_develop_policy = function
-  | Dev_all length -> Printf.sprintf "Dev_all_%d" length
-  | Dev_hidden length -> Printf.sprintf "Dev_hidden%d" length
-  | Dev_simulation length -> Printf.sprintf "Dev_simulation%d" length
+  | Dev_all length ->
+      Printf.sprintf "Dev_all%s"
+        (if length > 0 then Printf.sprintf "+%d" length else "")
+  | Dev_hidden length -> Printf.sprintf "Dev_hidden%s" (if length > 0 then Printf.sprintf "+%d" length else "")
+  | Dev_simulation length -> Printf.sprintf "Dev_simulation%s" (if length > 0 then Printf.sprintf "+%d" length else "")
   | No_dev -> "No_dev"
 
 (** {FR} Définie le paramètre d'exploration utilisée pour sélectionner le meilleur fils d'un noeud
