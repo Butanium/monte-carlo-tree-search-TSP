@@ -22,7 +22,7 @@ let tour_length adj_matrix tour =
   for i = 0 to Array.length tour - 2 do
     s := !s + adj_matrix.(tour.(i)).(tour.(i + 1))
   done;
-  !s + adj_matrix.(tour.(0)).(tour.(Array.length tour - 1))
+  !s + adj_matrix.(tour.(Array.length tour - 1)).(tour.(0))
 
 let random_tour city_count =
   let rndQ =
@@ -64,7 +64,6 @@ let check_tour_validity tour =
   in
   aux 0
 
-(* let check_tour_validity *)
 
 let tour_of_string tour_string =
   (*[0] -> 2 -> 1 -> 3 -> 7 -> 15 -> 12 -> 11 -> 9 -> 8 -> 10 -> 4 -> 14 -> 5 -> 6 -> [13]*)

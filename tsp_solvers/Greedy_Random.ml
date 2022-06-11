@@ -68,4 +68,5 @@ let greedy ?(generate_log_file = 1) ?(logs_path = "logs") ?(verbose = 0)
      Printf.printf "simulation ref for log files : %s\n"
      @@ String.sub file.file_name start
      @@ (String.length file.file_name - start));
+  assert (!best_score = get_tour_length best_tour && Base_tsp.check_tour_validity best_tour );
   (!best_score, best_tour)
