@@ -34,6 +34,8 @@ let all_iter2opt_list =
 let single_opt_list =
   1 *$- Iterated_2Opt.([ Random; Roulette ] $$ Two_Opt.[ Fast; Best; First ])
 
+let greedy_list = Greedy_Random.[ (max_int, Roulette); (max_int, Random) ]
+
 let configs test_set amount =
   let rec aux i =
     if i > amount then []
@@ -65,10 +67,10 @@ let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
     ?(exploration_policy = MCTS.Standard_deviation 1.) ?(ignore_level = 0)
     ?(score_policy = MCTS.Average) () =
   let base_opt =
-    MCTS.Two_opt { max_time = 1.; max_length = test_set; max_iter = max_int }
+    MCTS.Two_opt { max_time; max_length = max_int; max_iter = max_int }
   in
 
-  let full_opt = MCTS.Full_Two_opt { max_time = 1.; max_iter = max_int } in
+  let full_opt = MCTS.Full_Two_opt { max_time; max_iter = max_int } in
 
   let mcts_opt_list =
     (match ignore_level with
@@ -122,8 +124,6 @@ let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
 let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
     ?(exp_per_config = 1) ?(exploration_policy = MCTS.Standard_deviation 1.)
     ?(max_time = default_time) () =
-  let greedy_list = Greedy_Random.[ (max_int, Roulette); (max_int, Random) ] in
-
   let base_opt =
     MCTS.Two_opt { max_time = 1.; max_length = test_set; max_iter = max_int }
   in
@@ -168,4 +168,16 @@ let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
     | Some s -> s
   in
 
+  Experiment_Runner.run_models ~sim_name configs models ~exp_per_config
+
+
+let greedy_experiment ?sim_name ?(amount = 128) ?(test_set = 200)
+  ?(max_time = default_time) ?(exp_per_config = 5) () =
+  let sim_name =
+    match sim_name with
+    | None -> Printf.sprintf "Greedy-TSP%d-%.3gs" test_set max_time
+    | Some name -> name
+  in
+  let configs = configs test_set amount in
+  let models = Experiment_Runner.create_models ~max_time ~greedy_list () in
   Experiment_Runner.run_models ~sim_name configs models ~exp_per_config

@@ -66,7 +66,11 @@ let solver_simulation ?(generate_log_file = 1) ?(verbose = 0) ?seed city_config
           ~opt_policy:solver.opt_policy ~random_policy:solver.random_policy
           ~name:solver.name ~city_config solver.max_time solver.max_iter
           ?logs_path:
-            (if generate_log_file < 0 then None else Some log_files_path)
+            (if
+             generate_log_file < 0
+             || (generate_log_file <= 1 && solver.max_iter = 1)
+            then None
+            else Some log_files_path)
           ~verbose:(verbose > 0) ?seed
       in
       let score = Base_tsp.tour_length adj_matrix tour in
