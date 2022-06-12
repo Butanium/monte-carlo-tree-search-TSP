@@ -1,4 +1,4 @@
-(data_only_dirs logs _archive external_tools venv tsp_instances)
+(data_only_dirs logs _archive external_tools venv tsp_instances results) 
 
 (env
  (release

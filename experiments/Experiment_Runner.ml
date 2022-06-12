@@ -295,20 +295,6 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
              for i = 1 to exp_per_config do
                models
                |> List.iter (fun model ->
-                      (* _________ Save progress _________ *)
-                      let diff = Unix.gettimeofday () -. !last_debug in
-                      if diff > 3600. then (
-                        debug_count := !debug_count + (int_of_float diff / 3600);
-                        if verbose > 0 then
-                          Printf.printf
-                            "currently testing %s, Simulation %s has been \
-                             running for %d hours\n\
-                             %!"
-                            config sim_name !debug_count;
-                        update_log_file best_lengths
-                          ~missing_exp:(exp_per_config - (i - 1));
-                        last_debug := Unix.gettimeofday ());
-
                       (* ___ Get model results ___ *)
                       let length, opt_length =
                         if model.solver = Exact then
@@ -335,6 +321,22 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                           sim_name logs.file_path logs.file_name);
                       if !stop_experiment then raise @@ Break best_lengths)
              done;
+             (* _________ Save progress _________ *)
+             let diff = Unix.gettimeofday () -. !last_debug in
+             if diff > 3600. then (
+               debug_count := !debug_count + (int_of_float diff / 3600);
+               if verbose > 0 then (
+                 let hours =
+                   (Unix.gettimeofday () -. start_time) /. 3600. |> int_of_float
+                 in
+                 Printf.printf
+                   "currently testing %s, Simulation %s has been running for \
+                    %d hours\n\
+                    %!"
+                   config sim_name hours;
+                 update_log_file best_lengths;
+                 last_debug := Unix.gettimeofday ()));
+
              best_lengths)
            []
     with Break best_lengths -> best_lengths
