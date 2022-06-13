@@ -54,8 +54,12 @@ let str_of_develop_policy = function
   | Dev_all length ->
       Printf.sprintf "Dev_all%s"
         (if length > 0 then Printf.sprintf "+%d" length else "")
-  | Dev_hidden length -> Printf.sprintf "Dev_hidden%s" (if length > 0 then Printf.sprintf "+%d" length else "")
-  | Dev_simulation length -> Printf.sprintf "Dev_simulation%s" (if length > 0 then Printf.sprintf "+%d" length else "")
+  | Dev_hidden length ->
+      Printf.sprintf "Dev_hidden%s"
+        (if length > 0 then Printf.sprintf "+%d" length else "")
+  | Dev_simulation length ->
+      Printf.sprintf "Dev_simulation%s"
+        (if length > 0 then Printf.sprintf "+%d" length else "")
   | No_dev -> "No_dev"
 
 (** {FR} Définie le paramètre d'exploration utilisée pour sélectionner le meilleur fils d'un noeud
@@ -432,7 +436,7 @@ let simulation last_city =
   if simulation_score < !arg.best_score then (
     !arg.best_score <- simulation_score;
     Util.copy_in_place !arg.best_tour ~model:simulation_tour;
-    if deb.generate_log_file > 0 then
+    if deb.generate_log_file >= 3 then
       deb.best_score_hist <-
         ( Unix.gettimeofday () -. !arg.start_time,
           !arg.simulation_count,
@@ -452,7 +456,7 @@ let simulation last_city =
       opt_score)
     else simulation_score
   in
-  if deb.generate_log_file > 0 then
+  if deb.generate_log_file >= 4 then
     deb.score_hist <-
       (float !arg.simulation_count, simulation_score, hidden_score)
       :: deb.score_hist;
@@ -663,7 +667,7 @@ let debug_mcts oc root =
 
 let verbose_message = Util.mcts_verbose_message
 
-(* TODO : refactor arguments with a record as argumennt for optional values *)
+(* TODO : refactor arguments with a record as argument for optional values *)
 
 (** {FR} Créer développe l'arbre en gardant en mémoire le meilleur chemin emprunté durant les différents simulation
     {EN} Create and develop the tree, keeping in memory the best tour done during the simulations *)
@@ -834,7 +838,7 @@ let proceed_mcts ?((* Policy arguments *)
     let file_path = Printf.sprintf "%s/%s" log_files_path suffix in
     let _ = File_log.create_dir_if_not_exist file_path in
 
-    if generate_log_file > 2 then (
+    if generate_log_file >= 4 then (
       let file = File_log.create_file ~file_path ~file_name:"all_scores" () in
       let oc =
         File_log.log_string_endline ~close:false ~file "timestamp,length"
@@ -844,7 +848,8 @@ let proceed_mcts ?((* Policy arguments *)
           if hidden_opt = No_opt then Printf.fprintf oc "%g,%d\n" t s
           else Printf.fprintf oc "%g,%d,%d\n" t s hs)
         deb.score_hist;
-      close_out oc;
+      close_out oc);
+    if generate_log_file >= 3 then (
       let file = File_log.create_file ~file_path ~file_name:"best_scores" () in
       let oc =
         File_log.log_string_endline ~close:false ~file

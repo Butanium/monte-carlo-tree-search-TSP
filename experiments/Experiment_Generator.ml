@@ -62,10 +62,11 @@ let experiment_iter2opt ?sim_name ?(amount = 128) ?(test_set = 200)
   let configs = configs test_set amount in
   Experiment_Runner.run_models ~sim_name configs models ~exp_per_config
 
+(* todo switch to model_set instead of ignore_level with `All `Some `Best*)
 let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
     ?(max_time = default_time) ?(exp_per_config = 1)
     ?(exploration_policy = MCTS.Standard_deviation 1.) ?(ignore_level = 0)
-    ?(score_policy = MCTS.Average) () =
+    ?(score_policy = MCTS.Average) ?(default_log_file = 3) () =
   let base_opt =
     MCTS.Two_opt { max_time; max_length = max_int; max_iter = max_int }
   in
@@ -119,7 +120,8 @@ let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
 
   let configs = configs test_set amount in
 
-  Experiment_Runner.run_models ~sim_name configs models ~exp_per_config
+  Experiment_Runner.run_models ~sim_name ~exp_per_config ~default_log_file
+    configs models
 
 let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
     ?(exp_per_config = 1) ?(exploration_policy = MCTS.Standard_deviation 1.)
@@ -170,9 +172,8 @@ let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
 
   Experiment_Runner.run_models ~sim_name configs models ~exp_per_config
 
-
 let greedy_experiment ?sim_name ?(amount = 128) ?(test_set = 200)
-  ?(max_time = default_time) ?(exp_per_config = 5) () =
+    ?(max_time = default_time) ?(exp_per_config = 5) () =
   let sim_name =
     match sim_name with
     | None -> Printf.sprintf "Greedy-TSP%d-%.3gs" test_set max_time

@@ -217,7 +217,7 @@ let create_models ?(exploration_policy = MCTS.Standard_deviation 1.)
 
 (** Run the different models and collect their results *)
 let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
-    ?(exp_per_config = 1) configs models =
+    ?(exp_per_config = 1) ?(default_log_file=4) configs models =
   let exception Break of int list in
   let update_csv = ref false in
   if Sys.os_type <> "Win32" then
@@ -302,7 +302,7 @@ let run_models ?(sim_name = "sim") ?(mk_new_log_dir = true) ?(verbose = 1) ?seed
                         else
                           solver_simulation config city_count adj log_files_path
                             model.solver ~verbose:(verbose - 1)
-                            ~generate_log_file:(if i = 1 then 3 else 1)
+                            ~generate_log_file:(if i = 1 then default_log_file else 1)
                             ?seed
                       in
 
