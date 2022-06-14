@@ -652,7 +652,7 @@ let debug_mcts oc root =
         let n, _ =
           List.fold_left
             (fun ((_, acc_s) as acc) n ->
-              let s = get_expected_length node in
+              let s = get_expected_length n in
               if s < acc_s then (n, s) else acc)
             (node, infinity) l
         in
