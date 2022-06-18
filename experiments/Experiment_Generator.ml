@@ -55,7 +55,7 @@ let experiment_iter2opt ?sim_name ?(amount = 128) ?(test_set = 200)
 
   let sim_name =
     match sim_name with
-    | None -> Printf.sprintf "Iter2Opt-TSP%d-%.3gs" test_set max_time
+    | None -> Printf.sprintf "Iter2Opt-TSP%d-%gs" test_set max_time
     | Some s -> s
   in
 
@@ -112,7 +112,7 @@ let experiment_partial ?sim_name ?(amount = 128) ?(test_set = 200)
   let sim_name =
     match sim_name with
     | None ->
-        Printf.sprintf "Exploration-%s-TSP%d-%.3gs"
+        Printf.sprintf "Exploration-%s-TSP%d-%gs"
           (MCTS.str_of_exploration_policy exploration_policy)
           test_set max_time
     | Some s -> s
@@ -166,7 +166,7 @@ let experiment_all ?sim_name ?(amount = 128) ?(test_set = 200)
 
   let sim_name =
     match sim_name with
-    | None -> Printf.sprintf "Duration-%.3gs-TSP%d" max_time test_set
+    | None -> Printf.sprintf "Duration-%gs-TSP%d" max_time test_set
     | Some s -> s
   in
 
@@ -176,7 +176,7 @@ let greedy_experiment ?sim_name ?(amount = 128) ?(test_set = 200)
     ?(max_time = default_time) ?(exp_per_config = 5) () =
   let sim_name =
     match sim_name with
-    | None -> Printf.sprintf "Greedy-TSP%d-%.3gs" test_set max_time
+    | None -> Printf.sprintf "Greedy-TSP%d-%gs" test_set max_time
     | Some name -> name
   in
   let configs = configs test_set amount in

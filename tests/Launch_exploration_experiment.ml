@@ -1,4 +1,4 @@
-let max_time = 10.
+let max_time = 30.
 
 let exploration_policies =
   MCTS.
@@ -23,6 +23,13 @@ let exploitation = MCTS.[
   Min_spanning_tree 0.005;
   Standard_deviation 0.005;
 ]
+
+let small = MCTS.[
+  Min_spanning_tree 0.001;
+  Min_spanning_tree 0.01;
+  Min_spanning_tree 0.005;
+  Min_spanning_tree 0.05
+]
 (* 
   # First exploration experiment
 
@@ -34,11 +41,18 @@ let exploitation = MCTS.[
     exploration_policies 
 *)
 
-(* # Sescond exploration experiment *)
-let () =
+(* # Third exploration experiment *)
+(* let () =
   List.iter
     (fun exploration_policy ->
       Experiments.Experiment_Generator.experiment_partial ~exploration_policy ~max_time
         ~amount:128 ~test_set:100 ~exp_per_config:5 ~ignore_level:10 ~score_policy:MCTS.Best ())
-    exploitation
+    exploitation *)
 
+(* # Third exploration experiment *)
+let () =
+  List.iter
+    (fun exploration_policy ->
+      Experiments.Experiment_Generator.experiment_partial ~exploration_policy ~max_time
+        ~amount:128 ~test_set:100 ~exp_per_config:2 ~ignore_level:10 ~score_policy:MCTS.Best ())
+    small
