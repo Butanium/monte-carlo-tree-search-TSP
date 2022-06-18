@@ -74,8 +74,8 @@ type exploration_policy =
   | Standard_deviation of float
 
 let str_of_exploration_policy = function
-  | Min_spanning_tree c -> Printf.sprintf "Min_spanning_tree_%.2f" c
-  | Standard_deviation c -> Printf.sprintf "Standard_deviation_%.2f" c
+  | Min_spanning_tree c -> Printf.sprintf "Min_spanning_tree_%g" c
+  | Standard_deviation c -> Printf.sprintf "Standard_deviation_%g" c
 
 (** {FR} Définie comment le score estimé est calculé à partir d'un noeud
       - [Average] utilise la moyenne des scores du noeud
